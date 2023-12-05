@@ -76,6 +76,11 @@
 </template>
 
 <script setup>
+
+definePageMeta({
+  middleware: ['auth'],
+  isAdminPage: true
+})
 const name = ref("");
 const email = ref("");
 const password = ref("");

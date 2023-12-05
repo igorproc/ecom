@@ -1,8 +1,14 @@
-import { createVuetify } from "vuetify";
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as labsComponents from 'vuetify/labs/components'
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
     ssr: true,
+    components: {
+      ...components,
+      ...labsComponents
+    },
     defaults,
     // add theme
     theme: {
@@ -11,12 +17,6 @@ export default defineNuxtPlugin((app) => {
         light,
         dark,
       },
-      // add color variations
-      //   variations: {
-      //     colors: ["primary", "secondary"],
-      //     lighten: 3,
-      //     darken: 3,
-      //   },
     },
     // Add the custom iconset
     icons: {

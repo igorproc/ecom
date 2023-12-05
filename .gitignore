@@ -195,6 +195,7 @@ dist
 node_modules
 
 # System files
+~
 
 ### VisualStudioCode ###
 .vscode/*
@@ -203,6 +204,9 @@ node_modules
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+
+# Inetliij
+.idea
 
 # Local History for Visual Studio Code
 .history/
@@ -244,3 +248,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,node,nuxtjs,windows
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
+server/db/static/migrations/*
