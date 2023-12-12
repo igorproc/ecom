@@ -1,12 +1,7 @@
 import mitt from 'mitt'
 
-interface User {
-  name: string
-}
-
 type ApplicationEvents = {
-  'user:registered': User
-  'user:deleted': User
+  'notification:open': undefined
 }
 
 export default defineNuxtPlugin(() => {

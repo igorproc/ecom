@@ -1,5 +1,5 @@
 <template>
-  <VContainer fluid class="fill-height">
-
-  </VContainer>
+  <div class="app-main-page">
+    <slot />
+  </div>
 </template>

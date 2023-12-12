@@ -8,7 +8,7 @@ export const ProductModel = {
       const productList = db
         .select()
         .from(product)
-        .get()
+        .all()
       if (!productList) {
         return []
       }

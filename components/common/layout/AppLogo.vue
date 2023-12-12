@@ -12,13 +12,13 @@
 .app-logo {
   .app-logo__text {
     font-size: lib-font-size(18);
-    font-weight: map-get($font-weights, 'bold');
+    font-weight: bold;
   }
 
-  @media #{map-get($display-breakpoints, 'md')} {
-    .app-logo__text {
-      font-size: lib-font-size(22);
-    }
-  }
+  //@media #{map-get($display-breakpoints, 'md')} {
+  //  .app-logo__text {
+  //    font-size: lib-font-size(22);
+  //  }
+  //}
 }
 </style>

@@ -1,48 +1,82 @@
 <template>
-  <v-form class="app-sign-in-form" @submit.prevent="submit">
-    <v-text-field
+  <form class="app-sign-up-form" @submit.prevent="submit">
+    <vs-input
       v-model="registerData.email.value"
-      :error-messages="registerData.email.errors"
       label="email"
-    />
-    <v-text-field
+      class="app-sign-up-form__field"
+      @change="inputField"
+    >
+      <template v-if="registerData.email.errors.length" #message-danger>
+        {{ registerData.email.errors.join(', ') }}
+      </template>
+    </vs-input>
+    <vs-input
       v-model="registerData.password.value"
       :error-messages="registerData.password.errors"
       type="password"
       label="password"
-      class="mt-2"
-    />
-    <v-text-field
+      class="app-sign-up-form__field"
+      @change="inputField"
+    >
+      <template v-if="registerData.password.errors.length" #message-danger>
+        {{ registerData.password.errors.join(', ') }}
+      </template>
+    </vs-input>
+    <vs-input
       v-model="registerData.birthday.value"
       :error-messages="registerData.birthday.errors"
       type="date"
       label="Birth day"
-    />
-    <v-select
+      class="app-sign-up-form__field"
+      @change="inputField"
+    >
+      <template v-if="registerData.birthday.errors.length" #message-danger>
+        {{ registerData.birthday.errors.join(', ') }}
+      </template>
+    </vs-input>
+    <vs-select
       v-model="registerData.role.value"
       :items="availableRoles"
       :error-messages="registerData.role.errors"
       label="Current role"
-      item-title="label"
-      item-value="value"
-    />
-    <div class="d-flex align-center justify-end">
-      <v-btn
+    >
+      <vs-option
+        v-for="option in availableRoles"
+        :key="option.label"
+        :label="option.label"
+        :value="option.value"
+      />
+      <template v-if="registerData.role.errors.length" #message-danger>
+        {{ registerData.role.errors.join(', ') }}
+      </template>
+    </vs-select>
+    <div class="app-sign-up-form__actions actions">
+      <vs-button
         :disabled="isLoading"
         :loading="isLoading"
         type="submit"
+        :class="{ '--disabled': isDisabled }"
+        class="actions__submit-action"
       >
         Зарегестрироваться
-      </v-btn>
+      </vs-button>
     </div>
-  </v-form>
+  </form>
 </template>
 
 <script setup lang="ts">
+import {
+  VsInput,
+  VsButton,
+  VsSelect,
+  VsOption
+} from 'vuesax-alpha'
+
 import { useForm, useField } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-import { object, string } from 'yup'
-import { createUser } from "~/store/user/auth";
+import { object, string, date } from 'yup'
+
+import { createUser } from '~/store/user/auth'
 
 const availableRoles = [
   { label: 'admin', value: 'admin' },
@@ -54,14 +88,14 @@ useForm({
     object({
       email: string().email().required(),
       password: string().required(),
-      birthday: string().required(),
+      birthday: date().required(),
       role: string()
     })
   )
 })
 
+const isDisabled = ref(true)
 const isLoading = ref(false)
-const formDateIsOpen = ref(false)
 const registerData = reactive({
   email: useField('email'),
   password: useField('password'),
@@ -69,16 +103,23 @@ const registerData = reactive({
   role: useField('role')
 })
 
+const inputField = () => {
+  if (
+    registerData.email.errors.length ||
+    registerData.password.errors.length ||
+    registerData.birthday.errors.length
+  ) {
+    isDisabled.value = true
+    return
+  }
+  isDisabled.value = false
+}
 const submit = async () => {
   try {
-    if (
-      registerData.email.errors.length ||
-      registerData.password.errors.length ||
-      registerData.birthday.errors.length ||
-      registerData.role.errors.length
-    ) {
+    if (isDisabled.value) {
       return
     }
+
     isLoading.value = true
 
     const userIsCreated = await createUser({
@@ -98,3 +139,25 @@ const submit = async () => {
   }
 }
 </script>
+
+<style lang="scss">
+.app-sign-up-form {
+  padding: 0.5rem 1rem;
+  & .vs-input {
+    .app-sign-up-form__field {
+      width: 100%;
+    }
+  }
+  & &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    .actions__submit-action {
+      &.--disabled {
+        cursor: unset;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+</style>

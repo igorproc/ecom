@@ -6,7 +6,9 @@
     "generate": "nuxt generate",
     "reset": "rm -rf .nuxt node_modules .output package-lock.json && npm install",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db-view": "drizzle-kit studio",
+    "db-migrations": "drizzle-kit generate:sqlite && drizzle-kit push:sqlite"
   },
   "devDependencies": {
     "@iconify/vue": "^4.1.1",
@@ -15,13 +17,18 @@
     "@nuxtjs/google-fonts": "^3.0.2",
     "@types/bcrypt": "^5.0.2",
     "@types/better-sqlite3": "^7.6.8",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.4",
     "aws-sdk": "^2.1510.0",
     "bcrypt": "^5.1.1",
     "drizzle-kit": "^0.20.6",
+    "fs-extra": "^11.2.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
     "nuxt": "3.7.4",
     "sass": "^1.68.0",
-    "vuetify": "^3.3.19"
+    "short-uuid": "^4.2.2"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
@@ -35,8 +42,8 @@
     "objection": "^3.1.2",
     "pinia": "^2.1.7",
     "sqlite3": "^5.1.6",
-    "vite-plugin-vuetify": "^1.0.2",
     "vue": "^3.3.9",
-    "vue3-dropzone": "^2.1.2"
+    "vue3-dropzone": "^2.1.2",
+    "vuesax-alpha": "^0.2.0-beta.62"
   }
 }

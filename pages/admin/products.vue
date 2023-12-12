@@ -1,28 +1,17 @@
 <template>
   <div class="admin-products-page w-100 h-100 px-2">
-    <AppAdminProductListHeader
-      :product-count="productCount"
-      @open-add-product-modal="onAddProductAction"
-    />
-    <AppAdminProductList class="page__table" />
-    <AppAdminAddProductModal
-      :is-visible="addProductModalIsVisible"
-      @close-add-product-modal="onCloseProductAction"
-    />
+    <AppAdminProductListHeader :product-count="productCount" class="admin-products-page__header" />
+    <AppAdminProductList :product-list="data || null" class="admin-products-page__products-table" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { productApi } from '~/api/product'
-
 import AppAdminProductList from '~/components/admin/products/AppAdminProductList.vue'
 import AppAdminProductListHeader from '~/components/admin/products/AppAdminProductListHeader.vue'
-import AppAdminAddProductModal from "~/components/admin/products/AppAdminAddProductModal.vue";
 
-const addProductModalIsVisible = ref(false)
-const { data } = await useAsyncData(
-  'productList',
-  () => productApi.getProductList()
+const { data } = await useAsyncData<unknown[]>(
+  'product-list-admin',
+  () => $fetch('/api/product/getProductList')
 )
 
 const productCount = computed(() => {
@@ -31,11 +20,13 @@ const productCount = computed(() => {
   }
   return data.value.length
 })
-
-const onAddProductAction = () => {
-  addProductModalIsVisible.value = true
-}
-const onCloseProductAction = () => {
-  addProductModalIsVisible.value = false
-}
 </script>
+
+<style>
+.admin-products-page {
+  padding: 0 15px;
+  .admin-products-page__products-table {
+    margin-top: 0.75rem;
+  }
+}
+</style>

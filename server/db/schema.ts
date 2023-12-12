@@ -1,9 +1,8 @@
 import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core'
 import { InferSelectModel, InferInsertModel, sql } from 'drizzle-orm'
 
-import { EProductTypes } from '~/server/db/types/product'
-import { EUserRoles } from '~/server/db/types/user'
-
+import { EProductTypes } from './types/product'
+import { EUserRoles } from './types/user'
 
 // Models
 export const user = sqliteTable('user', {

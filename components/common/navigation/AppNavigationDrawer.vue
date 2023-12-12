@@ -1,55 +1,58 @@
 <template>
-  <v-navigation-drawer
-    v-model="conditionStore.navigationDrawerIsOpen"
-    temporary
-    :absolute="true"
-    location="right"
+  <VsSidebar
+    v-model="activeTab"
+    v-model:open="conditionStore.navigationDrawerIsOpen"
+    right
     class="app-navigation-drawer drawer"
   >
     <div class="drawer__top-side top-side">
       <AppUserBadge v-if="!userStore.isGuest" />
-
-      <v-expansion-panels v-else class="top-side__auth-links">
-        <v-expansion-panel elevation="0" title="Войти">
-          <v-expansion-panel-text >
+      <div v-else>
+        <vs-sidebar-group>
+          <template #header>
+            <vs-sidebar-item arrow>
+              <template #icon>
+                <i class="bx bx-group" />
+              </template>
+              Войти
+            </vs-sidebar-item>
+          </template>
+          <div id="SignIn">
             <AppSignIn />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel elevation="0" title="Зарегестрироваться">
-          <v-expansion-panel-text>
+          </div>
+        </vs-sidebar-group>
+        <vs-sidebar-group>
+          <template #header>
+            <vs-sidebar-item arrow>
+              <template #icon>
+                <i class="bx bx-group" />
+              </template>
+              Зарегестрироваться
+            </vs-sidebar-item>
+          </template>
+          <div id="SignUp">
             <AppSignUp />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-      <v-divider></v-divider>
+          </div>
+        </vs-sidebar-group>
+      </div>
     </div>
-
-    <v-list
-      v-if="drawerLinksList.length"
-      density="compact"
-      nav
-      class="drawer__link-list"
-    >
-      <v-list-item
-        v-for="listItem in drawerLinksList"
-        :key="listItem.title"
+    <div v-if="drawerLinksList.length" class="drawer__link-list list">
+      <vs-sidebar-item
+        v-for="item in drawerLinksList"
+        :key="item.title"
+        :id="item.title"
+        :to="item.url"
         class="list__item"
       >
-        <template #prepend>
-          <Icon
-            v-if="listItem.prependIcon"
-            :icon="listItem.prependIcon"
-            class="item__icon mr-2"
-          />
+        <template v-if="item.prependIcon" #icon>
+          <Icon :icon="item.prependIcon" class="list__item-prepend-icon" />
         </template>
-        <NuxtLink :to="listItem.url" class="item__link">
-          <v-list-item-title>{{ listItem.title }}</v-list-item-title>
-        </NuxtLink>
-      </v-list-item>
-    </v-list>
-
-    <div class="drawer__bottom-side bottom-side w-100 py-2">
+        <span v-if="item.url" class="list__item-title">
+          {{ item.title }}
+        </span>
+      </vs-sidebar-item>
+    </div>
+    <div class="drawer__bottom-side bottom-side">
       <div
         v-if="!userStore.isGuest"
         class="bottom-side__logout-action d-flex align-center justify-end"
@@ -57,15 +60,17 @@
         <AppLogout />
       </div>
     </div>
-  </v-navigation-drawer>
+  </VsSidebar>
 </template>
 
 <script setup lang="ts">
+import { VsSidebar, VsSidebarItem, VsSidebarGroup } from 'vuesax-alpha'
+
 import { useConditionStore } from '~/store/condition'
 import { useUserStore } from '~/store/user'
 
 import { Icon } from '@iconify/vue'
-import AppUserBadge from '~/components/common/AppUserBadge.vue'
+import AppUserBadge from '~/components/user/AppUserBadge.vue'
 import AppSignIn from '~/components/auth/AppSignIn.vue'
 import AppSignUp from '~/components/auth/AppSignUp.vue'
 import AppLogout from '~/components/auth/AppLogout.vue'
@@ -82,6 +87,8 @@ const defaultLinkList: TNavigationDrawerLinkListItem[] = [
 const adminLinkList: TNavigationDrawerLinkListItem[] = [
   { title: 'Добавление товаров', url: 'admin/products', prependIcon: 'gridicons:product' }
 ]
+
+const activeTab = ref('')
 
 const drawerLinksList = computed(() => {
   if (userStore.isGuest || !userStore.userData) {
@@ -103,15 +110,16 @@ const drawerLinksList = computed(() => {
 
 <style lang="scss">
 .app-navigation-drawer {
-  .v-navigation-drawer__content {
+  padding: 0.825rem 0;
+  .vs-sidebar__body {
+    gap: 0.5rem;
     position: relative;
     display: flex;
     flex-direction: column;
     .drawer__top-side {
-      .top-side__auth-links {
-        .v-expansion-panel-text__wrapper {
-          padding: 1rem 0.5rem;
-        }
+      width: 100%;
+      .vs-sidebar-group__content {
+        content: none !important;
       }
     }
     .drawer__link-list {
@@ -120,10 +128,6 @@ const drawerLinksList = computed(() => {
           font-size: 22px;
         }
       }
-    }
-    .drawer__bottom-side {
-      position: absolute;
-      bottom: 0;
     }
   }
 }

@@ -1,13 +1,19 @@
 <template>
   <div class="app-navigation-drawer-trigger px-2">
-    <v-btn icon class="trigger__action" @click="conditionStore.openNavigationDrawer">
+    <vs-button
+      type="transparent"
+      class="trigger__action"
+      @click="conditionStore.openNavigationDrawer"
+    >
       <Icon icon="gridicons:menu" class="action__icon" />
-    </v-btn>
+    </vs-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { VsButton } from 'vuesax-alpha'
+
 import { useConditionStore } from '~/store/condition'
 
 const conditionStore = useConditionStore()

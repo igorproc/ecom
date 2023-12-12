@@ -1,24 +1,28 @@
 <template>
-  <div class="app-admin-product-list-header d-flex align-center justify-space-between">
+  <div class="app-admin-product-list-header">
     <span>{{ totalProductCountText }}</span>
-    <v-btn
-      rounded
-      @click="emits('openAddProductModal')"
+
+    <vs-button
+      type="gradient"
+      @click="conditionStore.openAdminAddProductModal"
     >
       Добавить продукт
-    </v-btn>
+    </vs-button>
   </div>
 </template>
 
 <script setup lang="ts">
+import {
+  VsButton
+} from 'vuesax-alpha'
+
+import { useConditionStore } from '~/store/condition'
+
 interface Props {
   productCount: number
 }
-interface Emits {
-  (name: 'openAddProductModal'): void
-}
 
-const emits = defineEmits<Emits>()
+const conditionStore = useConditionStore()
 const props = defineProps<Props>()
 const { productCount } = toRefs(props)
 
@@ -29,3 +33,11 @@ const totalProductCountText = computed(() => {
   return `всего товаров: ${productCount.value}`
 })
 </script>
+
+<style lang="scss">
+.app-admin-product-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+</style>

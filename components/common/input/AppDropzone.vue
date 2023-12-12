@@ -1,8 +1,10 @@
 <template>
-  <v-card class="app-dropzone d-flex flex-column align-start">
-    <v-card-title>Перетащите сюда файл</v-card-title>
-    <v-card-actions class="w-100">
-      <v-card v-if="!state.files.length" v-bind="getRootProps()">
+  <vs-card class="app-dropzone-input">
+    <template #title>
+      Перетащите сюда файл
+    </template>
+    <div class="app-dropzone-input__actions">
+      <div v-if="!state.files.length" v-bind="getRootProps()">
         <div :class="{ isDragActive }">
           <input v-bind="getInputProps()" />
           <div class="pa-4">
@@ -10,12 +12,15 @@
             <Icon v-else icon="ci:file-upload" />
           </div>
         </div>
-      </v-card>
-    </v-card-actions>
-  </v-card>
+      </div>
+    </div>
+  </vs-card>
 </template>
 
 <script setup lang="ts">
+import {
+  VsCard
+} from 'vuesax-alpha'
 import { useDropzone } from 'vue3-dropzone'
 
 import { Icon } from '@iconify/vue'
@@ -40,3 +45,15 @@ const { getRootProps, getInputProps, isDragActive, ...rest } = useDropzone({
   onDrop,
 })
 </script>
+
+<style lang="scss">
+.app-dropzone-input {
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  & &__actions {
+    width: 100%;
+  }
+}
+</style>

@@ -1,5 +1,10 @@
+@import "breakpoints";
+
 :root {
   font-family: "Inter", sans-serif;
+}
+html, body {
+  overflow-y: unset;
 }
 @supports (font-variation-settings: normal) {
   :root {
@@ -13,19 +18,6 @@ a {
   text-decoration: none;
 }
 
-// Override the textfield's radius
-.v-text-field {
-  .v-field__outline__start {
-    border-radius: 10px 0 0 10px !important;
-  }
-  .v-field__outline__end {
-    border-radius: 0 10px 10px 0 !important;
-  }
-}
-
-.v-btn {
-  font-weight: 700 !important;
-}
 .label {
   font-weight: 600;
   font-size: 15px;

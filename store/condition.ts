@@ -1,11 +1,13 @@
 interface IConditionStoreState {
-  navigationDrawerIsOpen: boolean
+  navigationDrawerIsOpen: boolean,
+  adminAddProductModalIsOpen: boolean
 }
 
 export const useConditionStore = defineStore('condition-store', {
   state: (): IConditionStoreState => {
     return {
       navigationDrawerIsOpen: false,
+      adminAddProductModalIsOpen: false,
     }
   },
   actions: {
@@ -18,5 +20,11 @@ export const useConditionStore = defineStore('condition-store', {
     openNavigationDrawer() {
       this.navigationDrawerIsOpen = true
     },
+    openAdminAddProductModal() {
+      this.adminAddProductModalIsOpen = true
+    },
+    closeAdminAddProductModal() {
+      this.adminAddProductModalIsOpen = false
+    }
   },
 })
