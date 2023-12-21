@@ -69,7 +69,7 @@ import {
   VsInput,
   VsButton,
   VsSelect,
-  VsOption
+  VsOption,
 } from 'vuesax-alpha'
 
 import { useForm, useField } from 'vee-validate'
@@ -80,7 +80,7 @@ import { createUser } from '~/store/user/auth'
 
 const availableRoles = [
   { label: 'admin', value: 'admin' },
-  { label: 'user', value: 'user' }
+  { label: 'user', value: 'user' },
 ]
 
 useForm({
@@ -89,9 +89,9 @@ useForm({
       email: string().email().required(),
       password: string().required(),
       birthday: date().required(),
-      role: string()
-    })
-  )
+      role: string(),
+    }),
+  ),
 })
 
 const isDisabled = ref(true)
@@ -100,7 +100,7 @@ const registerData = reactive({
   email: useField('email'),
   password: useField('password'),
   birthday: useField('birthday'),
-  role: useField('role')
+  role: useField('role'),
 })
 
 const inputField = () => {
@@ -126,7 +126,7 @@ const submit = async () => {
       email: registerData.email.value as string,
       password: registerData.password.value as string,
       birthday: registerData.birthday.value as string,
-      role: registerData.role.value as string
+      role: registerData.role.value as string,
     })
 
     if (!userIsCreated) {
@@ -135,7 +135,7 @@ const submit = async () => {
     }
     isLoading.value = false
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 </script>

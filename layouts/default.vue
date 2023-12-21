@@ -15,8 +15,8 @@ import AppHeader from '~/components/common/layout/AppHeader.vue'
 <style lang="scss">
 .app-default-layout {
   & &__main {
-    margin-top: 72px;
-    height: calc(100vh - 72px);
+    margin-top: 83px;
+    height: calc(100vh - 83px);
   }
 }
 </style>

@@ -7,14 +7,18 @@ export const loginUser = async (loginData: TUserLoginInput) => {
     const userStore = useUserStore()
     const cookieTokenValue = useCookie(
       'Authorization',
-      { maxAge: 60*60*24*14 }
+      { maxAge: 60 * 60 * 24 * 14 },
     )
 
     if (cookieTokenValue.value) {
       userStore.isGuest = true
 
       if (!userStore.userData) {
-        userStore.userData = await userApi.getUserData(cookieTokenValue.value as string)
+        const userData = await userApi.getUserData(cookieTokenValue.value as string)
+        if (!userData) {
+          return
+        }
+        userStore.userData = userData
       }
       return
     }
@@ -30,7 +34,7 @@ export const loginUser = async (loginData: TUserLoginInput) => {
 
     return true
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 
@@ -39,7 +43,7 @@ export const createUser = async (registerData: TUserRegisterInput) => {
     const userStore = useUserStore()
     const cookieTokenValue = useCookie(
       'Authorization',
-      { maxAge: 60*60*24*14 }
+      { maxAge: 60 * 60 * 24 * 14 },
     )
 
     if (cookieTokenValue.value) {
@@ -62,7 +66,7 @@ export const createUser = async (registerData: TUserRegisterInput) => {
     userStore.userData = userIsLogin.userData
     return true
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 

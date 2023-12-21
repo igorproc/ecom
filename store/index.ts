@@ -1,24 +1,28 @@
+// Node Deps
 import { defineStore } from 'pinia'
-
-import { initilizateUser } from '~/store/user/init'
+import consola from 'consola'
+// Pinia Stores & Functions
+import { initializeUser } from '~/store/user/init'
 
 export const useIndexStore = defineStore('index-store', {
   actions: {
     async init() {
-      return await new Promise((resolve) => {
+      return await new Promise(resolve => {
         setTimeout(() => {
-          resolve('App Init')
-        }, 50)
+          consola.log('App Init')
+          resolve(true)
+        })
       })
     },
     async clientInit() {
-      return await initilizateUser()
+      return await initializeUser()
     },
     async serverInit() {
-      return await new Promise((resolve) => {
+      return await new Promise(resolve => {
         setTimeout(() => {
-          resolve('Server init')
-        }, 50)
+          consola.log('Server init')
+          resolve(true)
+        })
       })
     },
   },

@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import {
-  VsButton
+  VsButton,
 } from 'vuesax-alpha'
 
 import { useConditionStore } from '~/store/condition'

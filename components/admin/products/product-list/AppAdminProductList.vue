@@ -11,24 +11,12 @@
         </vs-th>
       </vs-tr>
     </template>
-    <template #tbody>
-      <vs-tr
-        v-if="productList && productList.length"
+    <template v-if="productList && productList.length" #tbody>
+      <AppAdminProductListItem
         v-for="item in productList"
         :key="item.pid"
-      >
-        <vs-td>{{ item.name }}</vs-td>
-        <vs-td>{{ item.price }}</vs-td>
-        <vs-td>{{ item.__typename }}</vs-td>
-        <vs-td>
-          <span v-if="item.productImage">{{ item.productImage }}</span>
-          <span v-else>Изображения нету</span>
-        </vs-td>
-
-        <template v-if="item.__typename === 'CONFIGURABLE'" #expand>
-          {{ item }}
-        </template>
-      </vs-tr>
+        :product-item="item"
+      />
     </template>
   </vs-table>
 </template>
@@ -38,11 +26,10 @@ import {
   VsTable,
   VsTr,
   VsTh,
-  VsTd,
-  VsButton
 } from 'vuesax-alpha'
 
 import { TProduct } from '~/types/api'
+import AppAdminProductListItem from '~/components/admin/products/product-list/AppAdminProductListItem.vue'
 
 interface Props {
   productList: TProduct[] | null

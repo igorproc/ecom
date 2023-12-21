@@ -43,19 +43,19 @@ import { toTypedSchema } from '@vee-validate/yup'
 import { loginUser } from '~/store/user/auth'
 
 useForm({
- validationSchema: toTypedSchema(
-   object({
-     email: string().email().required(),
-     password: string().required()
-   })
- )
+  validationSchema: toTypedSchema(
+    object({
+      email: string().email().required(),
+      password: string().required(),
+    }),
+  ),
 })
 
 const isLoading = ref(false)
 const isDisabled = ref(false)
 const loginData = reactive({
   email: useField('email'),
-  password: useField('password')
+  password: useField('password'),
 })
 
 const emailInput = () => {
@@ -74,7 +74,7 @@ const submit = async () => {
 
     const userData = await loginUser({
       email: loginData.email.value as string,
-      password: loginData.password.value as string
+      password: loginData.password.value as string,
     })
     if (!userData) {
       isLoading.value = false
@@ -84,7 +84,7 @@ const submit = async () => {
 
     isLoading.value = false
   } catch (error) {
-    throw new Error(error)
+    throw error
   }
 }
 </script>
@@ -92,19 +92,24 @@ const submit = async () => {
 <style lang="scss">
 .app-sign-in-form {
   padding: 0.5rem 1rem;
+
   & .vs-input {
     margin-top: 1.75rem !important;
+
     .app-sign-in-form__field {
       width: 100%;
     }
+
     &:first-child {
       margin-top: 1.5rem !important;
     }
   }
+
   & &__actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
     .actions__submit-action {
       &.--disabled {
         cursor: unset;

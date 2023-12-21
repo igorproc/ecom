@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 import { JWT_SECRET_KEY, JWT_TOKEN_LIFETIME } from '~/server/db/const/global'
-import { TUserJwtPayload } from "~/server/db/types/user";
+import { TUserJwtPayload } from '~/server/db/types/user'
 
 export const AuthModel = {
   createJwtToken: (loginData: TUserJwtPayload) => {
@@ -15,10 +15,7 @@ export const AuthModel = {
     try {
       const decodedToken = jwt.verify(token, JWT_SECRET_KEY)
 
-      if (typeof decodedToken !== 'string' && decodedToken.exp && Date.now() > decodedToken.exp) {
-        return true
-      }
-      return false
+      return !!(typeof decodedToken !== 'string' && decodedToken.exp && Date.now() > decodedToken.exp)
     } catch (error) {
       throw error
     }
@@ -29,5 +26,5 @@ export const AuthModel = {
     } catch (error) {
       throw error
     }
-  }
+  },
 }

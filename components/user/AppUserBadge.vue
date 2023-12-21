@@ -4,9 +4,11 @@
     class="app-user-badge"
   >
     <vs-avatar badge badge-color="success" class="badge__avatar">
-      <img src="https://randomuser.me/api/portraits/men/78.jpg" />
+      <img alt="User Avatar" src="https://randomuser.me/api/portraits/men/78.jpg">
     </vs-avatar>
-    <span class="badge__email">{{ userStore.userData.email }}</span>
+    <span class="badge__email">
+      {{ userStore.userData.email }}
+    </span>
   </div>
 </template>
 
@@ -22,6 +24,7 @@ const userStore = useUserStore()
 .app-user-badge {
   display: flex;
   align-items: center;
+
   .badge__email {
     width: 70%;
     margin-left: 0.5rem;

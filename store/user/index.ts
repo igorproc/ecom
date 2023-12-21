@@ -15,5 +15,5 @@ export const useUserStore = defineStore('user-store', {
       cartId: null,
       wishlistId: null,
     }
-  }
+  },
 })

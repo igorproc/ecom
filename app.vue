@@ -1,12 +1,12 @@
 <template>
-	<div>
-		<NuxtLayout>
-			<NuxtPage />
-		</NuxtLayout>
+  <div>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
     <ClientOnly>
       <AppGlobalScope />
     </ClientOnly>
-	</div>
+  </div>
 </template>
 
 <script setup lang="ts">

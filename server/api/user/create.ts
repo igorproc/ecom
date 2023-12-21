@@ -1,13 +1,14 @@
-import { TUserCreate } from '~/server/db/types/user'
+import { EUserRoles, TUserCreate } from '~/server/db/types/user'
 import { UserModel } from '~/server/models/user'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(event => {
   try {
+    const userModel = new UserModel()
     const req = getQuery(event)
 
     if (!req.email || !req.password || !req.birthday) {
       return {
-        error: { code: 501, message: 'Not all required fields are send' }
+        error: { code: 501, message: 'Not all required fields are send' },
       }
     }
 
@@ -15,9 +16,9 @@ export default defineEventHandler((event) => {
       email: req.email as string,
       password: req.password as string,
       birthday: req.birthday as number,
-      role: req?.role
+      role: req?.role as keyof typeof EUserRoles,
     }
-    return UserModel.createUser(userData)
+    return userModel.actions.createUser(userData)
 
   } catch (error) {
     throw error

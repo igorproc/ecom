@@ -1,5 +1,5 @@
 <template>
-  <div class="app-notification"></div>
+  <div class="app-notification" />
 </template>
 
 <script setup lang="ts">
@@ -22,7 +22,7 @@ $listen('notification:open', () => {
     color: notificationStore.notificationStatus,
     position: notificationStore.notificationPosition,
     text: notificationStore.notificationMessage,
-    onClose: () => notificationStore.closeErrorNotification() as () => void
+    onClose: () => notificationStore.closeErrorNotification() as void,
   })
 })
 </script>

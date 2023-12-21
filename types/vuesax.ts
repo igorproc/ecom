@@ -4,16 +4,7 @@ enum ENotificationPosition {
   'bottom-left',
   'top-left',
   'top-center',
-  'bottom-center
-}
-
-enum ENotificationColors {
-  'primary',
-  'success',
-  'danger',
-  'warn',
-  'dark'
+  'bottom-center'
 }
 
 export type TNotificationPosition = keyof typeof ENotificationPosition
-export type TNotificationColor = keyof typeof ENotificationColors | string

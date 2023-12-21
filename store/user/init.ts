@@ -1,7 +1,7 @@
 import { useUserStore } from '~/store/user/index'
 import { userApi } from '~/api/user'
 
-export const initilizateUser = async () => {
+export const initializeUser = async () => {
   const userStore = useUserStore()
   const cookieTokenValue = useCookie('Authorization')
 

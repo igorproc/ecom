@@ -39,8 +39,8 @@
     <div v-if="drawerLinksList.length" class="drawer__link-list list">
       <vs-sidebar-item
         v-for="item in drawerLinksList"
-        :key="item.title"
         :id="item.title"
+        :key="item.title"
         :to="item.url"
         class="list__item"
       >
@@ -82,10 +82,10 @@ const userStore = useUserStore()
 
 const defaultLinkList: TNavigationDrawerLinkListItem[] = [
   { title: 'Корзина', url: '/cart', prependIcon: 'gridicons:cart' },
-  { title: 'Избранные товары', url: '/wishlist', prependIcon: 'gridicons:thumbs-up' }
+  { title: 'Избранные товары', url: '/wishlist', prependIcon: 'gridicons:thumbs-up' },
 ]
 const adminLinkList: TNavigationDrawerLinkListItem[] = [
-  { title: 'Добавление товаров', url: 'admin/products', prependIcon: 'gridicons:product' }
+  { title: 'Добавление товаров', url: 'admin/products', prependIcon: 'gridicons:product' },
 ]
 
 const activeTab = ref('')
@@ -98,7 +98,7 @@ const drawerLinksList = computed(() => {
   const authorizeLinkList: TNavigationDrawerLinkListItem[] = [
     ...defaultLinkList,
     { title: 'Профиль', url: 'user/profile', prependIcon: 'gridicons:house' },
-    { title: 'Заказы', url: 'user/checkout', prependIcon: 'gridicons:tag' }
+    { title: 'Заказы', url: 'user/checkout', prependIcon: 'gridicons:tag' },
   ]
   if (userStore.userData.role === 'ADMIN') {
     return [...authorizeLinkList, ...adminLinkList]
@@ -111,17 +111,21 @@ const drawerLinksList = computed(() => {
 <style lang="scss">
 .app-navigation-drawer {
   padding: 0.825rem 0;
+
   .vs-sidebar__body {
     gap: 0.5rem;
     position: relative;
     display: flex;
     flex-direction: column;
+
     .drawer__top-side {
       width: 100%;
+
       .vs-sidebar-group__content {
         content: none !important;
       }
     }
+
     .drawer__link-list {
       .list__item {
         .item__icon {

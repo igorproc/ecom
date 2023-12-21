@@ -16,9 +16,7 @@
 import { VsNavbar, VsRow, VsCol } from 'vuesax-alpha'
 
 import AppLogo from '~/components/common/layout/AppLogo.vue'
-import AppNavigationTrigger from '~/components/common/navigation/AppNavigationTrigger.vue'
-import AppUserBadge from "~/components/user/AppUserBadge.vue";
-import AppLogout from "~/components/auth/AppLogout.vue";
+import AppNavigationTrigger from '~/components/common/layout/navigation/AppNavigationTrigger.vue'
 </script>
 
 <style lang="scss">
@@ -26,12 +24,15 @@ import AppLogout from "~/components/auth/AppLogout.vue";
   .vs-navbar__center {
     width: 100%;
   }
+
   .header__container {
     width: 100%;
+
     .container__logo {
       display: flex;
       align-items: center;
     }
+
     .container__actions {
       display: flex;
       align-items: center;

@@ -25,6 +25,6 @@ export const useConditionStore = defineStore('condition-store', {
     },
     closeAdminAddProductModal() {
       this.adminAddProductModalIsOpen = false
-    }
+    },
   },
 })

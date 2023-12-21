@@ -1,8 +1,8 @@
 // PWA Config
 export const pwaConfig = {
-  title: 'Vuetify 3 + Nuxt 3 Starter',
-  shortTitle: 'Vuetify 3 + Nuxt 3 Starter',
-  description: 'Template to get you up and running with Nuxt 3 & Vuetify 3',
+  title: 'Specto.su Shop',
+  shortTitle: 'Specto.su',
+  description: 'Pet Ecom Project',
   image: 'https://vuetify3nuxt3starter.behonbaker.com/starter.png',
-  url: 'https://vuetify3nuxt3starter.behonbaker.com/'
+  url: 'https://vuetify3nuxt3starter.behonbaker.com/',
 }

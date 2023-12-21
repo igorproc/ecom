@@ -1,26 +1,23 @@
+// Node Deps
 import { defineNuxtPlugin, useNuxtApp } from '#app'
-import { consola } from 'consola'
-
+// Pinia Stores
 import { useIndexStore } from '~/store'
+// Composables
 import { useServerOnly } from '~/composables/useServerOnly'
 import { useClientOnly } from '~/composables/useClientOnly'
 
 async function initApp() {
-  const nuxtApp = useNuxtApp()
   const $pinia = usePinia()
+  const nuxtApp = useNuxtApp()
+  const indexStore = useIndexStore($pinia)
 
   async function onInit() {
-    const indexStore = useIndexStore($pinia)
-    consola.info(await indexStore.init())
+    await indexStore.init()
   }
-
   async function onServerInit() {
-    const indexStore = useIndexStore($pinia)
-    consola.info(await indexStore.serverInit())
+    await indexStore.serverInit()
   }
-
   async function onClientInit() {
-    const indexStore = useIndexStore($pinia)
     await indexStore.clientInit()
   }
 
@@ -33,11 +30,12 @@ async function initApp() {
     useClientOnly(async () => {
       await onClientInit()
     })
-  } else {
-    // SPA MODE
-    await onServerInit()
-    await onClientInit()
+    return
   }
+
+  // SPA MODE
+  await onServerInit()
+  await onClientInit()
 }
 
 export default defineNuxtPlugin(async () => {

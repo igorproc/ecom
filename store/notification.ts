@@ -1,11 +1,11 @@
 import {
-  TNotificationColor,
-  TNotificationPosition
+  TNotificationPosition,
 } from '~/types/vuesax'
+import { Color } from 'vuesax-alpha'
 
 interface INotificationStoreState {
   notificationIsOpen: boolean,
-  notificationStatus: TNotificationColor | null,
+  notificationStatus: Color | null,
   notificationMessage: string | null,
   notificationPosition: TNotificationPosition | null,
   notificationIcon: string | null,
@@ -18,7 +18,7 @@ export const useNotificationStore = defineStore('notification-store', {
       notificationStatus: null,
       notificationMessage: null,
       notificationPosition: null,
-      notificationIcon: null
+      notificationIcon: null,
     }
   },
   actions: {
@@ -36,10 +36,9 @@ export const useNotificationStore = defineStore('notification-store', {
     },
     closeErrorNotification() {
       this.notificationIsOpen = false
-      this.notificationPosition =
-      this.notificationIsOpen = null
+      this.notificationPosition = null
       this.notificationStatus = null
       this.notificationMessage = null
-    }
-  }
+    },
+  },
 })

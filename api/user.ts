@@ -1,12 +1,15 @@
+// Node Deps
 import axios from 'axios'
-
+// Types & Interfaces
 import {
   TResponseError,
   TUserData,
   TUserLoginInput,
   TUserLogin,
   TUserRegisterInput,
+  TUserCheckJwt,
 } from '~/types/api'
+// Helper Stores
 import { useNotificationStore } from '~/store/notification'
 
 export const userApi = {
@@ -17,17 +20,17 @@ export const userApi = {
       const rolePayload = registerData.role ? `&role=${registerData.role}` : ''
       const payload = `${requiredPayload}${rolePayload}`
 
-      const { data } = await axios.post<TUserLogin>(
-        `/api/user/create?${payload}`
+      const { data } = await axios.post<TUserLogin | TResponseError>(
+        `/api/user/create?${payload}`,
       )
 
-      if (data.error || !data.token) {
+      if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
         return
       }
-      return data as { token: string, userData: TUserData }
+      return data
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
 
@@ -35,45 +38,47 @@ export const userApi = {
     try {
       const notificationStore = useNotificationStore()
       const requiredPayload = `email=${loginData.email}&password=${loginData.password}`
-      const { data } = await axios.post<TUserLogin>(`/api/user/login?${requiredPayload}`)
+      const { data } = await axios.post<TUserLogin | TResponseError>(`/api/user/login?${requiredPayload}`)
 
-      if (data.error || !data.userData) {
+      if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
         return
       }
-      return data as { token: string, userData: TUserData }
+      return data
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
 
   checkTokenOnValid: async (token: string) => {
     try {
       const notificationStore = useNotificationStore()
-      const { data } = await axios.get<boolean | TResponseError>(`/api/user/checkAuthStatus?token=${token}`)
+      const { data } = await axios.get<TUserCheckJwt | TResponseError>(
+        `/api/user/checkAuthStatus?token=${token}`,
+      )
 
-      if (data.error) {
+      if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
-        return
+        return false
       }
-      return data
+      return data.isValidToken
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   },
 
-  getUserData: async (token: string) => {
+  getUserData: async (token: string): Promise<TUserData | null> => {
     try {
       const notificationStore = useNotificationStore()
       const { data } = await axios.get<TUserData | TResponseError>(`/api/user/getUserData?token=${token}`)
 
-      if (data.error) {
+      if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
-        return
+        return null
       }
-      return data
+      return data as TUserData
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
-  }
+  },
 }

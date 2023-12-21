@@ -1,3 +1,4 @@
+// Global Api Types
 export type TResponseError = {
   error: {
     code: number,
@@ -17,7 +18,7 @@ export type TUserData = {
 export type TUserLogin = {
   token: string,
   userData: TUserData
-} | TResponseError
+}
 
 export type TUserLoginInput = {
   email: string,
@@ -31,49 +32,65 @@ export type TUserRegisterInput = {
   role: string
 }
 
+export type TUserCheckJwt = {
+  isValidToken: boolean
+}
+
 // Product Api Types
-enum EAddProductTypes {
-  'BASE',
-  'CONFIGURABLE'
+export enum EAddProductTypes {
+  'base' = 'BASE',
+  'configurable' = 'CONFIGURABLE',
 }
 
 export type TAddProductInput = {
   name: string,
   price: number,
   type: keyof typeof EAddProductTypes,
-  imageUrl: string,
-}
-
-type TConfigurableProductOption = {
-  attributeId: number,
-  attributeCode: string,
-  label: string,
-  values: TConfigurableProductOptionValue[]
-}
-
-type TConfigurableProductOptionValue = {
-  valueIndex: number,
-  label: string,
-  value: string
-}
-
-type TConfigurableProductVariant = {
-  variants: {
-    code: string,
-    value: string
-  }[],
-  product: {
-    sku: string,
-    productImage: string
-  }
+  productImage: string,
 }
 
 export type TProduct = {
-  __typename: keyof typeof EAddProductTypes,
-  pid: number,
-  name: string,
-  price: number,
-  productImage: string,
-  configurableOptions?: TConfigurableProductOption[],
-  variants?: TConfigurableProductVariant[]
+  pid: number
+  __typename: string
+  name: string
+  price: number
+  productImage: string
+  productOptions: TConfigurableProductOptions[] | null
+  productVariants: TConfigurableProductVariants[] | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type TConfigurableProductOptions = {
+  optionId: number
+  optionLabel: string
+  values: {
+    label: string
+    optionId: number
+    value: string
+  }[]
+}
+
+type TConfigurableProductVariants = {
+  attributes: {
+    code: string
+    valueId: number
+  }[]
+  product: {
+    id: number
+    sku: string
+    imageUrl: string
+  }
+}
+
+export type TConfigurableProductOptionInput = {
+  label: string,
+  value: string,
+}
+
+export type TConfigurableProductOption = {
+  pcoiid: number,
+  pcoid: number,
+  label: string,
+  value: string,
 }
