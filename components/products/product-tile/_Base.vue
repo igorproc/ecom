@@ -65,8 +65,15 @@ const addProductToWishlist = () => {
 
 <style lang="scss">
 .app-base-product-tile {
-  .vs-card__text {
-    width: 100%;
+  padding: 0.25rem;
+
+  .vs-card {
+    max-width: 100% !important;
+
+    .vs-card__text {
+      border-radius: unset !important;
+      width: 100%;
+    }
   }
 }
 </style>

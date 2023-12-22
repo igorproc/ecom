@@ -55,8 +55,11 @@
     <div class="drawer__bottom-side bottom-side">
       <div
         v-if="!userStore.isGuest"
-        class="bottom-side__logout-action d-flex align-center justify-end"
+        class="bottom-side__logout-action"
       >
+        <ClientOnly>
+          <AppThemeSwitcher />
+        </ClientOnly>
         <AppLogout />
       </div>
     </div>
@@ -76,6 +79,7 @@ import AppSignUp from '~/components/auth/AppSignUp.vue'
 import AppLogout from '~/components/auth/AppLogout.vue'
 
 import type { TNavigationDrawerLinkListItem } from '~/types/global'
+import AppThemeSwitcher from '~/components/common/layout/AppThemeSwitcher.vue'
 
 const conditionStore = useConditionStore()
 const userStore = useUserStore()
@@ -119,6 +123,7 @@ const drawerLinksList = computed(() => {
     flex-direction: column;
 
     .drawer__top-side {
+      padding: 0.25rem;
       width: 100%;
 
       .vs-sidebar-group__content {
@@ -127,10 +132,23 @@ const drawerLinksList = computed(() => {
     }
 
     .drawer__link-list {
+      width: 100%;
       .list__item {
+        padding: 0.25rem;
         .item__icon {
           font-size: 22px;
         }
+      }
+    }
+
+    .drawer__bottom-side {
+      padding: 0.25rem;
+      width: 100%;
+
+      .bottom-side__logout-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
     }
   }

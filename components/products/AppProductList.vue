@@ -5,9 +5,10 @@
         <vs-col
           v-for="product in productList"
           :key="product.pid"
-          :sm="12"
-          :md="6"
+          :xs="12"
+          :sm="4"
           :lg="3"
+          :xl="2"
         >
           <component :is="getComponent(product)" :product="product" />
         </vs-col>

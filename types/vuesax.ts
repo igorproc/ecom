@@ -4,7 +4,7 @@ enum ENotificationPosition {
   'bottom-left',
   'top-left',
   'top-center',
-  'bottom-center'
+  'bottom-center',
 }
 
 export type TNotificationPosition = keyof typeof ENotificationPosition
