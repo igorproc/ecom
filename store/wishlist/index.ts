@@ -18,19 +18,6 @@ export const useWishlistStore = defineStore('wishlist-store', {
       wishlistProductList: [],
     }
   },
-  getters: {
-    productIsInWishlist() {
-      return (productId: number) => {
-        if (!this.wishlistIdsList.length) {
-          return false
-        }
-        const wishListIdCandidate = this.wishlistIdsList
-          .find(itemId => itemId.productId === productId)
-
-        return !!wishListIdCandidate
-      }
-    },
-  },
   actions: {
     addItemToWishlist(productData: TProduct, variantId?: number) {
       const payload: IWishlistStoreState['wishlistIdsList'][0] = { productId: productData.pid }

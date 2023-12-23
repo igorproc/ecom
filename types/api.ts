@@ -51,7 +51,7 @@ export type TAddProductInput = {
 
 export type TProduct = {
   pid: number
-  __typename: string
+  __typename: EAddProductTypes
   name: string
   price: number
   productImage: string

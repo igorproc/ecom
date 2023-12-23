@@ -9,7 +9,6 @@
         <img
           :src="product.productImage"
           :alt="product.name"
-          width="100%"
           height="300"
         >
       </template>
@@ -24,7 +23,11 @@
         >
           <Icon icon="gridicons:heart-outline" />
         </vs-button>
-        <vs-button class="btn-chat" type="shadow">
+        <vs-button
+          icon
+          :loading="!productVariant"
+          @click="addProductToCart"
+        >
           <Icon icon="gridicons:cart" />
         </vs-button>
       </template>
@@ -36,6 +39,8 @@
       <AppConfigurableProductSwitchGroup
         :product-options="product.productOptions"
         :product-variants="product.productVariants"
+        @product-variant-is-selected="selectVariant"
+        @product-variant-is-not-selected="unselectVariant"
       />
     </div>
   </div>
@@ -63,18 +68,40 @@ interface Props {
 const props = defineProps<Props>()
 const { product } = toRefs(props)
 const {
+  productIsAddedToCart,
   productIsAddedToWishlist,
   wishlistButtonColor,
-  removeFromWishlist,
+  addToCart,
   addToWishlist,
+  removeFromWishlist,
+  removeFromCart,
 } = useProduct(product.value.pid)
 
+const productVariant = ref<null | number>(null)
+
+const unselectVariant = () => {
+  productVariant.value = null
+}
+const selectVariant = (variantId: number) => {
+  productVariant.value = variantId
+}
 const addProductToWishlist = () => {
   if (productIsAddedToWishlist.value) {
     removeFromWishlist()
     return
   }
   addToWishlist()
+}
+const addProductToCart = () => {
+  if (!productVariant.value) {
+    return
+  }
+
+  if (productIsAddedToCart.value(productVariant.value)) {
+    removeFromCart(productVariant.value)
+    return
+  }
+  addToCart(productVariant.value)
 }
 </script>
 

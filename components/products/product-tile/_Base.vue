@@ -21,7 +21,10 @@
         >
           <Icon icon="gridicons:heart-outline" />
         </vs-button>
-        <vs-button class="btn-chat" type="shadow">
+        <vs-button
+          icon
+          @click="addProductToCart"
+        >
           <Icon icon="gridicons:cart" />
         </vs-button>
       </template>
@@ -48,18 +51,28 @@ interface Props {
 const props = defineProps<Props>()
 const { product } = toRefs(props)
 const {
+  productIsAddedToCart,
   productIsAddedToWishlist,
   wishlistButtonColor,
-  removeFromWishlist,
+  addToCart,
   addToWishlist,
+  removeFromWishlist,
+  removeFromCart,
 } = useProduct(product.value.pid)
 
 const addProductToWishlist = () => {
-  if (productIsAddedToWishlist) {
+  if (productIsAddedToWishlist.value) {
     removeFromWishlist()
     return
   }
   addToWishlist()
+}
+const addProductToCart = () => {
+  if (productIsAddedToCart.value()) {
+    removeFromCart()
+    return
+  }
+  addToCart()
 }
 </script>
 

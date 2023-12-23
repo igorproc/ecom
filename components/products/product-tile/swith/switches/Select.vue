@@ -1,5 +1,6 @@
 <template>
   <vs-button
+    size="small"
     :color="buttonColor"
     :active="isActiveItem"
     :loading="isDisabled || false"

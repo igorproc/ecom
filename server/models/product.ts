@@ -1,7 +1,7 @@
 // Db Connector
 import { db } from '~/server/db/config/connection'
 // Db Schema
-import { product, TProduct } from '~/server/db/schema'
+import { product } from '~/server/db/schema'
 // Types & Interfaces
 import { EProductTypes, TAddProductInput } from '~/server/db/types/product'
 import type { TProductInput } from '~/server/db/schema'

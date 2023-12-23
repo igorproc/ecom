@@ -1,39 +1,46 @@
 <template>
-  <div class="app-configurable-product-switch-group-list product-switch-group-list">
-    <vs-button-group
+  <div class="app-configurable-product-switch-list product-switch-list">
+    <div
       v-for="optionGroup in productOptions"
       :key="optionGroup.optionId"
-      class="product-switch-group-list__group"
+      class="product-switch-list__group group-list"
     >
       <AppConfigurableProductDefaultSwitch
         v-for="optionItem in optionGroup.values"
-        :key="optionItem.value"
+        :key="optionItem.optionId"
         :option-label="optionGroup.optionLabel"
         :option-data="optionItem"
         :is-active-item="isActiveOption(optionItem.optionId)"
         :is-disabled="isDisabledOption(optionItem.optionId)"
+        class="group-list__item"
         @option-selected="selectOption"
       />
-    </vs-button-group>
-    {{ viableVariantsAndOptionsIdsListBySelected }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Ui Components
-import { VsButtonGroup } from 'vuesax-alpha'
+// Node Deps
+import { difference } from 'lodash-es'
 // Components
 import AppConfigurableProductDefaultSwitch from
     '~/components/products/product-tile/swith/switches/Select.vue'
 // Types & Interfaces
 import { TConfigurableProductOptions } from '~/types/api'
 import { TConfigurableProductVariants } from '~/server/db/types/product'
+import { arrayContains } from '~/utils/arrayContains.util'
 
 interface Props {
   productOptions: TConfigurableProductOptions[],
-  productVariants: TConfigurableProductVariants[]
+  productVariants: TConfigurableProductVariants[],
 }
 
+interface Emits {
+  (name: 'productVariantIsSelected', variantId: number): () => void,
+  (name: 'productVariantIsNotSelected'): () => void,
+}
+
+const emits = defineEmits<Emits>()
 const props = defineProps<Props>()
 const { productOptions, productVariants } = toRefs(props)
 
@@ -94,15 +101,20 @@ const viableVariantsAndOptionsIdsListBySelected = computed(() => {
     }
   }
 
-  selectedOptionIds.value.forEach(selectedOptionId => {
-    for (const [key, value] of Object.entries(allViableOptionsFromVariants.value)) {
-      if (value.includes(selectedOptionId)) {
-        variantsList.push(key)
-        idsList.push(...value)
-        return
-      }
+  for (const [key, value] of Object.entries(allViableOptionsFromVariants.value)) {
+    if (arrayContains <number, number>(value, selectedOptionIds.value)) {
+      variantsList.push(key)
+      idsList.push(...value)
     }
-  })
+  }
+
+  if (
+    variantsList.length === 1 && !difference(idsList, selectedOptionIds.value).length
+  ) {
+    emits('productVariantIsSelected', Number(variantsList[0]))
+  } else {
+    emits('productVariantIsNotSelected')
+  }
 
   return {
     variants: [...new Set(variantsList)],
@@ -115,7 +127,7 @@ const isActiveOption = (optionId: number) => {
 }
 const isDisabledOption = (optionId: number) => {
   return !viableVariantsAndOptionsIdsListBySelected.value.optionIds
-    .includes(optionId)
+    .includes(optionId) && !selectedOptionIds.value.includes(optionId)
 }
 const selectOption = (optionData: TConfigurableProductOptions['values'][0]) => {
   if (!selectedOptionIds.value.includes(optionData.optionId)) {
@@ -127,14 +139,17 @@ const selectOption = (optionData: TConfigurableProductOptions['values'][0]) => {
 </script>
 
 <style lang="scss">
-.app-configurable-product-switch-group-list {
+.app-configurable-product-switch-list {
   margin-top: 0.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 
-  .product-switch-group-list__group {
-    justify-content: flex-start;
+  .product-switch-list__group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
   }
 }
 </style>

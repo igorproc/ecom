@@ -1,14 +1,26 @@
 // Pinia Stores
 import { useProductStore } from '~/store/product'
 import { useWishlistStore } from '~/store/wishlist'
+import { useCartStore } from '~/store/cart'
 
 export const useProduct = (productId: number) => {
   const productStore = useProductStore()
   const wishlistStore = useWishlistStore()
+  const cartStore = useCartStore()
 
-  const productIsAddedToWishlist = ref(
-    wishlistStore.productIsInWishlist(productId),
-  )
+  const productIsAddedToCart = computed(() => {
+    return (variantId?: number) => {
+      if (!variantId) {
+        return !!cartStore.cartIdsList.find(cartId => cartId.productId === productId)
+      }
+      return !!cartStore.cartIdsList.find(cartId => {
+        return cartId.productId === productId && cartId.variantId === variantId
+      })
+    }
+  })
+  const productIsAddedToWishlist = computed(() => {
+    return !!wishlistStore.wishlistIdsList.find(wishlistId => wishlistId.productId === productId)
+  })
   const wishlistButtonColor = computed(() => {
     if (productIsAddedToWishlist.value) {
       return 'danger'
@@ -28,17 +40,24 @@ export const useProduct = (productId: number) => {
     }
 
     wishlistStore.addItemToWishlist(productData)
-    productIsAddedToWishlist.value = true
   }
   const removeFromWishlist = () => {
-    productIsAddedToWishlist.value = false
     wishlistStore.removeItemFromWishlist(productId)
+  }
+  const addToCart = (variantId?: number) => {
+    cartStore.addItemToCart(productId, 123, variantId || null)
+  }
+  const removeFromCart = (variantId?: number) => {
+    cartStore.removeItemFromCart(productId, variantId || null)
   }
 
   return {
     productIsAddedToWishlist,
+    productIsAddedToCart,
     wishlistButtonColor,
     addToWishlist,
     removeFromWishlist,
+    addToCart,
+    removeFromCart,
   }
 }
