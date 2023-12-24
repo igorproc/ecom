@@ -65,7 +65,7 @@ const productPrice = computed(() => {
 
 <style lang="scss">
 .app-admin-edit-product-card {
-  border: 1px solid #000;
+  border: 1px solid rgb(var(--vs-primary));
   border-radius: 0.375rem;
 
   .product-card__image,

@@ -9,6 +9,7 @@ import { eq } from 'drizzle-orm'
 import { ConfigurableProductModel } from '~/server/models/product/configurable'
 
 export const ProductModel = {
+
   getProductList: () => {
     try {
       const productIds = db

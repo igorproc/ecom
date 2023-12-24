@@ -1,6 +1,7 @@
 // Node Deps
 import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core'
 import { InferSelectModel, InferInsertModel, sql } from 'drizzle-orm'
+import { v4 } from 'uuid'
 // Types & Interfaces
 import { EUserRoles } from './types/user'
 import { EProductTypes } from './types/product'
@@ -63,10 +64,25 @@ export const productVariant = sqliteTable('product-configurable-variant-item', {
   optionId: integer('pcoiid').notNull(),
 })
 
-// Types
-export type TUserInput = InferInsertModel<typeof user>
+export const userWishlist = sqliteTable('user-wishlist', {
+  wishlistId: integer('wid').primaryKey({ autoIncrement: true }),
+  isGuestCart: integer('is_guest_cart', { mode: 'boolean' }).notNull(),
+  uid: integer('uid').default(0),
+  cartId: text('cart_id').notNull(),
+})
 
+export const userWishlistItem = sqliteTable('user-wishlist-item', {
+  wishlistItemId: integer('wiid').primaryKey({ autoIncrement: true }),
+  cartId: text('cart_id').notNull(),
+  productId: integer('pid').notNull(),
+  variantId: integer('vid').default(0),
+})
+
+// Types
+// User
+export type TUserInput = InferInsertModel<typeof user>
+// Product
 export type TProduct = InferSelectModel<typeof product>
 export type TProductInput = InferInsertModel<typeof product>
-
+// Configurable Options
 export type TProductOptionInput = InferInsertModel<typeof productOption>

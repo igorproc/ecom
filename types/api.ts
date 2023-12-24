@@ -36,6 +36,27 @@ export type TUserCheckJwt = {
   isValidToken: boolean
 }
 
+// User Wishlist Types
+export type TWishlistData = {
+  wishlistId: number,
+  isGuestCart: boolean,
+  uid: number,
+  cartId: string,
+}
+
+export type TWishlistDataWishProductIds = {
+  wishlistData: TWishlistData,
+  productIds:  { productId: number, variantId?: number }[]
+}
+
+export type TWishlistOperationWithProductInput = {
+  productId: number,
+  variantId?: number,
+}
+
+export type TWishlistRemoveProduct = {
+  successDeleting: boolean
+}
 // Product Api Types
 export enum EAddProductTypes {
   'base' = 'BASE',

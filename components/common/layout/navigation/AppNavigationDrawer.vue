@@ -41,7 +41,7 @@
         v-for="item in drawerLinksList"
         :id="item.title"
         :key="item.title"
-        :to="item.url"
+        :to="activeTab !== item.title ? item.url : ''"
         class="list__item"
       >
         <template v-if="item.prependIcon" #icon>
@@ -85,8 +85,8 @@ const conditionStore = useConditionStore()
 const userStore = useUserStore()
 
 const defaultLinkList: TNavigationDrawerLinkListItem[] = [
-  { title: 'Корзина', url: '/cart', prependIcon: 'gridicons:cart' },
-  { title: 'Избранные товары', url: '/wishlist', prependIcon: 'gridicons:thumbs-up' },
+  { title: 'Корзина', url: 'user/cart', prependIcon: 'gridicons:cart' },
+  { title: 'Избранные товары', url: 'user/wishlist', prependIcon: 'gridicons:thumbs-up' },
 ]
 const adminLinkList: TNavigationDrawerLinkListItem[] = [
   { title: 'Добавление товаров', url: 'admin/products', prependIcon: 'gridicons:product' },

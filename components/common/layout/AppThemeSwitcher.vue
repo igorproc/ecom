@@ -1,5 +1,5 @@
 <template>
-  <vs-switch v-model="active" @change="changeTheme">
+  <vs-switch :model-value="active === 'light'" @change="changeTheme">
     <template #off>
       <Icon icon="ph:moon" />
     </template>
@@ -16,7 +16,7 @@ import {
 } from 'vuesax-alpha'
 import { Icon } from '@iconify/vue'
 
-const active = ref(true)
+const active = useCookie('selected-theme')
 const $html = document.querySelector('html')
 
 const changeTheme = () => {
@@ -24,10 +24,16 @@ const changeTheme = () => {
     return
   }
 
-  if (active.value) {
-    $html.classList.add('dark')
+  if (active.value === 'dark') {
+    active.value = 'light'
+    $html.classList.remove('dark')
     return
   }
-  $html.classList.remove('dark')
+  active.value = 'dark'
+  $html.classList.add('dark')
+}
+
+if ($html && active.value === 'dark') {
+  $html.classList.add('dark')
 }
 </script>

@@ -1,5 +1,6 @@
 import { useUserStore } from '~/store/user/index'
 import { userApi } from '~/api/user'
+import { utilApi } from "~/api/util.api";
 
 export const initializeUser = async () => {
   const userStore = useUserStore()

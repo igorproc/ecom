@@ -1,6 +1,6 @@
 <template>
   <div class="app-base-product-tile">
-    <vs-card type="4">
+    <vs-card type="1">
       <template #title>
         <h3>{{ product.name }}</h3>
       </template>
@@ -15,7 +15,7 @@
 
       <template #interactions>
         <vs-button
-          :color="wishlistButtonColor"
+          :color="productIsAddedToWishlist ? 'danger' : 'success'"
           icon
           @click="addProductToWishlist"
         >
@@ -36,7 +36,7 @@
 //Ui Components
 import {
   VsCard,
-  VsButton,
+  VsButton, Color,
 } from 'vuesax-alpha'
 import { Icon } from '@iconify/vue'
 // Composables
@@ -53,7 +53,6 @@ const { product } = toRefs(props)
 const {
   productIsAddedToCart,
   productIsAddedToWishlist,
-  wishlistButtonColor,
   addToCart,
   addToWishlist,
   removeFromWishlist,
@@ -68,7 +67,7 @@ const addProductToWishlist = () => {
   addToWishlist()
 }
 const addProductToCart = () => {
-  if (productIsAddedToCart.value()) {
+  if (productIsAddedToCart.value) {
     removeFromCart()
     return
   }
@@ -81,8 +80,6 @@ const addProductToCart = () => {
   padding: 0.25rem;
 
   .vs-card {
-    max-width: 100% !important;
-
     .vs-card__text {
       border-radius: unset !important;
       width: 100%;

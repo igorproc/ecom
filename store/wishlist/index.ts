@@ -13,7 +13,7 @@ interface IWishlistStoreState {
 export const useWishlistStore = defineStore('wishlist-store', {
   state: (): IWishlistStoreState => {
     return {
-      wishlistId: 'a64e8d6a-49ad-4931-8031-3028ff9c70c5',
+      wishlistId: '',
       wishlistIdsList: [],
       wishlistProductList: [],
     }
@@ -26,13 +26,24 @@ export const useWishlistStore = defineStore('wishlist-store', {
       }
 
       this.wishlistIdsList.push(payload)
-      this.wishlistProductList.push(productData)
+      if (!this.wishlistProductList.find(item => item.pid == productData.pid)) {
+        this.wishlistProductList.push(productData)
+      }
     },
-    removeItemFromWishlist(productId: number) {
+    removeItemFromWishlist(productId: number, variantId?:number) {
+      if (!variantId) {
+        this.wishlistProductList = this.wishlistProductList
+          .filter(wishlistProduct => wishlistProduct.pid !== productId && wishlistProduct)
+        this.wishlistIdsList = this.wishlistIdsList
+          .filter(wishlistId => wishlistId.productId !== productId)
+        return
+      }
       this.wishlistIdsList = this.wishlistIdsList
-        .filter(wishlistProductId => wishlistProductId.productId !== productId)
-      this.wishlistProductList = this.wishlistProductList
-        .filter(wishlistProduct => wishlistProduct.pid !== productId)
+        .filter(wishlistProductId => wishlistProductId.productId !== productId && wishlistProductId.variantId !== variantId)
+      if (this.wishlistIdsList.find(wishlistId => wishlistId.productId === productId)) {
+        return
+      }
+      this.wishlistProductList = this.wishlistProductList.filter(wishlistProduct => wishlistProduct.pid !== productId)
     },
   },
 })

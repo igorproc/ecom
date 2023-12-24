@@ -1,6 +1,6 @@
 <template>
   <div class="app-configurable-product-tile">
-    <vs-card type="4">
+    <vs-card type="1">
       <template #title>
         <h3>{{ product.name }}</h3>
       </template>
@@ -13,36 +13,40 @@
         >
       </template>
 
-      <template #text />
-
       <template #interactions>
         <vs-button
-          :color="wishlistButtonColor"
+          :color="
+            configurableProductVariant && productIsAddedToWishlist ? 'danger' : 'success'
+          "
+          :loading="!configurableProductVariant"
           icon
           @click="addProductToWishlist"
         >
           <Icon icon="gridicons:heart-outline" />
         </vs-button>
         <vs-button
+          :loading="!configurableProductVariant "
           icon
-          :loading="!productVariant"
           @click="addProductToCart"
         >
           <Icon icon="gridicons:cart" />
         </vs-button>
       </template>
+
+      <template #text>
+        <div
+          v-if="product.productOptions?.length && product.productVariants?.length"
+          class="app-configurable-product-tile__configurable-switches"
+        >
+          <AppConfigurableProductSwitchGroup
+            :product-options="product.productOptions"
+            :product-variants="product.productVariants"
+            @product-variant-is-selected="selectVariant"
+            @product-variant-is-not-selected="unselectVariant"
+          />
+        </div>
+      </template>
     </vs-card>
-    <div
-      v-if="product.productOptions?.length && product.productVariants?.length"
-      class="app-configurable-product-tile__configurable-switches"
-    >
-      <AppConfigurableProductSwitchGroup
-        :product-options="product.productOptions"
-        :product-variants="product.productVariants"
-        @product-variant-is-selected="selectVariant"
-        @product-variant-is-not-selected="unselectVariant"
-      />
-    </div>
   </div>
 </template>
 
@@ -50,8 +54,8 @@
 //Ui Components
 import {
   VsCard,
-  VsButton,
-} from 'vuesax-alpha'
+  VsButton, Color,
+} from "vuesax-alpha";
 import { Icon } from '@iconify/vue'
 // Components
 import AppConfigurableProductSwitchGroup
@@ -68,24 +72,27 @@ interface Props {
 const props = defineProps<Props>()
 const { product } = toRefs(props)
 const {
+  configurableProductVariant,
   productIsAddedToCart,
   productIsAddedToWishlist,
-  wishlistButtonColor,
+  addProductVariant,
   addToCart,
   addToWishlist,
   removeFromWishlist,
   removeFromCart,
 } = useProduct(product.value.pid)
 
-const productVariant = ref<null | number>(null)
-
 const unselectVariant = () => {
-  productVariant.value = null
+  addProductVariant(null)
 }
 const selectVariant = (variantId: number) => {
-  productVariant.value = variantId
+  addProductVariant(variantId)
 }
 const addProductToWishlist = () => {
+  if (!configurableProductVariant.value) {
+    return
+  }
+
   if (productIsAddedToWishlist.value) {
     removeFromWishlist()
     return
@@ -93,15 +100,15 @@ const addProductToWishlist = () => {
   addToWishlist()
 }
 const addProductToCart = () => {
-  if (!productVariant.value) {
+  if (!configurableProductVariant.value) {
     return
   }
 
-  if (productIsAddedToCart.value(productVariant.value)) {
-    removeFromCart(productVariant.value)
+  if (productIsAddedToCart.value) {
+    removeFromCart()
     return
   }
-  addToCart(productVariant.value)
+  addToCart()
 }
 </script>
 
@@ -110,20 +117,10 @@ const addProductToCart = () => {
   padding: 0.25rem;
 
   .vs-card {
-    max-width: 100% !important;
-
     .vs-card__text {
       border-radius: unset !important;
       width: 100%;
     }
-  }
-
-  .app-configurable-product-tile__configurable-switches {
-    padding: 0.1rem 0;
-    background: rgba(var(--vs-background),.8);
-    --webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
-    border-radius: 0 0 20px 20px;
   }
 }
 </style>

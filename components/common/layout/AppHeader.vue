@@ -1,11 +1,11 @@
 <template>
   <VsNavbar class="app-header header">
     <VsRow class="header__container container">
-      <VsCol :sm="8" :md="3" class="container__logo">
+      <VsCol :xs="8" :sm="8" :md="3" class="vs-col-8 container__logo">
         <AppLogo />
       </VsCol>
-      <VsCol :sm="2" :md="7" />
-      <VsCol :sm="2" class="container__actions actions">
+      <VsCol :xs="1" :sm="2" :md="7" />
+      <VsCol :xs="3" :sm="2" :md="2" class="container__actions actions">
         <AppNavigationTrigger class="actions__open-navigation" />
       </VsCol>
     </VsRow>

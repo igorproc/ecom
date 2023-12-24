@@ -1,5 +1,7 @@
 // Node Deps
 import axios from 'axios'
+// Pinia Stores
+import { useNotificationStore } from '~/store/notification'
 // Types & Interfaces
 import {
   TResponseError,
@@ -8,9 +10,10 @@ import {
   TUserLogin,
   TUserRegisterInput,
   TUserCheckJwt,
-} from '~/types/api'
-// Helper Stores
-import { useNotificationStore } from '~/store/notification'
+  TWishlistData,
+  TWishlistDataWishProductIds,
+  TWishlistOperationWithProductInput, TWishlistRemoveProduct,
+} from "~/types/api";
 
 export const userApi = {
   createUser: async (registerData: TUserRegisterInput) => {
@@ -81,4 +84,67 @@ export const userApi = {
       throw error
     }
   },
+}
+
+export const userWishlistApi = {
+  createWishlistData: async () => {
+    try {
+      const notificationStore = useNotificationStore()
+      const { data } = await axios.post<TWishlistData>('/api/user/wishlist/create')
+      if (!data) {
+        notificationStore.openErrorNotification('Something went worong')
+        return
+      }
+      return data
+    } catch (error) {
+      throw error
+    }
+  },
+  getWishlistShorterData: async () => {
+    try {
+      const notificationStore = useNotificationStore()
+      const { data } = await axios.get<TWishlistDataWishProductIds | TResponseError>(
+        '/api/user/wishlist/getShorterData'
+      )
+      if ('error' in data) {
+        notificationStore.openErrorNotification(data.error.message)
+        return
+      }
+      return data
+    } catch (error) {
+      throw error
+    }
+  },
+  addProductToWishlist: async (payload: TWishlistOperationWithProductInput) => {
+    try {
+      const notificationStore = useNotificationStore()
+
+      const { data } = await axios.post<boolean | TResponseError>(
+        `/api/user/wishlist/addProduct?productId=${payload.productId}&variantId=${payload.variantId || null}`
+      )
+      if (typeof data === 'object' && 'error' in data) {
+        notificationStore.openErrorNotification(data.error.message)
+        return
+      }
+      return data as boolean
+    } catch (error) {
+      throw error
+    }
+  },
+  removeProductToWishlist: async (payload: TWishlistOperationWithProductInput) => {
+    try {
+      const notificationStore = useNotificationStore()
+
+      const { data } = await axios.post<TWishlistRemoveProduct | TResponseError>(
+        `/api/user/wishlist/removeProduct?productId=${payload.productId}&variantId=${payload.variantId || null}`
+      )
+      if ('error' in data) {
+        notificationStore.openErrorNotification(data.error.message)
+        return
+      }
+      return data.successDeleting
+    } catch (error) {
+      throw error
+    }
+  }
 }

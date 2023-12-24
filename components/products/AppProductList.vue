@@ -1,19 +1,21 @@
 <template>
   <div class="app-product-list product-list">
-    <div v-if="productList && productList.length" class="app-product-list__list">
-      <vs-row>
-        <vs-col
-          v-for="product in productList"
-          :key="product.pid"
-          :xs="12"
-          :sm="4"
-          :lg="3"
-          :xl="2"
-        >
-          <component :is="getComponent(product)" :product="product" />
-        </vs-col>
-      </vs-row>
-    </div>
+    <vs-row
+      v-if="productList && productList.length"
+      class="app-product-list__container list-container"
+    >
+      <vs-col
+        v-for="product in productList"
+        :key="product.pid"
+        :xs="12"
+        :sm="5"
+        :md="3"
+        :xl="2"
+        class="list-container__item"
+      >
+        <component :is="getComponent(product)" :product="product" class="list-container__item-product" />
+      </vs-col>
+    </vs-row>
   </div>
 </template>
 
@@ -42,3 +44,34 @@ const getComponent = (product: TProduct) => {
   return AppBaseProductTile
 }
 </script>
+
+<style lang="scss">
+.app-product-list {
+  padding: 0 0.75rem;
+
+  .app-product-list__container {
+    .list-container__item {
+      .list-container__item-product {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .vs-card-content {
+          max-width: 300px;
+        }
+      }
+      @media #{map-get($display-breakpoints, 'md')} {
+        margin: 0 auto;
+        .list-container__item-product {
+          display: block;
+          .vs-card-content {
+            max-width: unset;
+          }
+        }
+      }
+      @media #{map-get($display-breakpoints, 'lg')} {
+        margin: unset;
+      }
+    }
+  }
+}
+</style>
