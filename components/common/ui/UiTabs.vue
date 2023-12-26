@@ -29,6 +29,10 @@ const slots = useSlots()
 
 const tabTitles = ref([])
 slots.default().map(tabWrapper => {
+  if (!tabWrapper.children.length) {
+    return []
+  }
+
   tabWrapper.children.map(item => {
     if (!item.props.title) {
       return

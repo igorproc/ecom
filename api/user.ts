@@ -12,8 +12,10 @@ import {
   TUserCheckJwt,
   TWishlistData,
   TWishlistDataWishProductIds,
-  TWishlistOperationWithProductInput, TWishlistRemoveProduct,
-} from "~/types/api";
+  TWishlistOperationWithProductInput,
+  TWishlistRemoveProduct,
+  TWishlistProduct,
+} from '~/types/api'
 
 export const userApi = {
   createUser: async (registerData: TUserRegisterInput) => {
@@ -73,7 +75,9 @@ export const userApi = {
   getUserData: async (token: string): Promise<TUserData | null> => {
     try {
       const notificationStore = useNotificationStore()
-      const { data } = await axios.get<TUserData | TResponseError>(`/api/user/getUserData?token=${token}`)
+      const { data } = await axios.get<TUserData | TResponseError>(
+        `/api/user/getUserData?token=${token}`
+      )
 
       if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
@@ -104,7 +108,7 @@ export const userWishlistApi = {
     try {
       const notificationStore = useNotificationStore()
       const { data } = await axios.get<TWishlistDataWishProductIds | TResponseError>(
-        '/api/user/wishlist/getShorterData'
+        '/api/user/wishlist/getShorterData',
       )
       if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
@@ -115,12 +119,27 @@ export const userWishlistApi = {
       throw error
     }
   },
+  getWishlistProducts: async () => {
+    try {
+      const notificationStore = useNotificationStore()
+      const { data } = await axios.get<TWishlistProduct[] | TResponseError>('/api/user/wishlist/getWishlistProducts')
+
+      if ('error' in data) {
+        notificationStore.openErrorNotification(data.error.message)
+        return
+      }
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  },
   addProductToWishlist: async (payload: TWishlistOperationWithProductInput) => {
     try {
       const notificationStore = useNotificationStore()
 
       const { data } = await axios.post<boolean | TResponseError>(
-        `/api/user/wishlist/addProduct?productId=${payload.productId}&variantId=${payload.variantId || null}`
+        `/api/user/wishlist/addProduct?productId=${payload.productId}&variantId=${payload.variantId || null}`,
       )
       if (typeof data === 'object' && 'error' in data) {
         notificationStore.openErrorNotification(data.error.message)
@@ -136,7 +155,7 @@ export const userWishlistApi = {
       const notificationStore = useNotificationStore()
 
       const { data } = await axios.post<TWishlistRemoveProduct | TResponseError>(
-        `/api/user/wishlist/removeProduct?productId=${payload.productId}&variantId=${payload.variantId || null}`
+        `/api/user/wishlist/removeProduct?productId=${payload.productId}&variantId=${payload.variantId || null}`,
       )
       if ('error' in data) {
         notificationStore.openErrorNotification(data.error.message)
@@ -146,5 +165,5 @@ export const userWishlistApi = {
     } catch (error) {
       throw error
     }
-  }
+  },
 }

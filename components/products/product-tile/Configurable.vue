@@ -6,46 +6,46 @@
       </template>
 
       <template #img>
-        <img
-          :src="product.productImage"
-          :alt="product.name"
-          height="300"
-        >
+        <img :src="productImage" :alt="product.name" height="300">
       </template>
 
       <template #interactions>
-        <vs-button
-          :color="
-            configurableProductVariant && productIsAddedToWishlist ? 'danger' : 'success'
-          "
-          :loading="!configurableProductVariant"
-          icon
-          @click="addProductToWishlist"
-        >
-          <Icon icon="gridicons:heart-outline" />
-        </vs-button>
-        <vs-button
-          :loading="!configurableProductVariant "
-          icon
-          @click="addProductToCart"
-        >
-          <Icon icon="gridicons:cart" />
-        </vs-button>
+        <ClientOnly>
+          <vs-button
+            :color="
+              configurableProductVariant && productIsAddedToWishlist ? 'danger' : 'success'
+            "
+            :loading="operationWithWishlistIsProcessing"
+            :class="{ '--interaction-disabled': !configurableProductVariant  }"
+            icon
+            @click="addProductToWishlist"
+          >
+            <Icon icon="gridicons:heart-outline" />
+          </vs-button>
+          <vs-button
+            :loading="operationWithCartIsProcessing"
+            icon
+            :class="{ '--interaction-disabled': !configurableProductVariant  }"
+            @click="addProductToCart"
+          >
+            <Icon icon="gridicons:cart" />
+          </vs-button>
+        </ClientOnly>
       </template>
 
-      <template #text>
-        <div
-          v-if="product.productOptions?.length && product.productVariants?.length"
-          class="app-configurable-product-tile__configurable-switches"
-        >
-          <AppConfigurableProductSwitchGroup
-            :product-options="product.productOptions"
-            :product-variants="product.productVariants"
-            @product-variant-is-selected="selectVariant"
-            @product-variant-is-not-selected="unselectVariant"
-          />
-        </div>
-      </template>
+        <template #text>
+          <div
+            v-if="product.productOptions?.length && product.productVariants?.length"
+            class="app-configurable-product-tile__configurable-switches"
+          >
+            <AppConfigurableProductSwitchGroup
+              :product-options="product.productOptions"
+              :product-variants="product.productVariants"
+              @product-variant-is-selected="selectVariant"
+              @product-variant-is-not-selected="unselectVariant"
+            />
+          </div>
+        </template>
     </vs-card>
   </div>
 </template>
@@ -54,8 +54,8 @@
 //Ui Components
 import {
   VsCard,
-  VsButton, Color,
-} from "vuesax-alpha";
+  VsButton,
+} from 'vuesax-alpha'
 import { Icon } from '@iconify/vue'
 // Components
 import AppConfigurableProductSwitchGroup
@@ -73,6 +73,8 @@ const props = defineProps<Props>()
 const { product } = toRefs(props)
 const {
   configurableProductVariant,
+  operationWithCartIsProcessing,
+  operationWithWishlistIsProcessing,
   productIsAddedToCart,
   productIsAddedToWishlist,
   addProductVariant,
@@ -82,6 +84,19 @@ const {
   removeFromCart,
 } = useProduct(product.value.pid)
 
+const productImage = computed(() => {
+  if (!configurableProductVariant.value || !product.value.productVariants) {
+    return product.value.productImage
+  }
+
+  const variantCandidate = product.value.productVariants
+    .find(productVariant => productVariant.product.id === configurableProductVariant.value)
+  if (!variantCandidate || !variantCandidate.product.imageUrl) {
+    return product.value.productImage
+  }
+  return variantCandidate.product.imageUrl
+})
+
 const unselectVariant = () => {
   addProductVariant(null)
 }
@@ -89,7 +104,7 @@ const selectVariant = (variantId: number) => {
   addProductVariant(variantId)
 }
 const addProductToWishlist = () => {
-  if (!configurableProductVariant.value) {
+  if (!configurableProductVariant.value || operationWithWishlistIsProcessing.value) {
     return
   }
 
@@ -100,7 +115,7 @@ const addProductToWishlist = () => {
   addToWishlist()
 }
 const addProductToCart = () => {
-  if (!configurableProductVariant.value) {
+  if (!configurableProductVariant.value || operationWithCartIsProcessing) {
     return
   }
 
@@ -120,6 +135,11 @@ const addProductToCart = () => {
     .vs-card__text {
       border-radius: unset !important;
       width: 100%;
+    }
+
+    .--interaction-disabled {
+      cursor: auto;
+      opacity: 0.6;
     }
   }
 }

@@ -6,12 +6,14 @@ import { useCartStore } from '~/store/cart'
 import { userWishlistApi } from '~/api/user'
 // Types & Interfaces
 import type { TWishlistOperationWithProductInput } from '~/types/api'
-import type { Color } from 'vuesax-alpha'
 
 export const useProduct = (productId: number) => {
   const productStore = useProductStore()
   const wishlistStore = useWishlistStore()
   const cartStore = useCartStore()
+
+  const operationWithWishlistIsProcessing = ref(false)
+  const operationWithCartIsProcessing = ref(false)
 
   const configurableProductVariant = ref<number | null>(null)
 
@@ -41,13 +43,18 @@ export const useProduct = (productId: number) => {
       payload.variantId = configurableProductVariant.value
     }
 
+    operationWithWishlistIsProcessing.value = true
     const isAddedToWishlist = await userWishlistApi.addProductToWishlist(payload)
     const productData = productStore.getProductDataById(payload.productId)
     if (!productData || !isAddedToWishlist) {
+      operationWithWishlistIsProcessing.value = false
       return
     }
 
-    wishlistStore.addItemToWishlist(productData)
+    wishlistStore.addItemToWishlist(
+      Object.assign(productData, { selectedVariant: configurableProductVariant.value })
+    )
+    operationWithWishlistIsProcessing.value = false
   }
   const removeFromWishlist = async () => {
     const payload: TWishlistOperationWithProductInput = { productId }
@@ -55,11 +62,14 @@ export const useProduct = (productId: number) => {
       payload.variantId = configurableProductVariant.value
     }
 
+    operationWithWishlistIsProcessing.value = true
     const isRemovedFromWishlist = await userWishlistApi.removeProductToWishlist(payload)
     if (!isRemovedFromWishlist) {
+      operationWithWishlistIsProcessing.value = false
       return
     }
 
+    operationWithWishlistIsProcessing.value = false
     wishlistStore.removeItemFromWishlist(productId)
   }
   const addToCart = () => {
@@ -70,6 +80,8 @@ export const useProduct = (productId: number) => {
   }
 
   return {
+    operationWithCartIsProcessing,
+    operationWithWishlistIsProcessing,
     configurableProductVariant,
     productIsAddedToWishlist,
     productIsAddedToCart,

@@ -57,6 +57,9 @@ export type TWishlistOperationWithProductInput = {
 export type TWishlistRemoveProduct = {
   successDeleting: boolean
 }
+
+export type TWishlistProduct = TProduct & { selectedVariant: number | null }
+
 // Product Api Types
 export enum EAddProductTypes {
   'base' = 'BASE',

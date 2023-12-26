@@ -1,5 +1,5 @@
 // Types & Interfaces
-import { TProduct } from '~/types/api'
+import type { TWishlistProduct } from '~/types/api'
 
 interface IWishlistStoreState {
   wishlistId: string,
@@ -7,7 +7,7 @@ interface IWishlistStoreState {
     productId: number,
     variantId?: number,
   }[],
-  wishlistProductList: TProduct[],
+  wishlistProductList: TWishlistProduct[],
 }
 
 export const useWishlistStore = defineStore('wishlist-store', {
@@ -18,8 +18,21 @@ export const useWishlistStore = defineStore('wishlist-store', {
       wishlistProductList: [],
     }
   },
+  getters: {
+    allWishlistItemsHasAProductData(state) {
+      const listOfProductIdsWhoHasAData = state.wishlistIdsList
+        .map(item => {
+          if (state.wishlistProductList.find(productData => productData.pid === item.productId)) {
+            return item.productId
+          }
+        })
+        .filter(item => typeof item !== 'undefined')
+
+      return state.wishlistIdsList.length === listOfProductIdsWhoHasAData.length
+    }
+  },
   actions: {
-    addItemToWishlist(productData: TProduct, variantId?: number) {
+    addItemToWishlist(productData: TWishlistProduct, variantId?: number) {
       const payload: IWishlistStoreState['wishlistIdsList'][0] = { productId: productData.pid }
       if (variantId) {
         payload.variantId = variantId

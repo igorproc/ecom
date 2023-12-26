@@ -3,6 +3,7 @@
     <h2 class="product-variants-list__title">
       Variants List
     </h2>
+
     <UiTabs class="product-variant-list__tabs variant-list-tabs">
       <UiTab
         v-for="item in productVariants"

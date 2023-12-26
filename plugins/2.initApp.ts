@@ -25,7 +25,9 @@ async function initApp() {
   if (nuxtApp.payload.serverRendered) {
     // SSR MODE
     useServerOnly(async () => {
-      await onServerInit()
+      await nuxtApp.runWithContext(async () => {
+        await onServerInit()
+      })
     })
     useClientOnly(async () => {
       await onClientInit()

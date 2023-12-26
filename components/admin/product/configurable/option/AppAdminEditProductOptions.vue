@@ -4,39 +4,41 @@
       Options List
     </h2>
 
-    <UiTabs class="product-option-list__tabs option-list-tabs">
-      <template #header-append>
-        <div class="option-list-tabs__add-new-group add-new-group">
-          <vs-button
-            v-if="!addNewOptionGroupIsOpen"
-            type="border"
-            @click="addNewOptionGroupIsOpen = true"
-          >
-            Add new group
-          </vs-button>
-          <div v-else class="add-new-group__field-container">
-            <vs-input
-              v-model="addNewOptionGroupData"
-              placeholder="label"
-            />
-            <vs-button type="transparent" @click="addNewOptionGroup">
-              <Icon icon="gridicons:plus" />
+    <div class="product-option-list__tabs">
+      <UiTabs class=" option-list-tabs">
+        <template #header-append>
+          <div class="option-list-tabs__add-new-group add-new-group">
+            <vs-button
+              v-if="!addNewOptionGroupIsOpen"
+              type="border"
+              @click="addNewOptionGroupIsOpen = true"
+            >
+              Add new group
             </vs-button>
+            <div v-else class="add-new-group__field-container">
+              <vs-input
+                v-model="addNewOptionGroupData"
+                placeholder="label"
+              />
+              <vs-button type="transparent" @click="addNewOptionGroup">
+                <Icon icon="gridicons:plus" />
+              </vs-button>
+            </div>
           </div>
-        </div>
-      </template>
-      <UiTab
-        v-for="groupItem in productOptions"
-        :key="groupItem.optionId"
-        :title="groupItem.optionLabel"
-        class="option-list-tabs__item tabs-item"
-      >
-        <AppAdminEditProductOptionItem
-          :group-values="groupItem"
-          @add-option-item="addNewOptionToGroup"
-        />
-      </UiTab>
-    </UiTabs>
+        </template>
+        <UiTab
+          v-for="groupItem in productOptions"
+          :key="groupItem.optionId"
+          :title="groupItem.optionLabel"
+          class="option-list-tabs__item tabs-item"
+        >
+          <AppAdminEditProductOptionItem
+            :group-values="groupItem"
+            @add-option-item="addNewOptionToGroup"
+          />
+        </UiTab>
+      </UiTabs>
+    </div>
     <AppAdminEditProductAddOptionItemModal
       v-if="addNewItemDialogIsOpen && addedItemGroupId"
       :added-item-group-id="addedItemGroupId"

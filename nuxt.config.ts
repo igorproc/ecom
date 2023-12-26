@@ -3,44 +3,50 @@ import PwaConfig from './config/pwa.config'
 import ViteConfig from './config/vite.config'
 import S3Config from './config/s3.config'
 import EslintConfig from './config/eslint.config'
+import NitroConfig from './config/nitro.config'
 
 const isProd = process.env.APP_MODE === 'production'
 const isSsr = !!process.env.IS_SSR
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
+// @ts-ignore
 export default defineNuxtConfig({
-  ssr: isSsr,
-  // import styles
+  app: AppConfig,
   css: [
     'vuesax-alpha/theme-chalk/index.css',
     'vuesax-alpha/theme-chalk/dark/css-vars.css',
     '@/assets/main.scss',
   ],
-  runtimeConfig: {
-    public: {
-      s3Url: process.env.S3_URL || '',
-      s3Bucket: process.env.S3_BUCKET_NAME || '',
-    },
+  devtools: { enabled: !isProd },
+  // import styles
+  eslint: EslintConfig,
+  experimental: {
+    inlineSSRStyles: true,
   },
 
   // enable takeover mode
-  typescript: { shim: false },
-
   modules: [
     // https://github.com/kevinmarrec/nuxt-pwa-module
-    '@kevinmarrec/nuxt-pwa',
+    "@kevinmarrec/nuxt-pwa",
     // https://nuxt.com/modules/pinia
-    '@pinia/nuxt',
+    "@pinia/nuxt",
     // https://nuxt.com/modules/vee-validate
-    '@vee-validate/nuxt',
+    "@vee-validate/nuxt",
     // https://nuxt-s3.bg.tn/usage/validation
-    'nuxt-s3',
+    "nuxt-s3",
     // https://nuxt.com/modules/eslint
-    '@nuxtjs/eslint-module',
+    "@nuxtjs/eslint-module",
   ],
-  app: AppConfig,
+
+  nitro: NitroConfig,
   pwa: PwaConfig,
-  vite: ViteConfig,
+  runtimeConfig: {
+    public: {
+      s3Url: process.env.S3_URL || "",
+      s3Bucket: process.env.S3_BUCKET_NAME || "",
+    },
+  },
   s3: S3Config,
-  eslint: EslintConfig,
-  devtools: { enabled: !isProd },
+  ssr: isSsr,
+  typescript: { shim: false },
+  vite: ViteConfig,
 })

@@ -9,7 +9,7 @@
         :key="product.pid"
         :xs="12"
         :sm="5"
-        :md="3"
+        :lg="3"
         :xl="2"
         class="list-container__item"
       >
@@ -63,6 +63,7 @@ const getComponent = (product: TProduct) => {
         margin: 0 auto;
         .list-container__item-product {
           display: block;
+          max-width: 330px;
           .vs-card-content {
             max-width: unset;
           }

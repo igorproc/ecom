@@ -41,15 +41,17 @@
         v-for="item in drawerLinksList"
         :id="item.title"
         :key="item.title"
-        :to="activeTab !== item.title ? item.url : ''"
         class="list__item"
       >
         <template v-if="item.prependIcon" #icon>
           <Icon :icon="item.prependIcon" class="list__item-prepend-icon" />
         </template>
-        <span v-if="item.url" class="list__item-title">
-          {{ item.title }}
-        </span>
+
+        <NuxtLink v-if="item.url.name" :to="item.url">
+          <span class="list__item-title">
+            {{ item.title }}
+          </span>
+        </NuxtLink>
       </vs-sidebar-item>
     </div>
     <div class="drawer__bottom-side bottom-side">
@@ -85,11 +87,16 @@ const conditionStore = useConditionStore()
 const userStore = useUserStore()
 
 const defaultLinkList: TNavigationDrawerLinkListItem[] = [
-  { title: 'Корзина', url: 'user/cart', prependIcon: 'gridicons:cart' },
-  { title: 'Избранные товары', url: 'user/wishlist', prependIcon: 'gridicons:thumbs-up' },
+  { title: 'Корзина', url: { name: 'user-cart' }, prependIcon: 'gridicons:cart' },
+  { title: 'Избранные товары', url: { name: 'user-wishlist' }, prependIcon: 'gridicons:thumbs-up' },
+]
+const authorizeLinkList: TNavigationDrawerLinkListItem[] = [
+  ...defaultLinkList,
+  { title: 'Профиль', url: { name: 'user-profile' }, prependIcon: 'gridicons:house' },
+  { title: 'Заказы', url: { name: 'user-orders' }, prependIcon: 'gridicons:tag' },
 ]
 const adminLinkList: TNavigationDrawerLinkListItem[] = [
-  { title: 'Добавление товаров', url: 'admin/products', prependIcon: 'gridicons:product' },
+  { title: 'Добавление товаров', url: { name: 'admin-products' }, prependIcon: 'gridicons:product' },
 ]
 
 const activeTab = ref('')
@@ -99,11 +106,6 @@ const drawerLinksList = computed(() => {
     return defaultLinkList
   }
 
-  const authorizeLinkList: TNavigationDrawerLinkListItem[] = [
-    ...defaultLinkList,
-    { title: 'Профиль', url: 'user/profile', prependIcon: 'gridicons:house' },
-    { title: 'Заказы', url: 'user/checkout', prependIcon: 'gridicons:tag' },
-  ]
   if (userStore.userData.role === 'ADMIN') {
     return [...authorizeLinkList, ...adminLinkList]
   }

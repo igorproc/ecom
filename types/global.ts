@@ -1,5 +1,5 @@
 export type TNavigationDrawerLinkListItem = {
   title: string,
-  url: string,
+  url: { name: string },
   prependIcon?: string
 }

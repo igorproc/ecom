@@ -42,3 +42,9 @@ const buttonColor = computed(() => {
   return 'primary'
 })
 </script>
+
+<style lang="scss">
+.app-configurable-product-default-switch {
+  color: #000;
+}
+</style>

@@ -1,6 +1,10 @@
+// Pinia Stores & Methods with store
 import { useUserStore } from '~/store/user/index'
+import { wishlistDataOnLogout } from '~/store/wishlist/auth'
+// Api Methods
 import { userApi } from '~/api/user'
-import { TUserLoginInput, TUserRegisterInput } from '~/types/api'
+// Types & Interfaces
+import type { TUserLoginInput, TUserRegisterInput } from '~/types/api'
 
 export const loginUser = async (loginData: TUserLoginInput) => {
   try {
@@ -70,11 +74,13 @@ export const createUser = async (registerData: TUserRegisterInput) => {
   }
 }
 
-export const logoutUser = () => {
+export const logoutUser = async () => {
   const userStore = useUserStore()
   const cookieTokenValue = useCookie('Authorization')
 
   userStore.isGuest = true
   userStore.userData = null
   cookieTokenValue.value = ''
+
+  await wishlistDataOnLogout()
 }

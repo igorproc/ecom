@@ -14,19 +14,23 @@
       <template #text />
 
       <template #interactions>
-        <vs-button
-          :color="productIsAddedToWishlist ? 'danger' : 'success'"
-          icon
-          @click="addProductToWishlist"
-        >
-          <Icon icon="gridicons:heart-outline" />
-        </vs-button>
-        <vs-button
-          icon
-          @click="addProductToCart"
-        >
-          <Icon icon="gridicons:cart" />
-        </vs-button>
+        <ClientOnly>
+          <vs-button
+            :color="productIsAddedToWishlist ? 'danger' : 'success'"
+            icon
+            :class="{ '--interaction-disabled': operationWithWishlistIsProcessing }"
+            @click="addProductToWishlist"
+          >
+            <Icon icon="gridicons:heart-outline" />
+          </vs-button>
+          <vs-button
+            icon
+            :class="{ '--interaction-disabled': operationWithCartIsProcessing }"
+            @click="addProductToCart"
+          >
+            <Icon icon="gridicons:cart" />
+          </vs-button>
+        </ClientOnly>
       </template>
     </vs-card>
   </div>
@@ -36,7 +40,7 @@
 //Ui Components
 import {
   VsCard,
-  VsButton, Color,
+  VsButton,
 } from 'vuesax-alpha'
 import { Icon } from '@iconify/vue'
 // Composables
@@ -53,6 +57,8 @@ const { product } = toRefs(props)
 const {
   productIsAddedToCart,
   productIsAddedToWishlist,
+  operationWithCartIsProcessing,
+  operationWithWishlistIsProcessing,
   addToCart,
   addToWishlist,
   removeFromWishlist,
@@ -60,6 +66,10 @@ const {
 } = useProduct(product.value.pid)
 
 const addProductToWishlist = () => {
+  if (operationWithWishlistIsProcessing.value) {
+    return
+  }
+
   if (productIsAddedToWishlist.value) {
     removeFromWishlist()
     return
@@ -67,6 +77,10 @@ const addProductToWishlist = () => {
   addToWishlist()
 }
 const addProductToCart = () => {
+  if (operationWithCartIsProcessing.value) {
+    return
+  }
+
   if (productIsAddedToCart.value) {
     removeFromCart()
     return
@@ -83,6 +97,11 @@ const addProductToCart = () => {
     .vs-card__text {
       border-radius: unset !important;
       width: 100%;
+    }
+
+    .--interaction-disabled {
+      cursor: unset;
+      opacity: 0.6;
     }
   }
 }
