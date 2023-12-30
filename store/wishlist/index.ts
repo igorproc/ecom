@@ -29,13 +29,13 @@ export const useWishlistStore = defineStore('wishlist-store', {
         .filter(item => typeof item !== 'undefined')
 
       return state.wishlistIdsList.length === listOfProductIdsWhoHasAData.length
-    }
+    },
   },
   actions: {
-    addItemToWishlist(productData: TWishlistProduct, variantId?: number) {
+    addItemToWishlist(productData: TWishlistProduct) {
       const payload: IWishlistStoreState['wishlistIdsList'][0] = { productId: productData.pid }
-      if (variantId) {
-        payload.variantId = variantId
+      if (productData.selectedVariant) {
+        payload.variantId = productData.selectedVariant
       }
 
       this.wishlistIdsList.push(payload)
@@ -43,7 +43,7 @@ export const useWishlistStore = defineStore('wishlist-store', {
         this.wishlistProductList.push(productData)
       }
     },
-    removeItemFromWishlist(productId: number, variantId?:number) {
+    removeItemFromWishlist(productId: number, variantId?: number) {
       if (!variantId) {
         this.wishlistProductList = this.wishlistProductList
           .filter(wishlistProduct => wishlistProduct.pid !== productId && wishlistProduct)
@@ -51,6 +51,7 @@ export const useWishlistStore = defineStore('wishlist-store', {
           .filter(wishlistId => wishlistId.productId !== productId)
         return
       }
+
       this.wishlistIdsList = this.wishlistIdsList
         .filter(wishlistProductId => wishlistProductId.productId !== productId && wishlistProductId.variantId !== variantId)
       if (this.wishlistIdsList.find(wishlistId => wishlistId.productId === productId)) {

@@ -1,7 +1,6 @@
 // Node Deps
 import { integer, sqliteTable, text, real } from 'drizzle-orm/sqlite-core'
 import { InferSelectModel, InferInsertModel, sql } from 'drizzle-orm'
-import { v4 } from 'uuid'
 // Types & Interfaces
 import { EUserRoles } from './types/user'
 import { EProductTypes } from './types/product'
@@ -86,3 +85,5 @@ export type TProduct = InferSelectModel<typeof product>
 export type TProductInput = InferInsertModel<typeof product>
 // Configurable Options
 export type TProductOptionInput = InferInsertModel<typeof productOption>
+// WIshlist
+export type TWishlistItem = InferSelectModel<typeof userWishlistItem>

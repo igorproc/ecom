@@ -1,5 +1,4 @@
 import { ProductModel } from '~/server/models/product'
-import { TProduct } from '~/server/db/schema'
 import { TAddProductInput } from '~/server/db/types/product'
 
 interface BodyData {

@@ -1,3 +1,5 @@
+import { TProduct } from '~/server/db/schema'
+
 export enum EProductTypes {
   'base' = 'BASE',
   'configurable' = 'CONFIGURABLE',
@@ -8,6 +10,11 @@ export type TAddProductInput = {
   price: number,
   productImage: string
   type: keyof typeof EProductTypes
+}
+
+export type TReturningProduct = TProduct & {
+  productOptions: TConfigurableProductOptions,
+  productVariants: TConfigurableProductVariants,
 }
 
 // Configurable Types

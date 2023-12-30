@@ -1,25 +1,48 @@
 <template>
   <div class="app-wishlist-item --configurable">
     <vs-row class="app-wishlist-item__container item-container">
-      <vs-col :xs="3" :sm="1" class="item-container__field">
+      <vs-col
+        :xs="3"
+        :sm="1"
+        class="item-container__field"
+      >
         <span class="item-container__field-text-content">
           {{ wishlistItem.name }}
         </span>
       </vs-col>
-      <vs-col :xs="2" :sm="1" class="item-container__field">
+      <vs-col
+        :xs="2"
+        :sm="1"
+        class="item-container__field"
+      >
         <img :src="productImage" :alt="wishlistItem.name">
       </vs-col>
-      <vs-col :xs="2" :sm="1" :push="pushFields" class="item-container__field">
+      <vs-col
+        :xs="2"
+        :sm="1"
+        :push="pushFields"
+        class="item-container__field"
+      >
         <span class="item-container__field-text-content">
           {{ productPrice }}
         </span>
       </vs-col>
-      <vs-col :xs="2" :sm="2" :push="pushFields" class="item-container__field">
+      <vs-col
+        :xs="2"
+        :sm="2"
+        :push="pushFields"
+        class="item-container__field"
+      >
         <span class="item-container__field-text-content">
           {{ wishlistItem.__typename }}
         </span>
       </vs-col>
-      <vs-col :xs="3" :sm="5" :push="pushInteractions" class="item-container__interactions">
+      <vs-col
+        :xs="3"
+        :sm="5"
+        :push="pushInteractions"
+        class="item-container__interactions"
+      >
         <vs-button
           :loading="operationWithWishlistIsProcessing"
           icon
@@ -45,7 +68,7 @@
 import {
   VsButton,
   VsCol,
-  VsRow
+  VsRow,
 } from 'vuesax-alpha'
 import { Icon } from '@iconify/vue'
 // Coomposables
@@ -82,7 +105,7 @@ const productImage = computed(() => {
 
   const variantCandidate = wishlistItem.value.productVariants
     .find(productVariant => productVariant.product.id === wishlistItem.value.selectedVariant)
-  if (!variantCandidate) {
+  if (!variantCandidate || !variantCandidate.product.imageUrl) {
     return wishlistItem.value.productImage
   }
   return variantCandidate.product.imageUrl
@@ -102,6 +125,7 @@ const addProductToCart = async () => {
 <style lang="scss">
 .app-wishlist-item.--configurable {
   padding: 0.75rem;
+
   .app-wishlist-item__container {
     .item-container__field,
     .item-container__interactions {
@@ -124,6 +148,7 @@ const addProductToCart = async () => {
       justify-content: flex-end;
     }
   }
+
   @media #{map-get($display-breakpoints, 'md')} {
     padding: 0;
     .app-wishlist-item__container {

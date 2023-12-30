@@ -1,5 +1,5 @@
 <template>
-  <form class="app-sign-in-form" @submit.prevent="submit">
+  <div class="app-sign-in-form">
     <vs-input
       v-model="loginData.email.value"
       label="email"
@@ -24,14 +24,14 @@
     <div class="app-sign-in-form__actions actions">
       <VsButton
         :loading="isLoading"
-        type="submit"
         :class="{ '--disabled': isDisabled }"
         class="actions__submit-action"
+        @click="submit"
       >
         Войти
       </VsButton>
     </div>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">

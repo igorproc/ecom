@@ -1,6 +1,6 @@
 // Pinia Stores & Methods with store
 import { useUserStore } from '~/store/user/index'
-import { wishlistDataOnLogout } from '~/store/wishlist/auth'
+import { wishlistDataOnCreate, wishlistDataOnLogin, wishlistDataOnLogout } from '~/store/wishlist/auth'
 // Api Methods
 import { userApi } from '~/api/user'
 // Types & Interfaces
@@ -16,12 +16,12 @@ export const loginUser = async (loginData: TUserLoginInput) => {
 
     if (cookieTokenValue.value) {
       userStore.isGuest = true
-
       if (!userStore.userData) {
         const userData = await userApi.getUserData(cookieTokenValue.value as string)
         if (!userData) {
           return
         }
+
         userStore.userData = userData
       }
       return
@@ -36,6 +36,9 @@ export const loginUser = async (loginData: TUserLoginInput) => {
     userStore.isGuest = false
     userStore.userData = userIsLogin.userData
 
+    await Promise.all([
+      wishlistDataOnLogin(),
+    ])
     return true
   } catch (error) {
     throw error
@@ -50,13 +53,10 @@ export const createUser = async (registerData: TUserRegisterInput) => {
       { maxAge: 60 * 60 * 24 * 14 },
     )
 
-    if (cookieTokenValue.value) {
-      userStore.isGuest = true
-
-      if (!userStore.userData) {
-        const userData = await userApi.getUserData(cookieTokenValue.value as string)
-        userStore.userData = userData
-      }
+    if (cookieTokenValue.value && !userStore.userData) {
+      userStore.isGuest = false
+      userStore.userData = await userApi.getUserData(cookieTokenValue.value as string)
+      await wishlistDataOnCreate()
       return
     }
 
@@ -68,6 +68,8 @@ export const createUser = async (registerData: TUserRegisterInput) => {
     cookieTokenValue.value = userIsLogin.token
     userStore.isGuest = false
     userStore.userData = userIsLogin.userData
+    await wishlistDataOnCreate()
+
     return true
   } catch (error) {
     throw error
@@ -75,12 +77,19 @@ export const createUser = async (registerData: TUserRegisterInput) => {
 }
 
 export const logoutUser = async () => {
-  const userStore = useUserStore()
-  const cookieTokenValue = useCookie('Authorization')
+  try {
+    const userStore = useUserStore()
+    const cookieTokenValue = useCookie('Authorization')
 
-  userStore.isGuest = true
-  userStore.userData = null
-  cookieTokenValue.value = ''
+    userStore.isGuest = true
+    userStore.userData = null
+    cookieTokenValue.value = ''
 
-  await wishlistDataOnLogout()
+    console.log(cookieTokenValue.value)
+    await Promise.all([
+      wishlistDataOnLogout(),
+    ])
+  } catch (error) {
+    throw error
+  }
 }

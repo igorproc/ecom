@@ -23,7 +23,7 @@ export const ProductModel = {
       const productList: unknown[] = []
       productIds.forEach(productId => {
         productList.push(
-          ProductModel.getProductById(productId.pid)
+          ProductModel.getProductById(productId.pid),
         )
       })
 

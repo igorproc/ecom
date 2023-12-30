@@ -16,7 +16,7 @@
               configurableProductVariant && productIsAddedToWishlist ? 'danger' : 'success'
             "
             :loading="operationWithWishlistIsProcessing"
-            :class="{ '--interaction-disabled': !configurableProductVariant  }"
+            :class="{ '--interaction-disabled': !configurableProductVariant }"
             icon
             @click="addProductToWishlist"
           >
@@ -25,7 +25,7 @@
           <vs-button
             :loading="operationWithCartIsProcessing"
             icon
-            :class="{ '--interaction-disabled': !configurableProductVariant  }"
+            :class="{'--interaction-disabled': !configurableProductVariant }"
             @click="addProductToCart"
           >
             <Icon icon="gridicons:cart" />
@@ -33,19 +33,19 @@
         </ClientOnly>
       </template>
 
-        <template #text>
-          <div
-            v-if="product.productOptions?.length && product.productVariants?.length"
-            class="app-configurable-product-tile__configurable-switches"
-          >
-            <AppConfigurableProductSwitchGroup
-              :product-options="product.productOptions"
-              :product-variants="product.productVariants"
-              @product-variant-is-selected="selectVariant"
-              @product-variant-is-not-selected="unselectVariant"
-            />
-          </div>
-        </template>
+      <template #text>
+        <div
+          v-if="product.productOptions?.length && product.productVariants?.length"
+          class="app-configurable-product-tile__configurable-switches"
+        >
+          <AppConfigurableProductSwitchGroup
+            :product-options="product.productOptions"
+            :product-variants="product.productVariants"
+            @product-variant-is-selected="selectVariant"
+            @product-variant-is-not-selected="unselectVariant"
+          />
+        </div>
+      </template>
     </vs-card>
   </div>
 </template>

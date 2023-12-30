@@ -1,7 +1,7 @@
 // Node Deps
 import { and, eq } from 'drizzle-orm'
 import { v4 } from 'uuid'
-import { difference } from 'lodash-es'
+import { differenceBy } from 'lodash-es'
 // Db Utils
 import { db } from '~/server/db/config/connection'
 // Models
@@ -9,26 +9,30 @@ import { ProductModel } from '~/server/models/product'
 import { AuthModel } from '~/server/models/auth'
 // Types & Interfaces
 import {
+  TWishlistItem,
   userWishlist,
   userWishlistItem,
 } from '~/server/db/schema'
+import { TReturningProduct } from '~/server/db/types/product'
 
 export class WishlistModel {
   private readonly productModel: typeof ProductModel
   private readonly authModel: typeof AuthModel
+
   constructor() {
     this.productModel = ProductModel
     this.authModel = AuthModel
   }
 
   protected readonly closedApi = {
-    getWishlistItemsIdsByWishlistToken: (wishlistToken: string) => {
+    getWishlistItemsIdsByWishlistToken: (wishlistToken: string): TWishlistItem[] => {
       try {
         const userWishlistItems = db
           .select()
           .from(userWishlistItem)
           .where(eq(userWishlistItem.cartId, wishlistToken))
           .all()
+
         if (!userWishlistItems) {
           return []
         }
@@ -69,7 +73,7 @@ export class WishlistModel {
               data.variantId = productId.variantId
             }
             return data
-          })
+          }),
         }
       } catch (error) {
         throw error
@@ -77,22 +81,28 @@ export class WishlistModel {
     },
     getWishlistProducts: (cartId: string) => {
       try {
-        const productList: any[] = []
-        const productIdsList = db.select().from(userWishlistItem).where(eq(userWishlistItem.cartId, cartId)).all()
+        type TProductItem = TReturningProduct & { selectedVariant: number | null }
+        const productList: TProductItem[] = []
+
+        const productIdsList = db
+          .select()
+          .from(userWishlistItem)
+          .where(eq(userWishlistItem.cartId, cartId))
+          .all()
 
         productIdsList.forEach(productId => {
-          productList.push(
+          return productList.push(
             {
-              ...ProductModel.getProductById(productId.productId),
-              selectedVariant: productId.variantId ? productId.variantId : null
-            }
+              ...ProductModel.getProductById(productId.productId) as TReturningProduct,
+              selectedVariant: productId.variantId || null,
+            },
           )
         })
         return productList
       } catch (error) {
         throw error
       }
-    }
+    },
   }
   public readonly actions = {
     createWishlist: (token: string) => {
@@ -102,7 +112,7 @@ export class WishlistModel {
             .insert(userWishlist)
             .values({
               isGuestCart: true,
-              cartId: v4()
+              cartId: v4(),
             })
             .returning()
             .get()
@@ -125,7 +135,7 @@ export class WishlistModel {
           .values({
             isGuestCart: false,
             uid: userId.uid,
-            cartId: v4()
+            cartId: v4(),
           })
           .returning()
           .get()
@@ -174,7 +184,7 @@ export class WishlistModel {
           const productIsDeleted = db
             .delete(userWishlistItem)
             .where(
-              and(eq(userWishlistItem.cartId, cartId), eq(userWishlistItem.productId, productId))
+              and(eq(userWishlistItem.cartId, cartId), eq(userWishlistItem.productId, productId)),
             )
             .run()
           if (productIsDeleted) {
@@ -192,7 +202,7 @@ export class WishlistModel {
               eq(userWishlistItem.cartId, cartId),
               eq(userWishlistItem.productId, productId),
               eq(userWishlistItem.variantId, variantId || 0),
-            )
+            ),
           )
           .run()
         if (productIsDeleted) {
@@ -219,18 +229,19 @@ export class WishlistModel {
 
       const userWishlistItems = this.closedApi.getWishlistItemsIdsByWishlistToken(userWishlistData.cartId)
       const guestWishlistItems = this.closedApi.getWishlistItemsIdsByWishlistToken(guestWishlistToken)
-      const itemsIdsDifference = difference(userWishlistItems, guestWishlistItems)
-      const itemsIdsList: { productId: number, variantId?: number }[] = []
+      const itemsIdsDifference = differenceBy(
+        userWishlistItems, guestWishlistItems, 'productId', 'variantId'
+      )
+      console.log(itemsIdsDifference)
 
       db
         .delete(userWishlist)
         .where(
           and(
             eq(userWishlist.cartId, guestWishlistToken),
-            eq(userWishlist.isGuestCart, true)
-          )
+            eq(userWishlist.isGuestCart, true),
+          ),
         )
-        .all()
 
       itemsIdsDifference.forEach(item => {
         const itemData = db
@@ -240,23 +251,13 @@ export class WishlistModel {
             and(
               eq(userWishlistItem.wishlistItemId, item.wishlistItemId),
               eq(userWishlistItem.cartId, guestWishlistToken),
-            )
+            ),
           )
           .returning()
           .get()
-
-        const payload: typeof itemsIdsList[0] = { productId: itemData.productId }
-        if (itemData.variantId) {
-          payload.variantId = itemData.variantId
-        }
-
-        itemsIdsList.push(payload)
       })
 
-      return {
-        wishlistData: userWishlistData,
-        productIds: itemsIdsList,
-      }
-    }
+      return this.getters.getWishlistDataWithProductIds(userWishlistData.cartId)
+    },
   }
 }

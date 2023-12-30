@@ -22,7 +22,7 @@ export const useWindowResize = () => {
   }
   setResizeConditions(width.value)
 
-  watch(width, (newWidth) => {
+  watch(width, newWidth => {
     setResizeConditions(newWidth)
   })
 

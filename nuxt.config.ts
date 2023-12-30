@@ -26,23 +26,23 @@ export default defineNuxtConfig({
   // enable takeover mode
   modules: [
     // https://github.com/kevinmarrec/nuxt-pwa-module
-    "@kevinmarrec/nuxt-pwa",
+    '@kevinmarrec/nuxt-pwa',
     // https://nuxt.com/modules/pinia
-    "@pinia/nuxt",
+    '@pinia/nuxt',
     // https://nuxt.com/modules/vee-validate
-    "@vee-validate/nuxt",
+    '@vee-validate/nuxt',
     // https://nuxt-s3.bg.tn/usage/validation
-    "nuxt-s3",
+    'nuxt-s3',
     // https://nuxt.com/modules/eslint
-    "@nuxtjs/eslint-module",
+    '@nuxtjs/eslint-module',
   ],
 
   nitro: NitroConfig,
   pwa: PwaConfig,
   runtimeConfig: {
     public: {
-      s3Url: process.env.S3_URL || "",
-      s3Bucket: process.env.S3_BUCKET_NAME || "",
+      s3Url: process.env.S3_URL || '',
+      s3Bucket: process.env.S3_BUCKET_NAME || '',
     },
   },
   s3: S3Config,

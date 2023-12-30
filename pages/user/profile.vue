@@ -1,5 +1,3 @@
 <template>
-  <div class="app-user-profile-page">
-    
-  </div>
+  <div class="app-user-profile-page" />
 </template>

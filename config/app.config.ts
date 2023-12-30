@@ -3,8 +3,8 @@ import type { NuxtOptions } from '@nuxt/schema'
 
 export default {
   head: {
-    title: 'Vuetify 3 + Nuxt 3 Starter',
-    titleTemplate: '%s | Vuetify 3 + Nuxt 3 Starter',
+    title: pwaConfig.title,
+    titleTemplate: pwaConfig.description,
     link: [
       { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' },
       { rel: 'preconnect', href: 'https://rsms.me/' },

@@ -17,6 +17,6 @@ export default defineEventHandler(event => {
   return wishlistModel.actions.addItemToWishlist(
     cookies.wishlistId,
     request.productId,
-    request.variantId || null
+    request.variantId || null,
   )
 })

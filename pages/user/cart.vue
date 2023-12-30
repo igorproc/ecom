@@ -1,5 +1,3 @@
 <template>
-  <div class="app-cart-page">
-
-  </div>
+  <div class="app-cart-page" />
 </template>

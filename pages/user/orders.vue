@@ -1,5 +1,3 @@
 <template>
-  <div class="app-user-orders-page">
-
-  </div>
+  <div class="app-user-orders-page" />
 </template>

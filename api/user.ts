@@ -76,7 +76,7 @@ export const userApi = {
     try {
       const notificationStore = useNotificationStore()
       const { data } = await axios.get<TUserData | TResponseError>(
-        `/api/user/getUserData?token=${token}`
+        `/api/user/getUserData?token=${token}`,
       )
 
       if ('error' in data) {
@@ -162,6 +162,23 @@ export const userWishlistApi = {
         return
       }
       return data.successDeleting
+    } catch (error) {
+      throw error
+    }
+  },
+  getDataOnLoginUser: async () => {
+    try {
+      const notificationStore = useNotificationStore()
+      const { data } = await axios.get<TWishlistDataWishProductIds | TResponseError>(
+        '/api/user/wishlist/login',
+      )
+
+      if ('error' in data) {
+        notificationStore.openErrorNotification(data.error.message)
+        return
+      }
+
+      return data
     } catch (error) {
       throw error
     }

@@ -1,5 +1,5 @@
 <template>
-  <form class="app-sign-up-form" @submit.prevent="submit">
+  <div class="app-sign-up-form">
     <vs-input
       v-model="registerData.email.value"
       label="email"
@@ -54,14 +54,14 @@
       <vs-button
         :disabled="isLoading"
         :loading="isLoading"
-        type="submit"
         :class="{ '--disabled': isDisabled }"
         class="actions__submit-action"
+        @click="submit"
       >
         Зарегестрироваться
       </vs-button>
     </div>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -2,7 +2,7 @@
   <div class="app-wishlist-items-list wishlist-items-list">
     <div
       v-for="product in wishlistItemsList"
-      :key="product.pid"
+      :key="listKey(product)"
       class="wishlist-items-list__item"
     >
       <component :is="getComponent(product)" :wishlist-item="product" />
@@ -23,6 +23,13 @@ interface Props {
 
 const props = defineProps<Props>()
 const { wishlistItemsList } = toRefs(props)
+
+const listKey = (productData: TWishlistProduct) => {
+  if (productData.__typename === 'BASE' || !productData.selectedVariant) {
+    return productData.pid
+  }
+  return `${productData.pid}-${productData.selectedVariant}`
+}
 
 const getComponent = (product: TWishlistProduct) => {
   if (product.__typename === 'CONFIGURABLE') {

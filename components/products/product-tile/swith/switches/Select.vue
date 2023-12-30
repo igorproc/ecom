@@ -3,9 +3,9 @@
     size="small"
     :color="buttonColor"
     :active="isActiveItem"
-    :loading="isDisabled || false"
     class="app-configurable-product-default-switch app-default-switch"
-    @click="emits('optionSelected', optionData)"
+    :class="{ '--disabled': isDisabled }"
+    @click="selectOption"
   >
     {{ optionData.label }}
   </vs-button>
@@ -41,10 +41,23 @@ const buttonColor = computed(() => {
   }
   return 'primary'
 })
+
+const selectOption = () => {
+  if (isDisabled.value) {
+    return
+  }
+
+  emits('optionSelected', optionData.value)
+}
 </script>
 
 <style lang="scss">
 .app-configurable-product-default-switch {
   color: #000;
+
+  &.--disabled {
+    cursor: auto;
+    opacity: 0.6;
+  }
 }
 </style>

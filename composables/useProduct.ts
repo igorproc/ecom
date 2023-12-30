@@ -12,26 +12,42 @@ export const useProduct = (productId: number) => {
   const wishlistStore = useWishlistStore()
   const cartStore = useCartStore()
 
+  const productData = productStore.getProductDataById(productId)
+  const configurableProductVariant = ref<number | null>(null)
   const operationWithWishlistIsProcessing = ref(false)
   const operationWithCartIsProcessing = ref(false)
 
-  const configurableProductVariant = ref<number | null>(null)
-
   const productIsAddedToCart = computed(() => {
-    if (!configurableProductVariant.value) {
+    if (!productData) {
+      return false
+    }
+
+    if (productData.__typename === 'BASE') {
       return !!cartStore.cartIdsList.find(cartId => cartId.productId === productId)
     }
+    if (!configurableProductVariant.value) {
+      return false
+    }
+
     return !!cartStore.cartIdsList.find(cartId => {
       return cartId.productId === productId && cartId.variantId === configurableProductVariant.value
     })
   })
   const productIsAddedToWishlist = computed(() => {
-    if (!configurableProductVariant.value) {
-      return wishlistStore.wishlistIdsList.find(wishlistId => wishlistId.productId === productId)?.productId
+    if (!productData) {
+      return false
     }
-    return wishlistStore.wishlistIdsList.find(wishlistId => {
+
+    if (productData.__typename === 'BASE') {
+      return !!wishlistStore.wishlistIdsList.find(wishlistId => wishlistId.productId === productId)
+    }
+    if (!configurableProductVariant.value) {
+      return false
+    }
+
+    return !!wishlistStore.wishlistIdsList.find(wishlistId => {
       return wishlistId.productId === productId && wishlistId.variantId === configurableProductVariant.value
-    })?.productId
+    })
   })
 
   const addProductVariant = (variantId: number | null) => {
@@ -45,14 +61,13 @@ export const useProduct = (productId: number) => {
 
     operationWithWishlistIsProcessing.value = true
     const isAddedToWishlist = await userWishlistApi.addProductToWishlist(payload)
-    const productData = productStore.getProductDataById(payload.productId)
     if (!productData || !isAddedToWishlist) {
       operationWithWishlistIsProcessing.value = false
       return
     }
 
     wishlistStore.addItemToWishlist(
-      Object.assign(productData, { selectedVariant: configurableProductVariant.value })
+      Object.assign(productData, { selectedVariant: configurableProductVariant.value }),
     )
     operationWithWishlistIsProcessing.value = false
   }
@@ -70,7 +85,7 @@ export const useProduct = (productId: number) => {
     }
 
     operationWithWishlistIsProcessing.value = false
-    wishlistStore.removeItemFromWishlist(productId)
+    wishlistStore.removeItemFromWishlist(payload.productId, payload.variantId)
   }
   const addToCart = () => {
     cartStore.addItemToCart(productId, 123, configurableProductVariant.value || null)

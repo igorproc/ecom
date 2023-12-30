@@ -8,11 +8,7 @@
 // Pinia Stores
 import { useWishlistStore } from '~/store/wishlist'
 import { userWishlistApi } from '~/api/user'
-import AppWishlistList from "~/components/wishlist/AppWishlistList.vue";
-
-definePageMeta({
-  middleware: ['auth']
-})
+import AppWishlistList from '~/components/wishlist/AppWishlistList.vue'
 
 const wishlistStore = useWishlistStore()
 if (!wishlistStore.allWishlistItemsHasAProductData) {
