@@ -1,7 +1,6 @@
 // Node Deps
 import { and, eq } from 'drizzle-orm'
 import { v4 } from 'uuid'
-import { differenceBy } from 'lodash-es'
 // Db Utils
 import { db } from '~/server/db/config/connection'
 // Models
@@ -14,6 +13,7 @@ import {
   userWishlistItem,
 } from '~/server/db/schema'
 import { TReturningProduct } from '~/server/db/types/product'
+import { concatArray } from '~/server/utils/concatArray.util'
 
 export class WishlistModel {
   private readonly productModel: typeof ProductModel
@@ -212,6 +212,26 @@ export class WishlistModel {
         throw error
       }
     },
+    deleteWishlist: (wishlistToken: string) => {
+      try {
+        const userDataIsDeleted = db
+          .delete(userWishlist)
+          .where(
+            and(
+              eq(userWishlist.cartId, wishlistToken),
+              eq(userWishlist.isGuestCart, true),
+            )
+          )
+          .run()
+        const userItemsIsDeleted = db
+          .delete(userWishlistItem)
+          .where(eq(userWishlistItem.cartId, wishlistToken))
+
+        return userDataIsDeleted && userItemsIsDeleted
+      } catch (error) {
+        throw error
+      }
+    },
     assignGuestAndUserWishlists: (userToken: string, guestWishlistToken: string) => {
       const userUid = this.authModel.decodeJwtToken(userToken)
       if (typeof userUid === 'string') {
@@ -229,22 +249,14 @@ export class WishlistModel {
 
       const userWishlistItems = this.closedApi.getWishlistItemsIdsByWishlistToken(userWishlistData.cartId)
       const guestWishlistItems = this.closedApi.getWishlistItemsIdsByWishlistToken(guestWishlistToken)
-      const itemsIdsDifference = differenceBy(
-        userWishlistItems, guestWishlistItems, 'productId', 'variantId'
+      const itemsIdsDifference = concatArray<TWishlistItem>(
+        userWishlistItems,
+        guestWishlistItems,
+        ['productId', 'variantId']
       )
-      console.log(itemsIdsDifference)
-
-      db
-        .delete(userWishlist)
-        .where(
-          and(
-            eq(userWishlist.cartId, guestWishlistToken),
-            eq(userWishlist.isGuestCart, true),
-          ),
-        )
 
       itemsIdsDifference.forEach(item => {
-        const itemData = db
+        db
           .update(userWishlistItem)
           .set({ cartId: userWishlistData.cartId })
           .where(
@@ -257,6 +269,7 @@ export class WishlistModel {
           .get()
       })
 
+      this.actions.deleteWishlist(userWishlistData.cartId)
       return this.getters.getWishlistDataWithProductIds(userWishlistData.cartId)
     },
   }

@@ -68,8 +68,10 @@ export const createUser = async (registerData: TUserRegisterInput) => {
     cookieTokenValue.value = userIsLogin.token
     userStore.isGuest = false
     userStore.userData = userIsLogin.userData
-    await wishlistDataOnCreate()
 
+    await Promise.all([
+      wishlistDataOnCreate()
+    ])
     return true
   } catch (error) {
     throw error
@@ -85,10 +87,10 @@ export const logoutUser = async () => {
     userStore.userData = null
     cookieTokenValue.value = ''
 
-    console.log(cookieTokenValue.value)
     await Promise.all([
       wishlistDataOnLogout(),
     ])
+    return true
   } catch (error) {
     throw error
   }
