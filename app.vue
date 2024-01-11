@@ -1,11 +1,14 @@
 <template>
   <div>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-    <ClientOnly>
-      <AppGlobalScope />
-    </ClientOnly>
+    <a-style-provider hash-priority="high">
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+
+      <ClientOnly>
+        <AppGlobalScope />
+      </ClientOnly>
+    </a-style-provider>
   </div>
 </template>
 

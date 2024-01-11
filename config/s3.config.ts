@@ -1,5 +1,5 @@
 // Interfaces & Types
-import { NuxtOptions } from '@nuxt/schema'
+import type { NuxtOptions } from '@nuxt/schema'
 
 export default {
   driver: 's3',

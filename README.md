@@ -1,6 +1,6 @@
 # Specto.SU ecom pet project
 
-![Starter Image](/public/starter.png)
+![Starter Image](/app/public/starter.png)
 Nuxt 3 is now stable. Vuesax 4 is alpha :(.
 
 ### Features
