@@ -11,7 +11,7 @@
 // Pinia Stores
 import { useAdminStore } from '~/store/user/admin'
 // Api Methods
-import { productApi } from '~/api/product'
+import { getProductData } from '~/api/product/getProductData'
 // Components
 import AppAdminEditProductForm from '~/components/admin/product/AppAdminEditProductForm.vue'
 
@@ -28,16 +28,10 @@ if (!route.params.productId || Array.isArray(route.params.productId)) {
   await router.push({ name: 'admin-products' })
 }
 
-const productData = await productApi.getProductDataById(Number(route.params.productId))
+const productData = await getProductData(Number(route.params.productId))
 if (productData) {
   adminStore.setConfigurableProduct(productData)
 } else {
   await router.push({ name: 'admin-products' })
 }
 </script>
-
-<style lang="scss">
-.app-admin-edit-product-page {
-  padding: 0 15px;
-}
-</style>

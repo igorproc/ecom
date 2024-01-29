@@ -12,14 +12,12 @@ import AppProductList from '~/components/products/AppProductList.vue'
 // Pinia Stores
 import { useProductStore } from '~/store/product'
 // Api Methods
-import { productApi } from '~/api/product'
-// Types & Interfaces
-import type { TProduct } from '~/types/api'
+import { getAllProducts } from '~/api/product/getAllProducts'
 
 const productStore = useProductStore()
-const { data } = await useAsyncData<TProduct[] | null>(
+const { data } = await useLazyAsyncData(
   'product-list-user',
-  () => $fetch('/api/product/all'),
+  async () => await getAllProducts(),
 )
 if (data) {
   productStore.setProductList(data.value || [])

@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async to => {
     await router.push({ name: 'index' })
     return
   }
-  if (to.meta?.isAdminPage && userStore.userData.role !== 'ADMIN') {
+  if (to.meta?.isAdminPage && !userStore.isAdmin) {
     await router.push({ name: 'index' })
   }
   return true

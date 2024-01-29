@@ -3,5 +3,5 @@ export type TNavigationDrawerLinkListItem = {
   label: string,
   icon: unknown,
   disabled: boolean,
-  onClick: () => Promise<unknown> | unknown
+  cb: () => Promise<unknown> | unknown
 }

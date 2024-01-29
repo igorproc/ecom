@@ -1,52 +1,54 @@
 <template>
-  <vs-row class="app-admin-edit-product-card product-card">
-    <vs-col
-      :sm="12"
-      :md="6"
-      :lg="4"
+  <a-row :gutter="[24,16]" class="app-admin-edit-product-card product-card">
+    <a-col
+      :sm="24"
+      :md="12"
+      :lg="8"
       class="product-card__image"
     >
-      <img :src="product.productImage" :alt="product.name">
-    </vs-col>
-    <vs-col
-      :sm="12"
-      :md="6"
-      :lg="8"
+      <img width="100%" :src="product.productImage" :alt="product.name">
+    </a-col>
+    <a-col
+      :sm="24"
+      :md="12"
+      :lg="16"
       class="product-card__content card-content"
     >
       <div class="card-content__field">
-        <span>
-          Product name: {{ product.name }}
-        </span>
-        <vs-button type="transparent">
+      <span>
+        Product name: {{ product.name }}
+      </span>
+        <a-button type="link">
           <EditOutlined />
-        </vs-button>
+        </a-button>
       </div>
+
       <div class="card-content__field">
-        <span>
-          Product price: {{ productPrice }}
-        </span>
-        <vs-button type="transparent">
+      <span>
+        Product price: {{ productPrice }}
+      </span>
+        <a-button type="link">
           <EditOutlined />
-        </vs-button>
+        </a-button>
       </div>
+
       <div class="card-content__dates">
+      <span>
+        Published At: {{ product.createdAt }}
+      </span>
         <span>
-          Published At: {{ product.createdAt }}
-        </span>
-        <span>
-          Updated At: {{ product.updatedAt }}
-        </span>
+        Updated At: {{ product.updatedAt }}
+      </span>
       </div>
-    </vs-col>
-  </vs-row>
+    </a-col>
+  </a-row>
 </template>
 
 <script setup lang="ts">
 // Utils
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
-import type { TProduct } from '~/types/api'
+import type { TProduct } from '~/api/product/shared.types'
 
 interface Props {
   product: TProduct
@@ -62,45 +64,6 @@ const productPrice = computed(() => {
 
 <style lang="scss">
 .app-admin-edit-product-card {
-  border: 1px solid rgb(var(--vs-primary));
   border-radius: 0.375rem;
-
-  .product-card__image,
-  .product-card__content {
-    padding: 0.5rem;
-  }
-
-  .product-card__image {
-    border-radius: 0.375rem;
-  }
-
-  .product-card__content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.5rem;
-  }
-
-  .card-content__field {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .vs-button {
-      font-size: 0.9rem;
-
-      .vs-button__content {
-        padding: 0.4rem;
-      }
-    }
-  }
-
-  .card-content__dates {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
 }
 </style>

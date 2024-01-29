@@ -10,7 +10,7 @@
         :key="optionItem.optionId"
         :option-label="optionGroup.optionLabel"
         :option-data="optionItem"
-        :is-active-item="isActiveOption(optionItem.optionId)"
+        :is-active="isActiveOption(optionItem.optionId)"
         :is-disabled="isDisabledOption(optionItem.optionId)"
         class="group-list__item"
         @option-selected="selectOption"
@@ -31,7 +31,7 @@ import { arrayContains } from '~/utils/arrayContains.util'
 import type {
   TConfigurableProductOptions,
   TConfigurableProductVariants,
-} from '~/types/api'
+} from '~/api/product/configurable/shred.types'
 
 interface Props {
   productOptions: TConfigurableProductOptions[],
@@ -152,6 +152,7 @@ const selectOption = (optionData: TConfigurableProductOptions['values'][0]) => {
   .product-switch-list__group {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 0.25rem;
   }

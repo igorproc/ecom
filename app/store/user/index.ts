@@ -1,4 +1,4 @@
-import type { TUserData } from '~/types/api'
+import type { TUserData } from '~/api/user/shared.types'
 
 interface IUserStoreState {
   isGuest: boolean,

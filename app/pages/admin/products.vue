@@ -12,19 +12,19 @@ import { useProductStore } from '~/store/product'
 import AppAdminProductList from '~/components/admin/products/product-list/AppAdminProductList.vue'
 import AppAdminProductListHeader from '~/components/admin/products/AppAdminProductListHeader.vue'
 // Api Methods
-import { productApi } from '~/api/product'
-// Types & Interfaces
-import type { TProduct } from '~/types/api'
+import { getAllProducts } from '~/api/product/getAllProducts'
 
 definePageMeta({
   middleware: ['auth'],
   isAdminPage: true,
 })
-const productStore = useProductStore()
-const { data } = await useAsyncData<TProduct[] | null>(
+const { data } = await useAsyncData(
   'product-list-admin',
-  async () => await productApi.getProductList(),
+  async () => await getAllProducts(),
 )
+
+const productStore = useProductStore()
+
 if (data) {
   productStore.setProductList(data.value || [])
 }

@@ -4,7 +4,7 @@
       <a-col
         :xs="10"
         :md="5"
-        class="vs-col-8 container__logo"
+        class="container__logo"
       >
         <AppLogo />
       </a-col>

@@ -1,53 +1,59 @@
 <template>
   <div class="app-admin-edit-product-option-item product-option-item">
-    <vs-table>
-      <template #header>
-        <vs-button @click="emits('addOptionItem', groupValues.optionId)">
-          Add new item
-        </vs-button>
+    <a-table
+      :columns="attributesList"
+      :data-source="groupValues.values"
+    >
+      <template #summary>
+        <a-table-summary fixed="bottom">
+          <a-table-summary-row>
+            <a-table-summary-cell>
+              <a-button @click="addNewOption">
+                Add New option
+              </a-button>
+            </a-table-summary-cell>
+          </a-table-summary-row>
+        </a-table-summary>
       </template>
-      <template #thead>
-        <vs-tr>
-          <vs-th v-for="item in attributesList" :key="item">
-            {{ item }}
-          </vs-th>
-        </vs-tr>
-      </template>
-      <template #tbody>
-        <vs-tr
-          v-for="attribute in groupValues.values"
-          :key="attribute.optionId"
-          :data="attribute"
-        >
-          <vs-td>
-            {{ attribute.optionId }}
-          </vs-td>
-          <vs-td edit>
-            {{ attribute.label }}
-          </vs-td>
-          <vs-td edit>
-            {{ attribute.value }}
-          </vs-td>
-        </vs-tr>
-      </template>
-    </vs-table>
+    </a-table>
   </div>
 </template>
 
 <script setup lang="ts">
 // Types & Interfaces
-import type { TConfigurableProductOptions } from '~/types/api'
+import type { TConfigurableProductOptions } from '~/api/product/configurable/shred.types'
 
 interface Emits {
   (name: 'addOptionItem', optionGroupId: number): () => void
 }
+
 interface Props {
   groupValues: TConfigurableProductOptions
 }
 
-const attributesList = ['ID', 'Label', 'Value'] as const satisfies readonly string[]
+const attributesList = [
+  {
+    title: 'id',
+    dataIndex: 'optionId',
+    key: 'option-group-ID',
+  },
+  {
+    title: 'Label',
+    dataIndex: 'label',
+    key: 'option-group-label',
+  },
+  {
+    title: 'Value',
+    dataIndex: 'value',
+    key: 'dataIndex',
+  },
+]
 
 const emits = defineEmits<Emits>()
 const props = defineProps<Props>()
 const { groupValues } = toRefs(props)
+
+const addNewOption = () => {
+  emits('addOptionItem', groupValues.value.optionId)
+}
 </script>

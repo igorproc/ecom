@@ -1,9 +1,13 @@
 // Pinia Stores & Methods with store
 import { useUserStore } from '~/store/user/index'
 // Api Methods
-import { userApi } from '~/api/user'
+import { getUserData } from '~/api/user/userData'
+import { loginUser as apiLoginUser } from '~/api/user/login'
+import { createUser as apiCreateUser } from '~/api/user/create'
 // Types & Interfaces
-import type { TUserLoginInput, TUserRegisterInput } from '~/types/api'
+import type { TUserLoginInput } from '~/api/user/login'
+import type { TUserRegisterInput } from '~/api/user/create'
+import { wishlistOnLoginUser } from '~/store/wishlist/auth'
 
 export const loginUser = async (loginData: TUserLoginInput) => {
   try {
@@ -16,17 +20,17 @@ export const loginUser = async (loginData: TUserLoginInput) => {
     if (cookieTokenValue.value) {
       userStore.isGuest = true
       if (!userStore.userData) {
-        const userData = await userApi.getUserData(cookieTokenValue.value as string)
+        const userData = await getUserData(cookieTokenValue.value as string)
         if (!userData) {
           return
         }
 
         userStore.userData = userData
       }
-      return
+      return true
     }
 
-    const userIsLogin = await userApi.loginUser(loginData)
+    const userIsLogin = await apiLoginUser(loginData)
     if (!userIsLogin) {
       return
     }
@@ -35,6 +39,7 @@ export const loginUser = async (loginData: TUserLoginInput) => {
     userStore.isGuest = false
     userStore.userData = userIsLogin.userData
 
+    await wishlistOnLoginUser(userIsLogin.token)
     return true
   } catch (error) {
     throw error
@@ -51,11 +56,11 @@ export const createUser = async (registerData: TUserRegisterInput) => {
 
     if (cookieTokenValue.value && !userStore.userData) {
       userStore.isGuest = false
-      userStore.userData = await userApi.getUserData(cookieTokenValue.value as string)
+      userStore.userData = await getUserData(cookieTokenValue.value as string)
       return
     }
 
-    const userIsLogin = await userApi.createUser(registerData)
+    const userIsLogin = await apiCreateUser(registerData)
     if (!userIsLogin) {
       return
     }
@@ -63,8 +68,6 @@ export const createUser = async (registerData: TUserRegisterInput) => {
     cookieTokenValue.value = userIsLogin.token
     userStore.isGuest = false
     userStore.userData = userIsLogin.userData
-
-    return true
   } catch (error) {
     throw error
   }
@@ -78,8 +81,6 @@ export const logoutUser = async () => {
     userStore.isGuest = true
     userStore.userData = null
     cookieTokenValue.value = ''
-
-    return true
   } catch (error) {
     throw error
   }

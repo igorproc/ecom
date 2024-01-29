@@ -1,37 +1,34 @@
 interface IConditionStoreState {
-  authorizeModalIsOpen: boolean,
+  authModalIsOpen: boolean,
   navigationDrawerIsOpen: boolean,
-  adminAddProductModalIsOpen: boolean
+  adminAddProductModalIsOpen: boolean,
 }
 
 export const useConditionStore = defineStore('condition-store', {
   state: (): IConditionStoreState => {
     return {
-      authorizeModalIsOpen: false,
+      authModalIsOpen: false,
       navigationDrawerIsOpen: false,
       adminAddProductModalIsOpen: false,
     }
   },
   actions: {
-    toggleNavigationDrawer() {
-      this.navigationDrawerIsOpen = !this.navigationDrawerIsOpen
+    openNavigationDrawer() {
+      this.navigationDrawerIsOpen = true
     },
     closeNavigationDrawer() {
       this.navigationDrawerIsOpen = false
     },
-    openNavigationDrawer() {
-      this.navigationDrawerIsOpen = true
+    openAuthModal() {
+      this.authModalIsOpen = true
+    },
+    closeAuthModal() {
+      this.authModalIsOpen = false
     },
     openAdminAddProductModal() {
       this.adminAddProductModalIsOpen = true
     },
     closeAdminAddProductModal() {
-      this.adminAddProductModalIsOpen = false
-    },
-    openAuthorizeModal() {
-      this.adminAddProductModalIsOpen = true
-    },
-    closeAuthorizeModal() {
       this.adminAddProductModalIsOpen = false
     },
   },

@@ -1,64 +1,48 @@
 <template>
-  <div class="app-admin-add-product-form">
-    <vs-row>
-      <vs-col :sm="12" :md="6" :lg="4">
-        <vs-input
-          v-model="addProductValues.name.value"
-          label="Название"
-          type="input"
-          placeholder="e.g Kit Cat"
-          class="app-admin-add-product-form__input"
-          @change="filedInput"
-        >
-          <template v-if="addProductValues.name.errors.length" #message-danger>
-            {{ addProductValues.name.errors.join(', ') }}
-          </template>
-        </vs-input>
-      </vs-col>
-      <vs-col :sm="12" :md="6" :lg="4">
-        <vs-input
-          v-model="addProductValues.price.value"
-          label="Цена (в USD)"
-          type="number"
-          placeholder="e.g 14"
-          class="app-admin-add-product-form__input"
-          @change="filedInput"
-        >
-          <template v-if="addProductValues.price.errors.length" #message-danger>
-            {{ addProductValues.price.errors.join(', ') }}
-          </template>
-        </vs-input>
-      </vs-col>
-      <vs-col :sm="12" :md="6" :lg="4">
-        <vs-select
-          v-model="addProductValues.type.value"
-          label="Тип товара"
-          class="app-admin-add-product-form__input"
-          @update:model-value="filedInput"
-        >
-          <template v-if="addProductValues.type.errors.length" #message-danger>
-            {{ addProductValues.type.errors.join(', ') }}
-          </template>
-          <vs-option
-            v-for="item in productTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </vs-select>
-      </vs-col>
-      <vs-col :sm="12" :md="6" :lg="4">
-        <ClientOnly>
-          <AppDropzone @upload-file="addProductImage" />
-        </ClientOnly>
-      </vs-col>
-    </vs-row>
-    <div class="app-admin-add-product-form__actions">
-      <vs-button :disabled="isDisabled" @click.stop="submit">
-        Добавить Продукт
-      </vs-button>
-    </div>
-  </div>
+  <a-form
+    layout="inline"
+    name="admin-add-product"
+    class="app-admin-add-product-form"
+  >
+    <a-form-item>
+      <a-input
+        v-model:value="addProductValues.name.value"
+        type="input"
+        label="Название"
+        placeholder="e.g Kit Cat"
+        class="app-admin-add-product-form__input"
+        @change="filedInput"
+      />
+    </a-form-item>
+    <a-form-item>
+      <a-input
+        v-model:value="addProductValues.price.value"
+        label="Цена (в USD)"
+        type="number"
+        placeholder="e.g 14"
+        class="app-admin-add-product-form__input"
+        @change="filedInput"
+      />
+    </a-form-item>
+    <a-form-item>
+      <a-select
+        v-model:value="addProductValues.type.value"
+        label="Тип товара"
+        class="app-admin-add-product-form__input"
+        @update:model-value="filedInput"
+      >
+        <a-select-option
+          v-for="item in productTypes"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </a-select>
+    </a-form-item>
+    <a-form-item>
+      <a-upload />
+    </a-form-item>
+  </a-form>
 </template>
 
 <script setup lang="ts">
@@ -70,11 +54,9 @@ import { object, string, number } from 'yup'
 import { useProductStore } from '~/store/product'
 import { useConditionStore } from '~/store/condition'
 // Api Methods
-import { productApi } from '~/api/product'
+import { addProduct } from '~/api/product/addProduct'
 // Types & Interfaces
-import { EAddProductTypes } from '~/types/api'
-// Components
-import AppDropzone from '~/components/common/input/AppDropzone.vue'
+import { EAddProductTypes } from '~/api/product/shared.types'
 
 const productTypes: { label: string, value: string }[] = [
   {
@@ -125,7 +107,7 @@ const submit = async () => {
     }
     isDisabled.value = true
 
-    const productIsCreated = await productApi.addProduct({
+    const productIsCreated = await addProduct({
       name: addProductValues.name.value as string,
       price: addProductValues.price.value as number,
       type: addProductValues.type.value as keyof typeof EAddProductTypes,
@@ -134,6 +116,7 @@ const submit = async () => {
     if (!productIsCreated) {
       return
     }
+
     validationForm.resetForm()
     productStore.addToProductList(productIsCreated)
     conditionStore.closeAdminAddProductModal()
@@ -146,20 +129,6 @@ const submit = async () => {
 
 <style lang="scss">
 .app-admin-add-product-form {
-  & &__input,
-  .vs-select {
-    min-width: calc(100% - 0.25rem);
-  }
-
-  .app-dropzone-input {
-    min-width: calc(100% - 0.25rem);
-    margin-top: 1.25rem;
-  }
-
-  & &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
+  padding: 0.75rem;
 }
 </style>

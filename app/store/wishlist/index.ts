@@ -1,5 +1,5 @@
 // Types & Interfaces
-import type { TWishlistProduct } from '~/types/api'
+import type { TWishlistProduct } from '~/api/user/wishlist/wishlistProducts'
 
 interface IWishlistStoreState {
   wishlistId: string,

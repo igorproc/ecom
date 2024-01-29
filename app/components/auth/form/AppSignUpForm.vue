@@ -1,39 +1,55 @@
 <template>
   <a-form
+    key="user-register-form"
     :model="registerData"
     autocomplete
     class="app-sign-up-form"
     @finish="submit"
   >
-    <a-form-item class="app-sign-up-form__field">
+    <a-form-item
+      name="register-email"
+      class="app-sign-up-form__field"
+    >
       <a-input
         v-model:value="registerData.email.value"
-        :label="registerData.email.errors.join()"
-        label="email"
+        :status="registerData.email.errors.length ? 'error' : ''"
+        :placeholder="registerData.email.errors.join() || ''"
         @change="inputField"
       />
     </a-form-item>
-    <a-form-item class="app-sign-up-form__field">
+    <a-form-item
+      name="register-password"
+      class="app-sign-up-form__field"
+    >
       <a-input
         v-model:value="registerData.password.value"
-        :label="registerData.password.errors.join()"
+        :status="registerData.password.errors.length ? 'error' : ''"
+        :placeholder="registerData.password.errors.join() || 'password'"
         type="password"
         @change="inputField"
       />
     </a-form-item>
-    <a-form-item class="app-sign-up-form__field">
+    <a-form-item
+      name="register-birthday"
+      class="app-sign-up-form__field"
+    >
       <a-input
-        v-model="registerData.birthday.value"
-        :label="registerData.birthday.errors.join()"
+        v-model:value="registerData.birthday.value"
+        :status="registerData.birthday.errors.length ? 'error' : ''"
+        :placeholder="registerData.birthday.errors.join() || 'Birthday'"
         type="date"
         class="app-sign-up-form__field"
-        @change="inputField"
+        @change="birthdayInput"
       />
     </a-form-item>
-    <a-form-item>
+    <a-form-item
+      name="register-role"
+      class="app-sign-up-form__field"
+    >
       <a-select
         v-model:value="registerData.role.value"
-        :label="registerData.role.errors.join()"
+        :status="registerData.role.errors.length ? 'error' : ''"
+        :placeholder="registerData.role.errors.join() || 'Role'"
         :items="availableRoles"
       >
         <a-select-option
@@ -45,6 +61,15 @@
       </a-select>
     </a-form-item>
     <a-form-item class="app-sign-up-form__actions actions">
+      <a-button
+        type="link"
+        :disabled="isLoading"
+        class="actions__change-form"
+        @click="emit('changeForm')"
+      >
+        Есть аккаунт?
+      </a-button>
+
       <a-button
         type="primary"
         html-type="submit"
@@ -63,21 +88,27 @@
 // Node Deps
 import { useForm, useField } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
-import { object, string, date } from 'yup'
+import { object, string, date, number } from 'yup'
 // Pinia Methods
 import { createUser } from '~/store/user/auth'
+
+interface Emits {
+  (name: 'changeForm'): void,
+  (name: 'formCompete'): void,
+}
 
 const availableRoles = [
   { label: 'admin', value: 'admin' },
   { label: 'user', value: 'user' },
 ]
 
-useForm({
+const emit = defineEmits<Emits>()
+const validationSchema = useForm({
   validationSchema: toTypedSchema(
     object({
       email: string().email().required(),
       password: string().required(),
-      birthday: date().required(),
+      birthday: string().required(),
       role: string(),
     }),
   ),
@@ -85,6 +116,7 @@ useForm({
 
 const isDisabled = ref(true)
 const isLoading = ref(false)
+const registerBirthday = ref(0)
 const registerData = reactive({
   email: useField('email'),
   password: useField('password'),
@@ -92,37 +124,34 @@ const registerData = reactive({
   role: useField('role'),
 })
 
+const resetForm = () => {
+  validationSchema.resetForm()
+  isDisabled.value = true
+  isLoading.value = false
+}
 const inputField = () => {
-  if (
-    registerData.email.errors.length ||
-    registerData.password.errors.length ||
-    registerData.birthday.errors.length
-  ) {
-    isDisabled.value = true
-    return
-  }
-  isDisabled.value = false
+  isDisabled.value = !!Object.values(validationSchema.errors.value).length
+}
+const birthdayInput = () => {
+  inputField()
+  registerBirthday.value = new Date(registerData.birthday.value as string).getTime() / 1000
 }
 const submit = async () => {
   try {
     if (isDisabled.value) {
       return
     }
-
     isLoading.value = true
 
-    const userIsCreated = await createUser({
+    await createUser({
       email: registerData.email.value as string,
       password: registerData.password.value as string,
-      birthday: registerData.birthday.value as string,
+      birthday: registerBirthday.value,
       role: registerData.role.value as string,
     })
 
-    if (!userIsCreated) {
-      isLoading.value = false
-      return
-    }
-    isLoading.value = false
+    resetForm()
+    emit('formCompete')
   } catch (error) {
     throw error
   }
@@ -131,20 +160,17 @@ const submit = async () => {
 
 <style lang="scss">
 .app-sign-up-form {
-  padding: 0.5rem 1rem;
-  & .vs-input {
-    .app-sign-up-form__field {
+  padding: 0.75rem 1rem;
+
+  .app-sign-up-form__actions {
+
+    .ant-row {
       width: 100%;
-    }
-  }
-  & &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    .actions__submit-action {
-      &.--disabled {
-        cursor: unset;
-        opacity: 0.6;
+
+      .ant-form-item-control-input-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
     }
   }

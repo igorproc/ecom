@@ -1,5 +1,7 @@
 <template>
-  <div class="app-notification" />
+  <div class="app-notification">
+    <ContextHolder />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -9,7 +11,7 @@ import { notification } from 'ant-design-vue'
 import { useNotificationStore } from '~/store/notification'
 
 const { $listen } = useNuxtApp()
-const [api] = notification.useNotification()
+const [api, ContextHolder] = notification.useNotification()
 const notificationStore = useNotificationStore()
 
 $listen('notification:open', () => openNotification())
@@ -24,10 +26,12 @@ const openNotification = () => {
   }
 
   api.open({
+    key: 'app-global-notification',
     type: notificationStore.notificationStatus,
     placement: notificationStore.notificationPosition,
     message: notificationStore.notificationMessage,
-    onClose: () => notificationStore.closeErrorNotification() as void,
+    duration: 1.5,
+    onClose: () => notificationStore.closeErrorNotification(),
   })
 }
 </script>

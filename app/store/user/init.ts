@@ -1,7 +1,8 @@
 // Pinia stores
 import { useUserStore } from '~/store/user/index'
 // Api Methods
-import { userApi } from '~/api/user'
+import { checkTokenHealth } from '~/api/user/checkTokenHealth'
+import { getUserData } from '~/api/user/userData'
 
 export const initializeUser = async () => {
   const userStore = useUserStore()
@@ -11,12 +12,12 @@ export const initializeUser = async () => {
     return
   }
 
-  const tokenIsValid = await userApi.checkTokenOnValid(cookieTokenValue.value)
+  const tokenIsValid = await checkTokenHealth(cookieTokenValue.value)
   if (!tokenIsValid) {
     return
   }
 
-  const userData = await userApi.getUserData(cookieTokenValue.value)
+  const userData = await getUserData(cookieTokenValue.value)
   if (!userData) {
     return
   }

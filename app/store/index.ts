@@ -10,12 +10,12 @@ export const useIndexStore = defineStore('index-store', {
     async init() {
       setTimeout(() => {
         consola.info('App init')
-      }, 1000)
+      })
     },
     async clientInit() {
       setTimeout(() => {
-        consola.info('server init')
-      }, 1000)
+        consola.info('client init')
+      })
     },
     async serverInit() {
       await Promise.all([

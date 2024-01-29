@@ -1,23 +1,24 @@
 <template>
-  <vs-button
-    size="small"
-    :color="buttonColor"
-    :active="isActiveItem"
+  <a-button
+    :disabled="isDisabled"
+    :style="{ '--select-color': buttonColor }"
+    :class="{ '--is-active': isActive }"
     class="app-configurable-product-default-switch app-default-switch"
-    :class="{ '--disabled': isDisabled }"
     @click="selectOption"
   >
-    {{ optionData.label }}
-  </vs-button>
+    <span class="app-default-switch__label">
+      {{ optionData.label }}
+    </span>
+  </a-button>
 </template>
 
 <script setup lang="ts">
 // Types & Interfaces
-import type { TConfigurableProductOptions } from '~/types/api'
+import type { TConfigurableProductOptions } from '~/api/product/configurable/shred.types'
 interface Props {
   optionLabel: TConfigurableProductOptions['optionLabel'],
   optionData: TConfigurableProductOptions['values'][0],
-  isActiveItem: boolean,
+  isActive: boolean,
   isDisabled?: boolean,
 }
 
@@ -31,9 +32,9 @@ const { isDisabled, optionLabel, optionData } = toRefs(props)
 
 const buttonColor = computed(() => {
   if (optionLabel.value.toLowerCase() === 'color') {
-    return optionData.value.value as Color
+    return optionData.value.value
   }
-  return 'primary'
+  return '#000'
 })
 
 const selectOption = () => {
@@ -47,11 +48,18 @@ const selectOption = () => {
 
 <style lang="scss">
 .app-configurable-product-default-switch {
-  color: #000;
+  transition: background-color 0.3s ease 0s, color 0.3s ease 0s;
 
-  &.--disabled {
-    cursor: auto;
-    opacity: 0.6;
+  .app-default-switch__label {
+    color: var(--select-color);
+  }
+
+  &.--is-active {
+    background-color: var(--select-color);
+
+    .app-default-switch__label {
+      color: #fff;
+    }
   }
 }
 </style>

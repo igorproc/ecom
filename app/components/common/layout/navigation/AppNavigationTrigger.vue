@@ -1,11 +1,9 @@
 <template>
-  <div
-    class="app-navigation-drawer-trigger"
-  >
+  <div class="app-navigation-drawer-trigger">
     <a-button
       type="link"
       class="trigger__action"
-      @click="conditionStore.toggleNavigationDrawer"
+      @click="conditionStore.openNavigationDrawer"
     >
       <MenuOutlined class="action__icon" />
     </a-button>
@@ -21,6 +19,9 @@ const conditionStore = useConditionStore()
 
 <style lang="scss">
 .app-navigation-drawer-trigger {
+  display: flex;
+  align-items: center;
+
   .trigger__action {
     .action__icon {
       font-size: 24px;

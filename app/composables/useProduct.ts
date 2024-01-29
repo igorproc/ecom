@@ -3,9 +3,10 @@ import { useProductStore } from '~/store/product'
 import { useWishlistStore } from '~/store/wishlist'
 import { useCartStore } from '~/store/cart'
 // Api Methods
-import { userWishlistApi } from '~/api/user'
+import { addProductToWishlist } from '~/api/user/wishlist/addProductToWishlist'
+import { removeProductFromWishlist } from '~/api/user/wishlist/removeProductFromWishlist'
 // Types & Interfaces
-import type { TWishlistOperationWithProductInput } from '~/types/api'
+import type { TWishlistOperationWithProductInput } from '~/api/user/wishlist/shared.types'
 
 export const useProduct = (productId: number) => {
   const productStore = useProductStore()
@@ -54,13 +55,17 @@ export const useProduct = (productId: number) => {
     configurableProductVariant.value = variantId
   }
   const addToWishlist = async () => {
-    const payload: TWishlistOperationWithProductInput = { productId }
+    const payload: TWishlistOperationWithProductInput = {
+      wishlistToken: wishlistStore.wishlistId,
+      productId,
+    }
+
     if (configurableProductVariant.value) {
       payload.variantId = configurableProductVariant.value
     }
-
     operationWithWishlistIsProcessing.value = true
-    const isAddedToWishlist = await userWishlistApi.addProductToWishlist(payload)
+
+    const isAddedToWishlist = await addProductToWishlist(payload)
     if (!productData || !isAddedToWishlist) {
       operationWithWishlistIsProcessing.value = false
       return
@@ -72,13 +77,16 @@ export const useProduct = (productId: number) => {
     operationWithWishlistIsProcessing.value = false
   }
   const removeFromWishlist = async () => {
-    const payload: TWishlistOperationWithProductInput = { productId }
+    const payload: TWishlistOperationWithProductInput = {
+      wishlistToken: wishlistStore.wishlistId,
+      productId,
+    }
     if (configurableProductVariant.value) {
       payload.variantId = configurableProductVariant.value
     }
 
     operationWithWishlistIsProcessing.value = true
-    const isRemovedFromWishlist = await userWishlistApi.removeProductToWishlist(payload)
+    const isRemovedFromWishlist = await removeProductFromWishlist(payload)
     if (!isRemovedFromWishlist) {
       operationWithWishlistIsProcessing.value = false
       return

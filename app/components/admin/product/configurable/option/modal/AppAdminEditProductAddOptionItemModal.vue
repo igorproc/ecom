@@ -1,41 +1,42 @@
 <template>
-  <vs-dialog
-    v-model="modalIsOpen"
-    @close="emits('modalIsClose')"
+  <a-modal
+    open
+    :footer="null"
+    @close="emit('modalIsClose')"
   >
     <div class="app-admin-edit-product-add-option-item-modal add-option-item-modal">
-      <div class="add-option-item-modal__fields">
-        <vs-input
-          v-model="addNewItemData.label.value"
-          label="label"
-          placeholder="e.g Yellow"
-          @change="filedInput"
-        >
-          <template v-if="addNewItemData.label.errors.length" #message-danger>
-            {{ addNewItemData.label.errors.join(', ') }}
-          </template>
-        </vs-input>
-        <vs-input
-          v-model="addNewItemData.value.value"
-          label="value"
-          placeholder="e.g #fff | 102"
-          @change="filedInput"
-        >
-          <template v-if="addNewItemData.value.errors.length" #message-danger>
-            {{ addNewItemData.value.errors.join(', ') }}
-          </template>
-        </vs-input>
-      </div>
+      <a-input-group size="large" class="add-option-item-modal__fields">
+        <a-row :gutter="8">
+          <a-col :sm="24" :md="12">
+            <a-input
+              v-model:value="addNewItemData.label.value"
+              :status="addNewItemData.label.errors.length ? 'error' : ''"
+              :placeholder="addNewItemData.label.errors[0] || 'label'"
+              @change="filedInput"
+            />
+          </a-col>
+
+          <a-col :sm="24" :md="12">
+            <a-input
+              v-model:value="addNewItemData.value.value"
+              :status="addNewItemData.value.errors.length ? 'error' : ''"
+              :placeholder="addNewItemData.value.errors[0] || 'value'"
+              @change="filedInput"
+            />
+          </a-col>
+        </a-row>
+      </a-input-group>
+
       <div class="add-option-item-modal__actions">
-        <vs-button
-          :loading="addNewItemSubmitIsDisabled"
+        <a-button
+          :disabled="addNewItemSubmitIsDisabled"
           @click="submitAddNewOptionToGroup"
         >
           Submit
-        </vs-button>
+        </a-button>
       </div>
     </div>
-  </vs-dialog>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -44,7 +45,7 @@ import { object, string } from 'yup'
 // Pinia Stores
 import { useAdminStore } from '~/store/user/admin'
 // Api Methods
-import { productApi } from '~/api/product'
+import { addItemToOptionGroup } from '~/api/product/configurable/addItemToOptionGroup'
 
 interface Props {
   addedItemGroupId: number
@@ -52,15 +53,15 @@ interface Props {
 
 interface Emits {
   (name: 'modalIsClose'): () => void,
-
   (name: 'formIsSubmit'): () => void,
 }
 
-const emits = defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 const props = defineProps<Props>()
 const { addedItemGroupId } = toRefs(props)
 const adminStore = useAdminStore()
-const addItemValidationForm = useForm({
+
+const validationSchema = useForm({
   validationSchema: toTypedSchema(
     object({
       label: string().required(),
@@ -69,14 +70,13 @@ const addItemValidationForm = useForm({
   ),
 })
 
-const modalIsOpen = ref(true)
 const addNewItemSubmitIsDisabled = ref(true)
 const addNewItemData = reactive({
   label: useField('label'),
   value: useField('value'),
 })
 const filedInput = () => {
-  if (Object.values(addItemValidationForm.errorBag.value).length) {
+  if (Object.values(validationSchema.errorBag.value).length) {
     addNewItemSubmitIsDisabled.value = true
     return
   }
@@ -87,23 +87,22 @@ const submitAddNewOptionToGroup = async () => {
     if (addNewItemSubmitIsDisabled.value || !addedItemGroupId.value) {
       return
     }
-
     addNewItemSubmitIsDisabled.value = true
-    const optionItemData = await productApi.addToConfigurableProductOptionItem(
+
+    const optionItemData = await addItemToOptionGroup(
       addedItemGroupId.value,
       {
         label: addNewItemData.label.value as string,
         value: addNewItemData.value.value as string,
       },
     )
-
     if (!optionItemData) {
       return
     }
 
     adminStore.addOptionToGroupByGroupId(optionItemData)
-    addItemValidationForm.resetForm()
-    emits('formIsSubmit')
+    validationSchema.resetForm()
+    emit('formIsSubmit')
   } catch (error) {
     throw error
   }
@@ -112,16 +111,14 @@ const submitAddNewOptionToGroup = async () => {
 
 <style lang="scss">
 .app-admin-edit-product-add-option-item-modal {
-  .add-option-item-modal__fields {
-    display: flex;
-    align-items: center;
+  padding: 1.5rem 0;
 
-    .vs-input:last-child {
-      margin-left: 0.5rem;
-    }
+  .ant-row {
+    width: 100%;
   }
 
   .add-option-item-modal__actions {
+    padding: 0 0.5rem;
     margin-top: 0.5rem;
     display: flex;
     align-items: center;

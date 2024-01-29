@@ -1,13 +1,13 @@
 <template>
   <div class="app-admin-product-list-header">
-    <span>{{ totalProductCountText }}</span>
+    <a-alert type="info" :message="totalProductCountText" />
 
-    <vs-button
-      type="gradient"
+    <a-button
+      type="primary"
       @click="conditionStore.openAdminAddProductModal"
     >
       Добавить продукт
-    </vs-button>
+    </a-button>
   </div>
 </template>
 

@@ -1,10 +1,10 @@
 <template>
-  <vs-dialog
+  <a-modal
     v-if="modalIsVisible"
-    v-model="conditionStore.adminAddProductModalIsOpen"
+    v-model:open="conditionStore.adminAddProductModalIsOpen"
   >
     <AppAdminAddProductForm />
-  </vs-dialog>
+  </a-modal>
 </template>
 
 <script setup lang="ts">

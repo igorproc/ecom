@@ -1,8 +1,18 @@
 <template>
-  <div class="app-navigation-drawer-container drawer-container">
+  <a-drawer
+    :open="conditionStore.navigationDrawerIsOpen"
+    title="Navigation"
+    root-class-name="app-navigation-drawer-container drawer-container"
+    @close="conditionStore.closeNavigationDrawer"
+  >
+    <div class="drawer-container__user-actions">
+      <AppUserBadge v-if="userStore.userData && !userStore.isGuest" />
+      <AppAuthModalTrigger v-else />
+    </div>
+
     <a-menu
-      v-model:selectedKeys="activeTab"
-      theme="dark"
+      id="app-navigation-drawer"
+      v-model:selectedKeys="selectedKeys"
       mode="inline"
       class="drawer-container__menu drawer-menu"
     >
@@ -11,36 +21,22 @@
         :key="menuItem.key"
         :disabled="menuItem.disabled"
         class="drawer-menu__link-item"
+        @click="selectTab(menuItem)"
       >
         <component :is="menuItem.icon" />
         <span>
           {{ menuItem.label }}
         </span>
       </a-menu-item>
-
-      <div class="drawer-menu__auth-actions">
-        <a-sub-menu v-if="userStore.isGuest" key="guest-register">
-          <template #title>
-            <user-outlined />
-            <span>Зарегестрироваться</span>
-          </template>
-          <AppSignUp />
-        </a-sub-menu>
-        <a-sub-menu v-if="userStore.isGuest" key="guest-auth">
-          <template #title>
-            <user-outlined />
-            <span>Войти</span>
-          </template>
-          <AppSignIn />
-        </a-sub-menu>
-      </div>
     </a-menu>
 
-    <AppLogout
-      v-if="userStore.userData && !userStore.isGuest"
-      class="drawer__container-logout-action"
-    />
-  </div>
+    <div class="drawer-container__logout-action">
+      <AppLogout
+        v-if="userStore.userData && !userStore.isGuest"
+        class=""
+      />
+    </div>
+  </a-drawer>
 </template>
 
 <script setup lang="ts">
@@ -48,23 +44,26 @@
 import {
   ShoppingCartOutlined,
   HeartOutlined,
-  HomeOutlined,
   UnorderedListOutlined,
   TableOutlined,
+  LoginOutlined,
 } from '@ant-design/icons-vue'
 // Components
-import AppSignUp from '~/components/auth/AppSignUp.vue'
-import AppSignIn from '~/components/auth/AppSignIn.vue'
 import AppLogout from '~/components/auth/AppLogout.vue'
+import AppUserBadge from '~/components/user/AppUserBadge.vue'
 // Pinia Stores
 import { useUserStore } from '~/store/user'
+import { useConditionStore } from '~/store/condition'
 // Types & Interfaces
 import type { TNavigationDrawerLinkListItem } from '~/types/global'
+import AppNavigationTrigger from '~/components/common/layout/navigation/AppNavigationTrigger.vue'
+import AppAuthModalTrigger from '~/components/auth/modal/AppAuthModalTrigger.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+const conditionStore = useConditionStore()
 
-const activeTab = ref<(string | number)[]>([])
+const selectedKeys = ref<string[]>([])
 const itemsIsDisabled = ref(false)
 
 type TSelectTab = {
@@ -72,65 +71,44 @@ type TSelectTab = {
   cb: () => Promise<unknown> | unknown
 }
 const selectTab = async (itemInstance: TSelectTab) => {
-  activeTab.value[0] = itemInstance.key
+  itemsIsDisabled.value = true
   await itemInstance.cb()
+  itemsIsDisabled.value = false
 }
 
 const defaultLinkList: TNavigationDrawerLinkListItem[] = [
   {
     key: 'all-cart',
     label: 'Корзина',
-    icon: () => h(ShoppingCartOutlined),
+    icon: ShoppingCartOutlined,
     disabled: itemsIsDisabled.value,
-    onClick: () => selectTab({
-      key: 'all-cart',
-      cb: async () => await router.push('user/cart'),
-    }),
+    cb: async () => await router.push('user/cart'),
   },
   {
     key: 'all-wishlist',
     label: 'Избранные товары',
-    icon: () => h(HeartOutlined),
+    icon: HeartOutlined,
     disabled: itemsIsDisabled.value,
-    onClick: () => selectTab({
-      key: 'all-wishlist',
-      cb: async () => await router.push('user/wishlist'),
-    }),
+    cb: async () => await router.push('user/wishlist'),
   },
 ]
 const authorizeLinkList: TNavigationDrawerLinkListItem[] = [
   ...defaultLinkList,
   {
-    key: 'user-profile',
-    label: 'Профиль',
-    icon: () => h(HomeOutlined),
-    disabled: itemsIsDisabled.value,
-    onClick: () => selectTab({
-      key: 'user-profile',
-      cb: async () => await router.push('user/profile'),
-    }),
-  },
-  {
     key: 'user-orders',
     label: 'Заказы',
-    icon: () => h(UnorderedListOutlined),
+    icon: UnorderedListOutlined,
     disabled: itemsIsDisabled.value,
-    onClick: () => selectTab({
-      key: 'user-orders',
-      cb: async () => await router.push('user/orders'),
-    }),
+    cb: async () => await router.push('user/orders'),
   },
 ]
 const adminLinkList: TNavigationDrawerLinkListItem[] = [
   {
     key: 'admin-product-add',
     label: 'Добавление товаров',
-    icon: () => h(TableOutlined),
+    icon: TableOutlined,
     disabled: itemsIsDisabled.value,
-    onClick: () => selectTab({
-      key: 'admin-product-add',
-      cb: async () => await router.push('admin/products'),
-    }),
+    cb: async () => await router.push('admin/products'),
   },
 ]
 
@@ -156,10 +134,24 @@ const drawerLinksList = computed(() => {
   align-items: flex-start;
   justify-content: space-between;
 
+  .drawer-container__user-actions {
+    padding: 0.5rem;
+  }
+
   .drawer-container__menu {
-    .ant-menu-item, .ant-menu-submenu-title {
-      padding-left: 0.75rem !important;
+    height: 90%;
+    border: none !important;
+
+    .drawer-menu__user-actions,
+    .drawer-menu__link-item {
+      padding: 0.5rem !important;
     }
+  }
+
+  .drawer-container__logout-action {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 }
 </style>

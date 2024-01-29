@@ -1,15 +1,18 @@
 <template>
-  <div
+  <NuxtLink
     v-if="userStore.userData && !userStore.isGuest"
+    :to="{ name: 'user-profile' }"
     class="app-user-badge"
   >
-    <vs-avatar badge badge-color="success" class="badge__avatar">
-      <img alt="User Avatar" src="https://randomuser.me/api/portraits/men/78.jpg">
-    </vs-avatar>
+    <a-avatar
+      src="https://randomuser.me/api/portraits/men/78.jpg"
+      shape="square"
+      class="badge__avatar"
+    />
     <span v-if="userStore.userData.email" class="badge__email">
       {{ userStore.userData.email }}
     </span>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">

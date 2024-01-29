@@ -1,69 +1,60 @@
 <template>
-  <div class="app-product-tile --configurable configurable-product">
-    <a-card>
-      <template #cover>
-        <div class="configurable-product--image-container">
-          <img
-            v-if="productImage"
-            :src="productImage"
-            :alt="product.name"
-          >
-          <a-skeleton-image v-else />
-        </div>
-      </template>
+  <a-card hoverable class="app-product-tile --configurable configurable-product">
+    <template #cover>
+      <div class="configurable-product__image-container">
+        <img
+          v-if="product.productImage"
+          :src="product.productImage"
+          :alt="product.name"
+        >
+        <a-skeleton-image v-else />
+      </div>
+    </template>
 
-      <a-card-meta :title="product.name" />
+    <a-card-meta :title="product.name" class="configurable-product__title" />
 
-      <template #actions>
+    <a-card-grid class="configurable-product__interactions-container interactions-container">
+      <div class="interactions-container__base">
         <a-button
-          key="base-product-add-wishlist"
           type="link"
-          :danger="productIsAddedToWishlist"
-          :disabled="operationWithWishlistIsProcessing"
+          size="large"
+          :disabled="!configurableProductVariant || operationWithWishlistIsProcessing"
           @click="addProductToWishlist"
         >
-          <div>
-            <HeartFilled v-if="productIsAddedToWishlist" />
-            <HeartOutlined v-else />
-          </div>
+          <HeartTwoTone :two-tone-color="wishlistButtonColor" />
         </a-button>
         <a-button
-          key="base-product-add-cart"
           type="link"
-          :danger="productIsAddedToWishlist"
-          :disabled="operationWithCartIsProcessing"
+          size="large"
+          :disabled="!configurableProductVariant || operationWithCartIsProcessing"
           @click="addProductToCart"
         >
-          <div>
-            <ShoppingCartOutlined v-if="productIsAddedToWishlist" />
-            <ShoppingFilled v-else />
-          </div>
+          <ShoppingTwoTone :two-tone-color="cartButtonColor" />
         </a-button>
-      </template>
+      </div>
 
       <div
-        v-if="product.productOptions?.length && product.productVariants?.length"
-        class="configurable-product__switches"
+        v-if="product.productOptions && product.productVariants"
+        class="interactions-container__switches"
       >
         <AppConfigurableProductSwitchGroup
           :product-options="product.productOptions"
           :product-variants="product.productVariants"
           @product-variant-is-selected="selectVariant"
-          @product-variant-is-not-selected="unselectVariant"
+          @product-variant-is-not-selected="selectVariant(null)"
         />
       </div>
-    </a-card>
-  </div>
+    </a-card-grid>
+  </a-card>
 </template>
 
 <script setup lang="ts">
-// Components
-import AppConfigurableProductSwitchGroup
-  from '~/components/products/product-tile/swith/AppConfigurableProductSwitchGroup.vue'
 // Composables
 import { useProduct } from '~/composables/useProduct'
 // Types & Interfaces
-import type { TProduct } from '~/types/api'
+import type { TProduct } from '~/api/product/shared.types'
+import AppConfigurableProductSwitchGroup
+  from '~/components/products/product-tile/swith/AppConfigurableProductSwitchGroup.vue'
 
 interface Props {
   product: TProduct
@@ -71,54 +62,57 @@ interface Props {
 
 const props = defineProps<Props>()
 const { product } = toRefs(props)
+
 const {
-  configurableProductVariant,
-  operationWithCartIsProcessing,
-  operationWithWishlistIsProcessing,
-  productIsAddedToCart,
-  productIsAddedToWishlist,
   addProductVariant,
-  addToCart,
+  operationWithWishlistIsProcessing,
+  productIsAddedToWishlist,
   addToWishlist,
   removeFromWishlist,
+  operationWithCartIsProcessing,
+  productIsAddedToCart,
+  addToCart,
   removeFromCart,
+  configurableProductVariant,
 } = useProduct(product.value.pid)
 
-const productImage = computed(() => {
-  if (!configurableProductVariant.value || !product.value.productVariants) {
-    return product.value.productImage
-  }
+const selectVariant = (productVariant: number | null) => {
+  addProductVariant(productVariant)
+}
 
-  const variantCandidate = product.value.productVariants
-    .find(productVariant => productVariant.product.id === configurableProductVariant.value)
-  if (!variantCandidate || !variantCandidate.product.imageUrl) {
-    return product.value.productImage
+const wishlistButtonColor = computed(() => {
+  if (operationWithWishlistIsProcessing.value || !configurableProductVariant.value) {
+    return '#000'
   }
-  return variantCandidate.product.imageUrl
+  if (productIsAddedToWishlist.value) {
+    return '#eb2f96'
+  }
 })
 
-const unselectVariant = () => {
-  addProductVariant(null)
-}
-const selectVariant = (variantId: number) => {
-  addProductVariant(variantId)
-}
-const addProductToWishlist = () => {
-  if (!configurableProductVariant.value || operationWithWishlistIsProcessing.value) {
+const cartButtonColor = computed(() => {
+  if (operationWithCartIsProcessing.value || !configurableProductVariant.value) {
+    return '#000'
+  }
+  if (productIsAddedToCart.value) {
+    return '#eb2f96'
+  }
+})
+
+const addProductToWishlist = async () => {
+  if (operationWithWishlistIsProcessing.value) {
     return
   }
-
   if (productIsAddedToWishlist.value) {
-    removeFromWishlist()
+    await removeFromWishlist()
     return
   }
-  addToWishlist()
+  await addToWishlist()
 }
-const addProductToCart = () => {
-  if (!configurableProductVariant.value || operationWithCartIsProcessing) {
+
+const addProductToCart = async () => {
+  if (operationWithCartIsProcessing.value) {
     return
   }
-
   if (productIsAddedToCart.value) {
     removeFromCart()
     return
@@ -129,11 +123,14 @@ const addProductToCart = () => {
 
 <style lang="scss">
 .app-product-tile.--configurable {
-  .configurable-product--image-container {
+  cursor: unset !important;
+
+  .configurable-product__image-container {
     max-height: 300px;
 
     img {
       width: 100%;
+      height: 230px;
     }
 
     .ant-skeleton {
@@ -141,6 +138,30 @@ const addProductToCart = () => {
 
       .ant-skeleton-image {
         width: 100%;
+        height: 230px;
+        border-radius: 0;
+      }
+    }
+  }
+
+  .ant-card-body {
+    flex-direction: column;
+
+    .configurable-product__title {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .configurable-product__interactions-container {
+      width: 100%;
+      padding: 0.5rem 0;
+      box-shadow: none;
+
+      .interactions-container__base {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
     }
   }

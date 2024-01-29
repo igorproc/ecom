@@ -1,7 +1,7 @@
 // Node Deps
 import { defineStore } from 'pinia'
 // Types & Interfaces
-import type { TProduct } from '~/types/api'
+import type { TProduct } from '~/api/product/shared.types'
 
 interface IProductStoreState {
   productList: TProduct[]

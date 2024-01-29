@@ -64,7 +64,7 @@ import { useProduct } from '~/composables/useProduct'
 // Utils
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
-import type { TWishlistProduct } from '~/types/api'
+import type { TWishlistProduct } from '~/api/user/wishlist/wishlistProducts'
 
 interface Props {
   wishlistItem: TWishlistProduct

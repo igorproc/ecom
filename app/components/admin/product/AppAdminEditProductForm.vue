@@ -1,17 +1,22 @@
 <template>
-  <div class="app-admin-edit-product-form edit-product-form">
+  <a-card class="app-admin-edit-product-form edit-product-form">
     <AppAdminEditProductCard :product="configurableProduct" />
-    <div
-      v-if="configurableProduct.__typename === 'CONFIGURABLE'"
+    <a-collapse
+      v-if="configurableProduct.typename === 'CONFIGURABLE'"
       class="edit-product-form__configurable-product"
     >
-      <AppAdminEditProductOptions
-        :product-options="configurableProduct.productOptions"
-        :product-id="configurableProduct.pid"
-      />
-      <AppAdminEditProductVariants :product-variants="configurableProduct.productVariants" />
-    </div>
-  </div>
+      <a-collapse-panel header="Product options">
+        <AppAdminEditProductOptions
+          :product-options="configurableProduct.productOptions"
+          :product-id="configurableProduct.pid"
+        />
+      </a-collapse-panel>
+
+      <a-collapse-panel header="Product variants">
+        <AppAdminEditProductVariants :product-variants="configurableProduct.productVariants" />
+      </a-collapse-panel>
+    </a-collapse>
+  </a-card>
 </template>
 
 <script setup lang="ts">
@@ -20,7 +25,7 @@ import AppAdminEditProductCard from '~/components/admin/product/AppAdminEditProd
 import AppAdminEditProductOptions from '~/components/admin/product/configurable/option/AppAdminEditProductOptions.vue'
 import AppAdminEditProductVariants from '~/components/admin/product/configurable/variant/AppAdminEditProductVariants.vue'
 // Types & Interfaces
-import type { TProduct } from '~/types/api'
+import type { TProduct } from '~/api/product/shared.types'
 
 interface Props {
   configurableProduct: TProduct
@@ -32,8 +37,7 @@ const { configurableProduct } = toRefs(props)
 
 <style lang="scss">
 .app-admin-edit-product-form {
-  .app-admin-edit-product-options-list,
-  .app-admin-edit-product-variants-list {
+  .edit-product-form__configurable-product {
     margin-top: 0.5rem;
   }
 }

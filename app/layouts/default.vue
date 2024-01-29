@@ -6,30 +6,16 @@
       <a-layout-content>
         <slot />
       </a-layout-content>
-
-      <a-layout-sider
-        v-model:collapsible="conditionStore.navigationDrawerIsOpen"
-        collapsed-width="0"
-        width="250"
-      >
-        <AppNavigationDrawer
-          v-model:collapsed="conditionStore.navigationDrawerIsOpen"
-          :default-collapsed="false"
-          collapsible
-        />
-      </a-layout-sider>
     </a-layout>
+
+    <AppGlobalScope />
   </a-layout>
 </template>
 
 <script setup lang="ts">
 // Components
 import AppHeader from '~/components/common/layout/AppHeader.vue'
-import AppNavigationDrawer from '~/components/common/layout/navigation/AppNavigationDrawer.vue'
-// Pinia Stores
-import { useConditionStore } from '~/store/condition'
-
-const conditionStore = useConditionStore()
+import AppGlobalScope from '~/components/common/global/AppGlobalScope.vue'
 </script>
 
 <style lang="scss">
@@ -38,6 +24,10 @@ const conditionStore = useConditionStore()
 
   & &__main {
     height: calc(100vh - 64px);
+
+    @media #{map-get($display-breakpoints, 'md')} {
+      padding: 0.75rem;
+    }
   }
 }
 </style>

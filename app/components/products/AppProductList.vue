@@ -8,7 +8,8 @@
       <a-col
         v-for="product in productList"
         :key="product.pid"
-        :xs="12"
+        :xs="24"
+        :sm="12"
         :md="6"
         :xxl="4"
         class="list-container__item"
@@ -28,11 +29,12 @@
 import AppBaseProductTile from '~/components/products/product-tile/_Base.vue'
 import AppConfigurableProductTile from '~/components/products/product-tile/Configurable.vue'
 // Types & Interfaces
-import type { TProduct } from '~/types/api'
+import type { TProduct } from '~/api/product/shared.types'
 
 interface Props {
   productList: TProduct[] | null
 }
+
 const props = defineProps<Props>()
 const { productList } = toRefs(props)
 
@@ -46,8 +48,6 @@ const getComponent = (product: TProduct) => {
 
 <style lang="scss">
 .app-product-list {
-  @media #{map-get($display-breakpoints, 'md')} {
-    padding: 0.75rem;
-  }
+  display: block;
 }
 </style>

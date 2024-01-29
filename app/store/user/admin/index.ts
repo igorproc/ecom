@@ -1,9 +1,8 @@
-// Types & Interfaces
+import type { TProduct } from '~/api/product/shared.types'
 import type {
-  TConfigurableProductOption,
-  TProduct,
-} from '~/types/api'
-import { TConfigurableProductOptions } from '~/types/api'
+  TConfigurableProductOptions,
+  TConfigurableProductOption
+} from '~/api/product/configurable/shred.types'
 
 interface IAdminStoreState {
   configurableProduct: TProduct | null
