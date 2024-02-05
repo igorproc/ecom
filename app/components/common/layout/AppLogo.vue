@@ -1,7 +1,7 @@
 <template>
   <NuxtLink :to="{ name: 'index' }" class="app-logo px-2">
     <span class="app-logo__text">
-      Specto.su Shop
+      Specto Shop
     </span>
   </NuxtLink>
 </template>

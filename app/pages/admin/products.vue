@@ -1,33 +1,43 @@
 <template>
   <div class="admin-products-page w-100 h-100 px-2">
-    <AppAdminProductListHeader :product-count="productStore.productList.length" class="admin-products-page__header" />
-    <AppAdminProductList :product-list="productStore.productList" class="admin-products-page__products-table" />
+    <AppAdminProductListHeader :product-count="data?.length" class="admin-products-page__header" />
+    <AppAdminProductList :product-list="data || []" class="admin-products-page__products-table" />
   </div>
 </template>
 
 <script setup lang="ts">
-// Pinia Stores
-import { useProductStore } from '~/store/product'
 // Components
 import AppAdminProductList from '~/components/admin/products/product-list/AppAdminProductList.vue'
 import AppAdminProductListHeader from '~/components/admin/products/AppAdminProductListHeader.vue'
+// Pinia Stores
+import { useProductStore } from '~/store/product'
 // Api Methods
-import { getAllProducts } from '~/api/product/getAllProducts'
+import { getProductPage } from '~/api/product/getProductPage'
+// Types & Interfaces
+import type { TProduct } from '~/api/product/shared.types'
+
+const productStore = useProductStore()
 
 definePageMeta({
   middleware: ['auth'],
   isAdminPage: true,
 })
+
+const onLoad = async () => {
+  const productList = await getProductPage(1)
+  if (!productList) {
+    productStore.productList = []
+    return [] as TProduct[]
+  }
+
+  productStore.productList = productList
+  return productList
+}
+
 const { data } = await useAsyncData(
   'product-list-admin',
-  async () => await getAllProducts(),
+  async () => await onLoad(),
 )
-
-const productStore = useProductStore()
-
-if (data) {
-  productStore.setProductList(data.value || [])
-}
 </script>
 
 <style>

@@ -40,13 +40,13 @@ export const useProduct = (productId: number) => {
     }
 
     if (productData.__typename === 'BASE') {
-      return !!wishlistStore.wishlistIdsList.find(wishlistId => wishlistId.productId === productId)
+      return !!wishlistStore.idsList.find(wishlistId => wishlistId.productId === productId)
     }
     if (!configurableProductVariant.value) {
       return false
     }
 
-    return !!wishlistStore.wishlistIdsList.find(wishlistId => {
+    return !!wishlistStore.idsList.find(wishlistId => {
       return wishlistId.productId === productId && wishlistId.variantId === configurableProductVariant.value
     })
   })

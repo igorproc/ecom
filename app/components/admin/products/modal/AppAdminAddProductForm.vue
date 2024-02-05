@@ -1,8 +1,8 @@
 <template>
   <a-form
-    layout="inline"
     name="admin-add-product"
     class="app-admin-add-product-form"
+    @submit="submit"
   >
     <a-form-item>
       <a-input
@@ -40,7 +40,13 @@
       </a-select>
     </a-form-item>
     <a-form-item>
-      <a-upload />
+      <AppAdminModalAddProductImage
+        @image-is-uploaded="addProductImage"
+      />
+    </a-form-item>
+
+    <a-form-item>
+      <a-button type="primary" html-type="submit">Submit</a-button>
     </a-form-item>
   </a-form>
 </template>
@@ -50,6 +56,8 @@
 import { useForm, useField } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { object, string, number } from 'yup'
+// Ui Components
+import AppAdminModalAddProductImage from '~/components/admin/products/modal/AppAdminModalAddProductImage.vue'
 // Pinia Stores
 import { useProductStore } from '~/store/product'
 import { useConditionStore } from '~/store/condition'
@@ -109,7 +117,7 @@ const submit = async () => {
 
     const productIsCreated = await addProduct({
       name: addProductValues.name.value as string,
-      price: addProductValues.price.value as number,
+      price: Number(addProductValues.price.value),
       type: addProductValues.type.value as keyof typeof EAddProductTypes,
       productImage: addProductValues.productImage as string,
     })

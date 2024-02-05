@@ -18,8 +18,8 @@ export const wishlistOnLoginUser = async (token: string) => {
       return
     }
 
-    wishlistStore.wishlistIdsList = idsList.productIds
-    wishlistStore.wishlistProductList = []
+    wishlistStore.idsList = idsList.productIds
+    wishlistStore.productList = []
   } catch (error) {
     throw error
   }

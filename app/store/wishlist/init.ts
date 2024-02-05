@@ -25,5 +25,5 @@ export const initializeWishlist = async () => {
   }
 
   wishlistStore.wishlistId = wishlistData.wishlistData.wishlistToken
-  wishlistStore.wishlistIdsList.push(...wishlistData.productIds)
+  wishlistStore.idsList = wishlistData.productIds
 }

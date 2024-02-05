@@ -5,7 +5,7 @@
       :key="listKey(product)"
       class="wishlist-items-list__item"
     >
-      <component :is="getComponent(product)" :wishlist-item="product" />
+      <component :is="getComponent(product.productData)" :wishlist-item="product" />
     </div>
   </div>
 </template>
@@ -24,15 +24,15 @@ interface Props {
 const props = defineProps<Props>()
 const { wishlistItemsList } = toRefs(props)
 
-const listKey = (productData: TWishlistProduct) => {
-  if (productData.__typename === 'BASE' || !productData.selectedVariant) {
-    return productData.pid
+const listKey = (product: TWishlistProduct) => {
+  if (product.productData.__typename === 'BASE' || !product.selectedVariant) {
+    return product.productData.pid
   }
-  return `${productData.pid}-${productData.selectedVariant}`
+  return `${product.productData.pid}-${product.selectedVariant}`
 }
 
-const getComponent = (product: TWishlistProduct) => {
-  if (product.__typename === 'CONFIGURABLE') {
+const getComponent = (productData: TWishlistProduct['productData']) => {
+  if (productData.__typename === 'CONFIGURABLE') {
     return AppConfigurableWishlistItem
   }
   return AppBaseWishlistItem
@@ -44,5 +44,9 @@ const getComponent = (product: TWishlistProduct) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  .wishlist-items-list__item {
+    height: 200px;
+  }
 }
 </style>

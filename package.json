@@ -22,7 +22,6 @@
     "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-vue": "^9.19.2",
     "nuxt": "^3.7.4",
-    "nuxt-s3": "^1.0.2",
     "sass": "^1.68.0",
     "vite-plugin-eslint": "^1.8.1"
   },
@@ -36,7 +35,6 @@
     "@vueuse/core": "^10.7.0",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
-    "objection": "^3.1.2",
     "pinia": "^2.1.7",
     "vue": "^3.3.9",
     "vue-axios": "^3.5.2"

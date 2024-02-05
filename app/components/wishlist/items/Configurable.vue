@@ -1,71 +1,41 @@
 <template>
-  <div class="app-wishlist-item --configurable">
-    <vs-row class="app-wishlist-item__container item-container">
-      <vs-col
-        :xs="3"
-        :sm="1"
-        class="item-container__field"
-      >
+  <a-card class="app-wishlist-item --configurable">
+    <a-row class="app-wishlist-item__container item-container">
+      <a-col :xs="8" :sm="16" :md="3" :xl="3" class="item-container__field --product-name">
         <span class="item-container__field-text-content">
-          {{ wishlistItem.name }}
+          {{ wishlistItem.productData.name }}
         </span>
-      </vs-col>
-      <vs-col
-        :xs="2"
-        :sm="1"
-        class="item-container__field"
-      >
-        <img :src="productImage" :alt="wishlistItem.name">
-      </vs-col>
-      <vs-col
-        :xs="2"
-        :sm="1"
-        :push="pushFields"
-        class="item-container__field"
-      >
+      </a-col>
+      <a-col :xs="16" :sm="8" :md="6" :xl="5" class="item-container__field">
+        <img :src="productImage" :alt="wishlistItem.productData.name" height="200">
+      </a-col>
+      <a-col :xs="12" :sm="6" :md="3" class="item-container__field">
         <span class="item-container__field-text-content">
           {{ productPrice }}
         </span>
-      </vs-col>
-      <vs-col
-        :xs="2"
-        :sm="2"
-        :push="pushFields"
-        class="item-container__field"
-      >
+      </a-col>
+      <a-col :xs="12" :sm="6" :md="3" class="item-container__field">
         <span class="item-container__field-text-content">
-          {{ wishlistItem.__typename }}
+          Stock Status
         </span>
-      </vs-col>
-      <vs-col
-        :xs="3"
-        :sm="5"
-        :push="pushInteractions"
-        class="item-container__interactions"
-      >
-        <vs-button
-          :loading="operationWithWishlistIsProcessing"
-          icon
-          @click="removeFromWishlist"
-        >
-          <HeartFilled />
-        </vs-button>
-        <vs-button
-          :loading="operationWithCartIsProcessing"
-          :color="productIsAddedToCart ? 'danger' : 'success'"
-          icon
-          @click="addProductToCart"
-        >
-          <ShoppingCartOutlined />
-        </vs-button>
-      </vs-col>
-    </vs-row>
-  </div>
+      </a-col>
+      <a-col :xs="0" :sm="6" :md="4" class="item-container__spacer" />
+      <a-col :xs="24" :sm="6" :md="5" class="item-container__interactions">
+        <AppWishlistItemBaseInteractions
+          :product-is-in-cart="productIsAddedToCart"
+          :operation-with-cart-is-processing="operationWithCartIsProcessing"
+          :operation-with-wishlist-is-processing="operationWithWishlistIsProcessing"
+          @product-removed-from-wishlist="removeFromWishlist"
+        />
+      </a-col>
+    </a-row>
+  </a-card>
 </template>
 
 <script setup lang="ts">
-// Coomposables
-import { useWindowResize } from '~/composables/useWindowResize'
+// Components
+import AppWishlistItemBaseInteractions from '~/components/wishlist/items/Interactions.vue'
+// Composables
 import { useProduct } from '~/composables/useProduct'
 // Utils
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
@@ -76,9 +46,8 @@ interface Props {
   wishlistItem: TWishlistProduct
 }
 
-const windowResize = useWindowResize()
 const props = defineProps<Props>()
-const { wishlistItem } = toRefs(props)
+
 const {
   operationWithWishlistIsProcessing,
   operationWithCartIsProcessing,
@@ -87,24 +56,26 @@ const {
   removeFromCart,
   removeFromWishlist,
   addProductVariant,
-} = useProduct(wishlistItem.value.pid)
-addProductVariant(wishlistItem.value.selectedVariant)
+} = useProduct(props.wishlistItem.productData.pid)
 
-const productPrice = computed(() => formattedPrice(wishlistItem.value.price))
+if (props.wishlistItem.selectedVariant) {
+  addProductVariant(props.wishlistItem.selectedVariant)
+}
+
+const productPrice = computed(() => formattedPrice(props.wishlistItem.productData.price))
 const productImage = computed(() => {
-  if (!wishlistItem.value.selectedVariant || !wishlistItem.value.productVariants) {
-    return wishlistItem.value.productImage
+  if (!props.wishlistItem.selectedVariant || !props.wishlistItem.productData.productVariants) {
+    return props.wishlistItem.productData.productImage
   }
 
-  const variantCandidate = wishlistItem.value.productVariants
-    .find(productVariant => productVariant.product.id === wishlistItem.value.selectedVariant)
+  const variantCandidate = props.wishlistItem.productData.productVariants
+    .find(productVariant => productVariant.product.id === props.wishlistItem.selectedVariant)
+
   if (!variantCandidate || !variantCandidate.product.imageUrl) {
-    return wishlistItem.value.productImage
+    return props.wishlistItem.productData.productImage
   }
   return variantCandidate.product.imageUrl
 })
-const pushFields = computed(() => windowResize?.lgAndDown ? 0 : 1)
-const pushInteractions = computed(() => windowResize?.lgAndDown ? 0 : 2)
 
 const addProductToCart = async () => {
   if (!productIsAddedToCart.value) {
@@ -117,33 +88,40 @@ const addProductToCart = async () => {
 
 <style lang="scss">
 .app-wishlist-item.--configurable {
-  padding: 0.75rem;
+
+  .ant-card-body {
+    padding: 0.5rem;
+  }
 
   .app-wishlist-item__container {
     .item-container__field,
     .item-container__interactions {
       padding: 0.25rem;
+      width: 100%;
       display: flex;
       align-items: center;
     }
 
     .item-container__field {
       justify-content: flex-start;
-
-      .item-container__field-text-content {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
     }
 
     .item-container__interactions {
-      justify-content: flex-end;
+      justify-content: center;
+
+      .ant-btn:last-child {
+        margin-left: 1rem;
+      }
     }
   }
 
   @media #{map-get($display-breakpoints, 'md')} {
     padding: 0;
+
+    .ant-card-body {
+      padding: 1rem;
+    }
+
     .app-wishlist-item__container {
       .item-container__field,
       .item-container__interactions {

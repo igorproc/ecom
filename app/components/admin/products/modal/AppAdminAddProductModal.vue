@@ -1,6 +1,7 @@
 <template>
   <a-modal
     v-if="modalIsVisible"
+    :footer="null"
     v-model:open="conditionStore.adminAddProductModalIsOpen"
   >
     <AppAdminAddProductForm />

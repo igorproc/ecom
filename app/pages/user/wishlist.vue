@@ -1,6 +1,6 @@
 <template>
   <div class="app-wishlist-page">
-    <AppWishlistList :wishlist-items-list="wishlistStore.wishlistProductList" />
+    <AppWishlistList :wishlist-items-list="data" />
   </div>
 </template>
 
@@ -11,15 +11,28 @@ import AppWishlistList from '~/components/wishlist/AppWishlistList.vue'
 import { useWishlistStore } from '~/store/wishlist'
 // Api Methods
 import { getWishlistProducts } from '~/api/user/wishlist/wishlistProducts'
+// Types & Interfaces
+import type { TWishlistProduct } from '~/api/user/wishlist/wishlistProducts'
 
 const wishlistStore = useWishlistStore()
-if (!wishlistStore.allWishlistItemsHasAProductData) {
-  const { data } = await useLazyAsyncData(
-    'user-wishlist-products',
-    async () => await getWishlistProducts(),
-  )
-  if (data.value) {
-    wishlistStore.wishlistProductList = data.value
+
+const onLoad = async () => {
+  if (wishlistStore.allWishlistItemsHasAProductData) {
+    return [] as TWishlistProduct[]
   }
+
+  const wishlistProductData = await getWishlistProducts()
+  if (!wishlistProductData) {
+    wishlistStore.productList =  []
+    return [] as TWishlistProduct[]
+  }
+
+  wishlistStore.productList = wishlistProductData
+  return wishlistProductData
 }
+
+const { data } = await useAsyncData(
+  'user-wishlist-products',
+  async () => await onLoad()
+)
 </script>

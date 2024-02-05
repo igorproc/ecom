@@ -21,6 +21,11 @@
         />
       </a-col>
     </a-row>
+    <a-alert
+      v-else
+      message="Продуктов пока что нету"
+      type="info"
+    />
   </div>
 </template>
 
@@ -39,15 +44,9 @@ const props = defineProps<Props>()
 const { productList } = toRefs(props)
 
 const getComponent = (product: TProduct) => {
-  if (product.typename === 'CONFIGURABLE') {
+  if (product.__typename === 'CONFIGURABLE') {
     return AppConfigurableProductTile
   }
   return AppBaseProductTile
 }
 </script>
-
-<style lang="scss">
-.app-product-list {
-  display: block;
-}
-</style>

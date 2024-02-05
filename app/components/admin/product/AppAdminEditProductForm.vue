@@ -2,7 +2,7 @@
   <a-card class="app-admin-edit-product-form edit-product-form">
     <AppAdminEditProductCard :product="configurableProduct" />
     <a-collapse
-      v-if="configurableProduct.typename === 'CONFIGURABLE'"
+      v-if="configurableProduct.__typename === 'CONFIGURABLE'"
       class="edit-product-form__configurable-product"
     >
       <a-collapse-panel header="Product options">

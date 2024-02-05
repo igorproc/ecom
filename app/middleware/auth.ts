@@ -10,6 +10,7 @@ export default defineNuxtRouteMiddleware(async to => {
   }
   if (to.meta?.isAdminPage && !userStore.isAdmin) {
     await router.push({ name: 'index' })
+    return
   }
   return true
 })

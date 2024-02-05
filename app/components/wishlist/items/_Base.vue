@@ -1,65 +1,38 @@
 <template>
   <div class="app-wishlist-item --base">
-    <vs-row class="app-wishlist-item__container item-container">
-      <vs-col
-        :xs="3"
-        :sm="1"
-        class="item-container__field"
-      >
-        {{ wishlistItem.name }}
-      </vs-col>
-      <vs-col
-        :xs="2"
-        :sm="1"
-        class="item-container__field"
-      >
-        <img :src="wishlistItem.productImage" :alt="wishlistItem.name">
-      </vs-col>
-      <vs-col
-        :xs="2"
-        :sm="1"
-        :push="pushFields"
-        class="item-container__field"
-      >
+    <a-row class="app-wishlist-item__container item-container">
+      <a-col :xs="3" :sm="1" class="item-container__field">
+        {{ wishlistItem.productData.name }}
+      </a-col>
+      <a-col :xs="2" :sm="1" class="item-container__field">
+        <img
+          :src="wishlistItem.productData.productImage"
+          :alt="wishlistItem.productData.name"
+          height="200"
+        >
+      </a-col>
+      <a-col :xs="2" :sm="1" class="item-container__field">
         {{ productPrice }}
-      </vs-col>
-      <vs-col
-        :xs="2"
-        :sm="2"
-        :push="pushFields"
-        class="item-container__field"
-      >
-        {{ wishlistItem.__typename }}
-      </vs-col>
-      <vs-col
-        :xs="3"
-        :sm="5"
-        :push="pushInteractions"
-        class="item-container__interactions"
-      >
-        <vs-button
-          :loading="operationWithWishlistIsProcessing"
-          icon
-          @click="removeFromWishlist"
-        >
-          <HeartFilled />
-        </vs-button>
-        <vs-button
-          :loading="operationWithCartIsProcessing"
-          :color="productIsAddedToCart ? 'danger' : 'success'"
-          icon
-          @click="addProductToCart"
-        >
-          <ShoppingCartOutlined />
-        </vs-button>
-      </vs-col>
-    </vs-row>
+      </a-col>
+      <a-col :xs="2" :sm="2" class="item-container__field">
+        {{ wishlistItem.productData.__typename }}
+      </a-col>
+      <a-col :xs="3" :sm="5" class="item-container__interactions">
+        <AppWishlistItemBaseInteractions
+          :product-is-in-cart="productIsAddedToCart"
+          :operation-with-cart-is-processing="operationWithCartIsProcessing"
+          :operation-with-wishlist-is-processing="operationWithWishlistIsProcessing"
+          @product-removed-from-wishlist="removeFromWishlist"
+        />
+      </a-col>
+    </a-row>
   </div>
 </template>
 
 <script setup lang="ts">
+// Components
+import AppWishlistItemBaseInteractions from '~/components/wishlist/items/Interactions.vue'
 // Composables
-import { useWindowResize } from '~/composables/useWindowResize'
 import { useProduct } from '~/composables/useProduct'
 // Utils
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
@@ -70,9 +43,8 @@ interface Props {
   wishlistItem: TWishlistProduct
 }
 
-const windowResize = useWindowResize()
 const props = defineProps<Props>()
-const { wishlistItem } = toRefs(props)
+
 const {
   operationWithWishlistIsProcessing,
   operationWithCartIsProcessing,
@@ -80,11 +52,9 @@ const {
   addToCart,
   removeFromCart,
   removeFromWishlist,
-} = useProduct(wishlistItem.value.pid)
+} = useProduct(props.wishlistItem.productData.pid)
 
-const productPrice = computed(() => formattedPrice(wishlistItem.value.price))
-const pushFields = computed(() => windowResize?.lgAndDown ? 0 : 1)
-const pushInteractions = computed(() => windowResize?.lgAndDown ? 0 : 2)
+const productPrice = computed(() => formattedPrice(props.wishlistItem.productData.price))
 const addProductToCart = async () => {
   if (!productIsAddedToCart.value) {
     addToCart()

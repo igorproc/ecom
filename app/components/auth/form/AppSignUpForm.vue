@@ -13,7 +13,7 @@
       <a-input
         v-model:value="registerData.email.value"
         :status="registerData.email.errors.length ? 'error' : ''"
-        :placeholder="registerData.email.errors.join() || ''"
+        :placeholder="registerData.email.errors.join() || 'Email'"
         @change="inputField"
       />
     </a-form-item>

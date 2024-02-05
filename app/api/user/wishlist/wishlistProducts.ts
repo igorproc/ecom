@@ -1,6 +1,9 @@
 import type { TProduct } from '~/api/product/shared.types'
 
-export type TWishlistProduct = TProduct & { selectedVariant: number | null }
+export type TWishlistProduct = {
+  productData: TProduct,
+  selectedVariant?: number | null
+}
 
 export async function getWishlistProducts() {
   const asyncQuery = useAsyncQuery()

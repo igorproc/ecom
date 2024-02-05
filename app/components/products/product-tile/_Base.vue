@@ -116,5 +116,9 @@ const addProductToCart = () => {
       }
     }
   }
+
+  @media #{map-get($display-breakpoints, 'lg')} {
+    max-width: 260px;
+  }
 }
 </style>

@@ -17,7 +17,7 @@
 
       <template v-else-if="column.key === 'product-type'">
         <a-tag :key="record.name" color="geekblue" class="admin-product-list__text">
-          {{ record.typename }}
+          {{ record.__typename }}
         </a-tag>
       </template>
 
@@ -33,7 +33,7 @@
         </NuxtLink>
       </template>
 
-      <template v-else>
+      <template v-else-if="column.key === 'product-price'">
         <span class="admin-product-list__text">
           {{ formattedPrice(record.price) }}
         </span>
