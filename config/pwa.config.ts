@@ -1,7 +1,8 @@
-import { pwaConfig } from '../const/app'
+import { pwaConfig } from '../app/const/app'
 import type { NuxtOptions } from '@nuxt/schema'
 
 export default {
+  strategies: 'generateSW',
   meta: {
     name: pwaConfig.shortTitle,
     author: 'pr0s1k',

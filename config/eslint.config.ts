@@ -1,4 +1,4 @@
-import { NuxtOptions } from '@nuxt/schema'
+import type { NuxtOptions } from '@nuxt/schema'
 
 export default {
   exclude: [
@@ -6,4 +6,5 @@ export default {
     './nuxt',
     './config',
   ],
+  include: ['./app']
 } as NuxtOptions['eslint']
