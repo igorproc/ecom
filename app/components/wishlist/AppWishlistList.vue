@@ -44,9 +44,5 @@ const getComponent = (productData: TWishlistProduct['productData']) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
-  .wishlist-items-list__item {
-    height: 200px;
-  }
 }
 </style>

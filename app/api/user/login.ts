@@ -2,6 +2,7 @@ import type { TUserData } from '~/api/user/shared.types'
 
 export type TUserLogin = {
   token: string,
+  wishlistToken: string,
   userData: TUserData
 }
 
