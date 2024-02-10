@@ -33,7 +33,7 @@ import AppGlobalScope from '~/components/common/global/AppGlobalScope.vue'
 
   @media #{map-get($display-breakpoints, 'md')} {
     .app-header {
-      padding: 1rem 2.5rem !important;
+      padding: 0 2.5rem !important;
     }
 
     & &__main {

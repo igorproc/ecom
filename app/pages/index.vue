@@ -1,6 +1,8 @@
 <template>
-  <div class="app-main-page">
-    <AppMainSlider />
+  <div class="app-main-page main-page">
+    <div class="main-page__slider">
+      <AppMainSlider />
+    </div>
   </div>
 </template>
 
@@ -8,3 +10,11 @@
 // Components
 import AppMainSlider from '~/components/main/AppMainSlider.vue'
 </script>
+
+<style lang="scss">
+.app-main-page {
+  .main-page__slider {
+    margin: -0.75rem -2.5rem;
+  }
+}
+</style>

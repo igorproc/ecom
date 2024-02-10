@@ -1,7 +1,6 @@
 import AppConfig from './config/app.config'
 import PwaConfig from './config/pwa.config'
 import ViteConfig from './config/vite.config'
-import AntConfig from './config/ant.config'
 
 const isProd = process.env.APP_MODE === 'production'
 const isSsr = !!process.env.IS_SSR
@@ -15,6 +14,10 @@ export default defineNuxtConfig({
   css: [
     '@/assets/main.scss',
   ],
+  experimental: {
+    inlineSSRStyles: false,
+    payloadExtraction: false,
+  },
   devtools: { enabled: isProd },
   modules: [
     // https://antdv.com/
@@ -28,7 +31,6 @@ export default defineNuxtConfig({
     // https://swiperjs.com/
     'nuxt-swiper',
   ],
-  antd: AntConfig,
   pwa: PwaConfig,
   runtimeConfig: {
     public: {
@@ -42,7 +44,7 @@ export default defineNuxtConfig({
       '/api/**': {
         proxy: process.env.API_URL + '/**' || '',
         cors: true,
-      }
+      },
     },
   },
   devServer: {

@@ -7,7 +7,7 @@
         </span>
       </a-col>
       <a-col :xs="16" :sm="8" :md="6" :xl="5" class="item-container__field">
-        <img :src="wishlistItem.productData.productImage" :alt="wishlistItem.productData.name" height="200">
+        <img :src="wishlistItem.productData.productImage" :alt="wishlistItem.productData.name" width="200">
       </a-col>
       <a-col :xs="12" :sm="6" :md="3" class="item-container__field">
         <span class="item-container__field-text-content">

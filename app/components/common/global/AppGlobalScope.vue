@@ -1,7 +1,7 @@
 <template>
   <div class="app-global-scope">
-    <AppNavigationDrawer />
-    <client-only>
+    <ClientOnly>
+      <AppNavigationDrawer />
       <AppNotification />
 
       <div v-if="userStore.isGuest" class="app-global-scope__guest">
@@ -10,7 +10,7 @@
       <div v-if="userStore.isAdmin" class="app-global-scope__admin">
         <AppAdminAddProductModal />
       </div>
-    </client-only>
+    </ClientOnly>
   </div>
 </template>
 
