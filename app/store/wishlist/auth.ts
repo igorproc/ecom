@@ -13,9 +13,9 @@ export const wishlistOnLoginUser = async (token: string) => {
     )
 
     wishlistTokenValue.value = token
-    wishlistStore.wishlistId = token
+    wishlistStore.wishlistToken = token
 
-    const idsList = await getWishlistShorterData()
+    const idsList = await getWishlistShorterData(token)
     if (!idsList) {
       return
     }

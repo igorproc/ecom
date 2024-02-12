@@ -1,12 +1,8 @@
-import type { TWishlistOperationWithProductInput } from '~/api/user/wishlist/shared.types'
-
-export type TWishlistAddProduct = {
-  productIsAdded: boolean
-}
+import type { IWishlistDataProductId, TWishlistOperationWithProductInput } from '~/api/user/wishlist/shared.types'
 
 export async function addProductToWishlist (productData: TWishlistOperationWithProductInput) {
   const asyncQuery = useAsyncQuery()
-  return await asyncQuery<TWishlistAddProduct>(
+  return await asyncQuery<IWishlistDataProductId>(
     'POST',
     '/api/user/wishlist/addProduct',
     { productData },

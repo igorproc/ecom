@@ -2,10 +2,12 @@
 import { useProductStore } from '~/store/product'
 import { useWishlistStore } from '~/store/wishlist'
 import { useCartStore } from '~/store/cart'
+import { addItemToWishlist, removeItemFromWishlist } from '~/store/wishlist/actions'
 // Api Methods
 import { addProductToWishlist } from '~/api/user/wishlist/addProductToWishlist'
 import { removeProductFromWishlist } from '~/api/user/wishlist/removeProductFromWishlist'
 // Types & Interfaces
+import type { TWishlistRemoveProductInput } from '~/api/user/wishlist/removeProductFromWishlist'
 import type { TWishlistOperationWithProductInput } from '~/api/user/wishlist/shared.types'
 
 export const useProduct = (productId: number) => {
@@ -40,13 +42,13 @@ export const useProduct = (productId: number) => {
     }
 
     if (productData.__typename === 'BASE') {
-      return !!wishlistStore.idsList.find(wishlistId => wishlistId.productId === productId)
+      return wishlistStore.idsList.find(wishlistId => wishlistId.productId === productId)
     }
     if (!configurableProductVariant.value) {
       return false
     }
 
-    return !!wishlistStore.idsList.find(wishlistId => {
+    return wishlistStore.idsList.find(wishlistId => {
       return wishlistId.productId === productId && wishlistId.variantId === configurableProductVariant.value
     })
   })
@@ -55,45 +57,26 @@ export const useProduct = (productId: number) => {
     configurableProductVariant.value = variantId
   }
   const addToWishlist = async () => {
-    const payload: TWishlistOperationWithProductInput = {
-      wishlistToken: wishlistStore.wishlistId,
-      productId,
-    }
-
-    if (configurableProductVariant.value) {
-      payload.variantId = configurableProductVariant.value
-    }
     operationWithWishlistIsProcessing.value = true
-
-    const isAddedToWishlist = await addProductToWishlist(payload)
-    if (!productData || !isAddedToWishlist) {
+    if (!productData) {
       operationWithWishlistIsProcessing.value = false
-      return
+      return false
     }
 
-    wishlistStore.addItemToWishlist(
-      Object.assign(productData, { selectedVariant: configurableProductVariant.value }),
+    await addItemToWishlist(
+      productData,
+      configurableProductVariant.value,
     )
     operationWithWishlistIsProcessing.value = false
   }
   const removeFromWishlist = async () => {
-    const payload: TWishlistOperationWithProductInput = {
-      wishlistToken: wishlistStore.wishlistId,
-      productId,
+    if (!productIsAddedToWishlist.value) {
+      return false
     }
-    if (configurableProductVariant.value) {
-      payload.variantId = configurableProductVariant.value
-    }
-
     operationWithWishlistIsProcessing.value = true
-    const isRemovedFromWishlist = await removeProductFromWishlist(payload)
-    if (!isRemovedFromWishlist) {
-      operationWithWishlistIsProcessing.value = false
-      return
-    }
 
+    await removeItemFromWishlist(productIsAddedToWishlist.value.itemId)
     operationWithWishlistIsProcessing.value = false
-    wishlistStore.removeItemFromWishlist(payload.productId, payload.variantId)
   }
   const addToCart = () => {
     cartStore.addItemToCart(productId, 123, configurableProductVariant.value || null)

@@ -10,3 +10,9 @@ export type TWishlistOperationWithProductInput = {
   variantId?: number,
   wishlistToken: string,
 }
+
+export interface IWishlistDataProductId {
+  itemId: number,
+  productId: number,
+  variantId?: number,
+}

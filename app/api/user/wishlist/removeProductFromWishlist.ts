@@ -1,11 +1,15 @@
-import type { TWishlistOperationWithProductInput } from '~/api/user/wishlist/shared.types'
+// Types & Interfaces
+import type { IWishlistDataProductId } from '~/api/user/wishlist/shared.types'
 
-export type TWishlistRemoveProduct = {
-  successDeleting: boolean
+export type TWishlistRemoveProductInput = {
+  wishlistToken: string,
+  wishlistItemId: number
 }
-export async function removeProductFromWishlist (productData: TWishlistOperationWithProductInput) {
+
+export async function removeProductFromWishlist(productData: TWishlistRemoveProductInput) {
   const asyncQuery = useAsyncQuery()
-  return await asyncQuery<TWishlistRemoveProduct>(
+
+  return await asyncQuery<IWishlistDataProductId>(
     'POST',
     '/api/user/wishlist/removeProduct',
     { productData },

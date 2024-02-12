@@ -14,16 +14,16 @@ export const initializeWishlist = async () => {
       return
     }
 
-    wishlistStore.wishlistId = wishlistData.wishlistToken
+    wishlistStore.wishlistToken = wishlistData.wishlistToken
     cookieWishlistTokenValue.value = wishlistData.wishlistToken
     return
   }
 
-  const wishlistData = await getWishlistShorterData()
+  const wishlistData = await getWishlistShorterData(cookieWishlistTokenValue.value)
   if (!wishlistData) {
     return
   }
 
-  wishlistStore.wishlistId = wishlistData.wishlistData.wishlistToken
+  wishlistStore.wishlistToken = wishlistData.wishlistData.wishlistToken
   wishlistStore.idsList = wishlistData.productIds
 }

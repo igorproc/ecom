@@ -1,6 +1,7 @@
 import AppConfig from './config/app.config'
 import PwaConfig from './config/pwa.config'
 import ViteConfig from './config/vite.config'
+import ExperimentalConfig from './config/exprerimantal.config'
 
 const isProd = process.env.APP_MODE === 'production'
 const isSsr = !!process.env.IS_SSR
@@ -14,10 +15,7 @@ export default defineNuxtConfig({
   css: [
     '@/assets/main.scss',
   ],
-  experimental: {
-    inlineSSRStyles: false,
-    payloadExtraction: false,
-  },
+  experimental: ExperimentalConfig,
   devtools: { enabled: isProd },
   modules: [
     // https://antdv.com/
@@ -50,6 +48,9 @@ export default defineNuxtConfig({
   devServer: {
     host: String(process.env.NITRO_DEV_HOST) || '0.0.0.0',
     port: Number(process.env.NITRO_DEV_PORT) || 3000,
+  },
+  antd: {
+    extractStyle: false,
   },
   typescript: { shim: false },
   vite: ViteConfig,
