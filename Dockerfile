@@ -23,7 +23,7 @@ COPY --from=prepare-stage /app /app
 
 WORKDIR /app
 
-RUN /bin/sh -c "cp ./config/environments/${ENVIRONMENT_NAME}.env .env"
+RUN /bin/sh -c "cp ./config/environments/.env.${ENVIRONMENT_NAME} .env"
 
 RUN npm ci
 
