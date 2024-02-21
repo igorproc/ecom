@@ -1,30 +1,98 @@
-// Node Deps
-import { useWindowSize } from '@vueuse/core'
+// Composables
+import { useSSRWindowSize } from '~/composables/useSSRWisndowSize'
 // Consts
-import { DISPLAY_BREAKPOINTS } from '~/const/vuesax'
+import { DEFAULT_BREAKPOINT_SIZES } from '~/const/app'
+import type { ComputedRef } from 'vue'
 
-export const useWindowResize = () => {
-  if (!window) {
+// TO:DO Refactor | Now Deprecated
+interface DynamicObject {
+  [key: string]: string | number,
+}
+
+interface IBreakpointFactoryOptions {
+  isMinimalValue?: boolean,
+}
+
+export const useWindowResize = (breakpoints?: DynamicObject) => {
+  if (!breakpoints) {
+    breakpoints = DEFAULT_BREAKPOINT_SIZES
+  }
+
+  const breakpointWatchers: {
+    [key: string]: ComputedRef<boolean>
+  } = {}
+
+  const minimalValue = windowResizeFactory(
+    ...Object.entries(breakpoints)[0],
+    breakpoints,
+    { isMinimalValue: true },
+  )
+  if (!minimalValue || Array.isArray(minimalValue)) {
     return
   }
+  breakpointWatchers[minimalValue.key] = minimalValue.watcher
 
-  const { width } = useWindowSize()
-  const resizeConditions = reactive({
-    lgAndDown: false,
-    mdAndDown: false,
-    mdAndUp: false,
-  })
+  for(const [key, value] of Object.entries(breakpoints).slice(1)) {
+    const breakpointsWatcher = windowResizeFactory(
+      key,
+      value,
+      breakpoints,
+    )
 
-  const setResizeConditions = (width: number) => {
-    resizeConditions.lgAndDown = width <= DISPLAY_BREAKPOINTS.lg
-    resizeConditions.mdAndDown = width <= DISPLAY_BREAKPOINTS.md
-    resizeConditions.mdAndUp = width >= DISPLAY_BREAKPOINTS.md
+    if (Array.isArray(breakpointsWatcher)) {
+      breakpointsWatcher.forEach(item => {
+        breakpointWatchers[item.key] = item.watcher
+      })
+    }
   }
-  setResizeConditions(width.value)
 
-  watch(width, newWidth => {
-    setResizeConditions(newWidth)
-  })
+  return breakpointWatchers
+}
 
-  return Object.assign(resizeConditions, { width })
+export const windowResizeFactory = (
+  breakpointKey: string,
+  breakpointValue: string | number,
+  breakpoints: DynamicObject,
+  breakpointOptions?: IBreakpointFactoryOptions,
+) => {
+  const { width } = useSSRWindowSize()
+
+  const getCapitalizedKey = () => {
+    return breakpointKey.charAt(0).toUpperCase() + breakpointKey.slice(1)
+  }
+
+  const getPrevBreakpoint = () => {
+    const currentBreakpointIndex = Object.keys(breakpoints)
+      .findIndex(item => item === breakpointKey)
+
+    if (!~currentBreakpointIndex || !breakpoints[currentBreakpointIndex - 1]) {
+      return null
+    }
+
+    return breakpoints[currentBreakpointIndex - 1]
+  }
+
+  if (breakpointOptions?.isMinimalValue) {
+    return {
+      key: 'only' + getCapitalizedKey(),
+      watcher: computed(() => width.value <= Number(breakpointValue)),
+    }
+  }
+
+  const prevBreakpoint = getPrevBreakpoint()
+
+  if (!prevBreakpoint) {
+    return null
+  }
+
+  return [
+    {
+      key: getCapitalizedKey() + 'andDown',
+      watcher: computed(() => width.value > Number(prevBreakpoint) && width.value <= Number(breakpointValue))
+    },
+    {
+      key: getCapitalizedKey() + 'andUp',
+      watcher: computed(() => width.value > Number(breakpointValue))
+    }
+  ]
 }

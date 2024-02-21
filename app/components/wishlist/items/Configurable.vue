@@ -115,7 +115,7 @@ const addProductToCart = async () => {
     }
   }
 
-  @media #{map-get($display-breakpoints, 'md')} {
+  @media #{map-get($display-rules, 'md')} {
     padding: 0;
 
     .ant-card-body {

@@ -25,7 +25,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { UploadProps } from 'ant-design-vue'
 
 interface Emits {
   (name: 'imageIsUploaded', imageUrl?: string): void

@@ -1,60 +1,52 @@
 <template>
-  <a-card hoverable class="app-product-tile --configurable configurable-product">
+  <UiCard
+    hoverable
+    :title="product.name"
+    :subtitle="product.__typename"
+    class="app-product-tile --configurable configurable-product"
+  >
     <template #cover>
       <div class="configurable-product__image-container">
-        <img
-          v-if="product.productImage"
-          :src="product.productImage"
-          :alt="product.name"
-        >
-        <a-skeleton-image v-else />
+        <ui-image :src="product.productImage" :alt="product.name" />
       </div>
     </template>
 
-    <a-card-meta :title="product.name" class="configurable-product__title" />
-
-    <a-card-grid class="configurable-product__interactions-container interactions-container">
-      <div class="interactions-container__base">
-        <a-button
-          type="link"
-          size="large"
-          :disabled="!configurableProductVariant || operationWithWishlistIsProcessing"
-          @click="addProductToWishlist"
-        >
-          <HeartTwoTone :two-tone-color="wishlistButtonColor" />
-        </a-button>
-        <a-button
-          type="link"
-          size="large"
-          :disabled="!configurableProductVariant || operationWithCartIsProcessing"
-          @click="addProductToCart"
-        >
-          <ShoppingTwoTone :two-tone-color="cartButtonColor" />
-        </a-button>
+    <template #content-expand>
+      <div class="configurable-product__price-container price-container">
+        <span class="price-container__actual-price">
+          {{ productPrice }}
+        </span>
       </div>
+    </template>
 
-      <div
-        v-if="product.productOptions && product.productVariants"
-        class="interactions-container__switches"
-      >
-        <AppConfigurableProductSwitchGroup
-          :product-options="product.productOptions"
-          :product-variants="product.productVariants"
-          @product-variant-is-selected="selectVariant"
-          @product-variant-is-not-selected="selectVariant(null)"
+    <template #hover-effect>
+      <div class="configurable-product__hover-container hover-container">
+        <Button
+          label="Add To Cart"
+          class="hover-container__add-to-cart-action"
         />
+
+        <div class="hover-container__additional-actions additional-actions">
+          <Button
+            variant="text"
+            label="Share"
+            prepend-icon="user/share"
+            @click="shareProductUrl"
+          />
+        </div>
       </div>
-    </a-card-grid>
-  </a-card>
+    </template>
+  </UiCard>
 </template>
 
 <script setup lang="ts">
 // Composables
 import { useProduct } from '~/composables/useProduct'
+// Utils
+import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
 import type { TProduct } from '~/api/product/shared.types'
-import AppConfigurableProductSwitchGroup
-  from '~/components/products/product-tile/swith/AppConfigurableProductSwitchGroup.vue'
+import Button from '~/components/ui/button/button.vue'
 
 interface Props {
   product: TProduct
@@ -63,111 +55,129 @@ interface Props {
 const props = defineProps<Props>()
 const { product } = toRefs(props)
 
+const runtimeConfig = useRuntimeConfig()
 const {
-  addProductVariant,
-  operationWithWishlistIsProcessing,
+  productIsAddedToCart,
   productIsAddedToWishlist,
+  operationWithCartIsProcessing,
+  operationWithWishlistIsProcessing,
+  addToCart,
   addToWishlist,
   removeFromWishlist,
-  operationWithCartIsProcessing,
-  productIsAddedToCart,
-  addToCart,
   removeFromCart,
-  configurableProductVariant,
 } = useProduct(product.value.pid)
 
-const selectVariant = (productVariant: number | null) => {
-  addProductVariant(productVariant)
-}
-
-const wishlistButtonColor = computed(() => {
-  if (operationWithWishlistIsProcessing.value || !configurableProductVariant.value) {
-    return '#000'
-  }
-  if (productIsAddedToWishlist.value) {
-    return '#eb2f96'
-  }
+const productPrice = computed(() => {
+  return formattedPrice(product.value.price)
 })
 
-const cartButtonColor = computed(() => {
-  if (operationWithCartIsProcessing.value || !configurableProductVariant.value) {
-    return '#000'
-  }
-  if (productIsAddedToCart.value) {
-    return '#eb2f96'
-  }
-})
+const productUrl = computed(() =>  `${runtimeConfig.public.appUrl}/product/${product.value.pid}`)
 
-const addProductToWishlist = async () => {
+const addProductToWishlist = () => {
   if (operationWithWishlistIsProcessing.value) {
     return
   }
+
   if (productIsAddedToWishlist.value) {
-    await removeFromWishlist()
+    removeFromWishlist()
     return
   }
-  await addToWishlist()
+  addToWishlist()
 }
-
-const addProductToCart = async () => {
+const addProductToCart = () => {
   if (operationWithCartIsProcessing.value) {
     return
   }
+
   if (productIsAddedToCart.value) {
     removeFromCart()
     return
   }
   addToCart()
 }
+
+const shareProductUrl = () => {
+  if (import.meta.server || !window) {
+    return
+  }
+
+  navigator
+    .clipboard
+    .writeText(productUrl.value)
+}
 </script>
 
 <style lang="scss">
 .app-product-tile.--configurable {
-  cursor: unset !important;
 
   .configurable-product__image-container {
-    max-height: 300px;
+    height: 300rem;
 
     img {
       width: 100%;
-      height: 230px;
-    }
-
-    .ant-skeleton {
-      width: 100%;
-
-      .ant-skeleton-image {
-        width: 100%;
-        height: 230px;
-        border-radius: 0;
-      }
+      height: 100%;
+      object-fit: cover;
     }
   }
 
-  .ant-card-body {
+  .configurable-product__price-container {
+    height: 30rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .price-container__actual-price {
+      font-size: 16rem;
+      font-weight: bold;
+    }
+  }
+
+  .configurable-product__hover-container {
+    height: 100%;
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-    .configurable-product__title {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 0.25rem;
+    .hover-container__add-to-cart-action {
+      background-color: map-get($white-color-palette, 'white-5');
+      border: none;
+
+      .button-content__label {
+        color: map-get($theme-colors, 'accent-color');
+      }
     }
 
-    .configurable-product__interactions-container {
-      width: 100%;
-      padding: 0.5rem 0;
-      box-shadow: none;
+    .hover-container__additional-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
 
-      .interactions-container__base {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .ui-button {
+        .nuxt-icon,
+        .button-content__label {
+          color: map-get($white-color-palette, 'white-5');
+        }
       }
     }
   }
 
-  @media #{map-get($display-breakpoints, 'lg')} {
-    max-width: 260px;
+  @media #{map-get($display-rules, 'xl')} {
+    .configurable-product__image-container {
+      height: 301rem;
+    }
+
+    .configurable-product__price-container {
+      .price-container__actual-price {
+        font-size: 16rem;
+      }
+    }
+
+    .configurable-product__hover-container {
+      .hover-container__additional-actions {
+        margin-top: 24rem;
+      }
+    }
   }
 }
 </style>

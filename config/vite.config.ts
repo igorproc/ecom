@@ -4,7 +4,7 @@ export default {
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "~/assets/_override.scss";`,
+        additionalData: `@use "~/assets/stylesheets/additional.scss" as *;`,
       },
     },
   },

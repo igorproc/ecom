@@ -1,17 +1,16 @@
 <template>
-  <div class="app-notification">
-    <ContextHolder />
-  </div>
+  <div class="app-notification" />
 </template>
 
 <script setup lang="ts">
 // Node Deps
-import { notification } from 'ant-design-vue'
+import { POSITION, TYPE, useToast } from 'vue-toastification'
 // Pinia Stores
 import { useNotificationStore } from '~/store/notification'
 
 const { $listen } = useNuxtApp()
-const [api, ContextHolder] = notification.useNotification()
+const toast = useToast()
+
 const notificationStore = useNotificationStore()
 
 $listen('notification:open', () => openNotification())
@@ -25,13 +24,18 @@ const openNotification = () => {
     return
   }
 
-  api.open({
-    key: 'app-global-notification',
-    type: notificationStore.notificationStatus,
-    placement: notificationStore.notificationPosition,
+  const options = {
+    type: TYPE[notificationStore.notificationStatus] || TYPE.INFO,
+    position: POSITION[notificationStore.notificationPosition] || POSITION.BOTTOM_RIGHT,
     message: notificationStore.notificationMessage,
-    duration: 1.5,
-    onClose: () => notificationStore.closeErrorNotification(),
-  })
+    timeout: 1500,
+    onClose: notificationStore.closeErrorNotification,
+    showCloseButtonOnHover: true,
+  }
+
+  toast(
+    notificationStore.notificationMessage,
+    options,
+  )
 }
 </script>

@@ -1,57 +1,61 @@
 <template>
-  <a-card hoverable class="app-product-tile --base base-product">
+  <UiCard
+    hoverable
+    :title="product.name"
+    :subtitle="product.__typename"
+    class="app-product-tile --base base-product"
+  >
     <template #cover>
       <div class="base-product__image-container">
-        <img
-          v-if="product.productImage"
+        <ui-image
           :src="product.productImage"
           :alt="product.name"
-        >
-        <a-skeleton-image v-else />
+        />
       </div>
     </template>
 
-    <a-card-meta :title="product.name" />
-
-    <template #actions>
-      <a-button
-        key="base-product-add-wishlist"
-        type="link"
-        :danger="productIsAddedToWishlist"
-        :disabled="operationWithWishlistIsProcessing"
-        @click="addProductToWishlist"
-      >
-        <div>
-          <HeartFilled v-if="productIsAddedToWishlist" />
-          <HeartOutlined
-            v-else
-            :two-tone-color="productIsAddedToWishlist ? '#eb2f96' : '#1677ff'"
-          />
-        </div>
-      </a-button>
-      <a-button
-        key="base-product-add-cart"
-        type="link"
-        :disabled="operationWithCartIsProcessing"
-        @click="addProductToCart"
-      >
-        <div>
-          <ShoppingCartOutlined v-if="productIsAddedToWishlist" />
-          <ShoppingFilled
-            :two-tone-color="productIsAddedToWishlist ? '#eb2f96' : '#1677ff'"
-            v-else
-          />
-        </div>
-      </a-button>
+    <template #content-expand>
+      <div class="base-product__price-container price-container">
+        <span class="price-container__actual-price">
+          {{ productPrice }}
+        </span>
+      </div>
     </template>
-  </a-card>
+
+    <template #hover-effect>
+      <div class="base-product__hover-container hover-container">
+        <Button
+          label="Add To Cart"
+          class="hover-container__add-to-cart-action"
+        />
+
+        <div class="hover-container__additional-actions additional-actions">
+          <Button
+            variant="text"
+            label="Share"
+            prepend-icon="user/share"
+            @click="shareProductUrl"
+          />
+          <Button
+            variant="text"
+            label="Like"
+            prepend-icon="user/heart"
+            @click="addToWishlist"
+          />
+        </div>
+      </div>
+    </template>
+  </UiCard>
 </template>
 
 <script setup lang="ts">
 // Composables
 import { useProduct } from '~/composables/useProduct'
+// Utils
+import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
 import type { TProduct } from '~/api/product/shared.types'
+import Button from '~/components/ui/button/button.vue'
 
 interface Props {
   product: TProduct
@@ -59,6 +63,8 @@ interface Props {
 
 const props = defineProps<Props>()
 const { product } = toRefs(props)
+
+const runtimeConfig = useRuntimeConfig()
 const {
   productIsAddedToCart,
   productIsAddedToWishlist,
@@ -69,6 +75,12 @@ const {
   removeFromWishlist,
   removeFromCart,
 } = useProduct(product.value.pid)
+
+const productPrice = computed(() => {
+  return formattedPrice(product.value.price)
+})
+
+const productUrl = computed(() =>  `${runtimeConfig.public.appUrl}/product/${product.value.pid}`)
 
 const addProductToWishlist = () => {
   if (operationWithWishlistIsProcessing.value) {
@@ -92,33 +104,89 @@ const addProductToCart = () => {
   }
   addToCart()
 }
+
+const shareProductUrl = () => {
+  if (import.meta.server || !window) {
+    return
+  }
+
+  navigator
+    .clipboard
+    .writeText(productUrl.value)
+}
 </script>
 
 <style lang="scss">
 .app-product-tile.--base {
-  cursor: unset !important;
 
   .base-product__image-container {
-    max-height: 300px;
+    height: 300rem;
 
     img {
       width: 100%;
-      height: 230px;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .base-product__price-container {
+    height: 30rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .price-container__actual-price {
+      font-size: 16rem;
+      font-weight: bold;
+    }
+  }
+
+  .base-product__hover-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .hover-container__add-to-cart-action {
+      background-color: map-get($white-color-palette, 'white-5');
+      border: none;
+
+      .button-content__label {
+        color: map-get($theme-colors, 'accent-color');
+      }
     }
 
-    .ant-skeleton {
-      width: 100%;
+    .hover-container__additional-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
 
-      .ant-skeleton-image {
-        width: 100%;
-        height: 230px;
-        border-radius: 0;
+      .ui-button {
+        .nuxt-icon,
+        .button-content__label {
+          color: map-get($white-color-palette, 'white-5');
+        }
       }
     }
   }
 
-  @media #{map-get($display-breakpoints, 'lg')} {
-    max-width: 260px;
+  @media #{map-get($display-rules, 'xl')} {
+    .base-product__image-container {
+      height: 301rem;
+    }
+
+    .base-product__price-container {
+      .price-container__actual-price {
+        font-size: 16rem;
+      }
+    }
+
+    .base-product__hover-container {
+      .hover-container__additional-actions {
+        margin-top: 24rem;
+      }
+    }
   }
 }
 </style>

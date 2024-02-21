@@ -1,0 +1,24 @@
+html {
+  overflow: hidden;
+  font-size: calc(1vw / 3.6);
+
+  @media screen and (min-width: 768px) {
+    font-size: calc(1vw / 7.68);
+  }
+
+  @media screen and (min-width: 1024px) {
+    font-size: calc(1vw / 10.24);
+  }
+
+  @media screen and (min-width: 1440px) {
+    font-size: calc(1vw / 14.4);
+  }
+
+  @media screen and (min-width: 1920px) {
+    font-size: calc(1vw / 19.2);
+  }
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}

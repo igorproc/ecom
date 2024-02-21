@@ -1,12 +1,11 @@
 <template>
   <div class="app-navigation-drawer-trigger">
-    <a-button
-      type="link"
+    <button
       class="trigger__action"
       @click="conditionStore.openNavigationDrawer"
     >
-      <MenuOutlined class="action__icon" />
-    </a-button>
+      <UiIcon name="common/menu-horizontal" class="action__icon" />
+    </button>
   </div>
 </template>
 
@@ -24,7 +23,7 @@ const conditionStore = useConditionStore()
 
   .trigger__action {
     .action__icon {
-      font-size: 24px;
+      font-size: 18rem !important;
     }
   }
 }

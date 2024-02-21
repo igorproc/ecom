@@ -1,43 +1,38 @@
 <template>
-  <a-layout class="app-default-layout">
+  <div class="app-default-layout">
     <AppHeader />
-
-    <a-layout class="app-default-layout__main">
-      <a-layout-content>
-        <slot />
-      </a-layout-content>
-    </a-layout>
+    <div class="app-default-layout__main">
+      <slot />
+    </div>
+    <AppFooter />
 
     <AppGlobalScope />
-  </a-layout>
+  </div>
 </template>
 
 <script setup lang="ts">
 // Components
 import AppHeader from '~/components/common/layout/AppHeader.vue'
 import AppGlobalScope from '~/components/common/global/AppGlobalScope.vue'
+import AppFooter from '~/components/common/layout/AppFooter.vue'
 </script>
 
 <style lang="scss">
 .app-default-layout {
-  overflow: auto;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: map-get($theme-colors, 'background-colors');
 
-  .app-header {
-    padding: 0 1.5rem !important;
+  &__main {
+    padding: 10rem 15rem;
   }
 
-  & &__main {
-    height: calc(100vh - 64px);
-    padding: 0.5rem 1.5rem;
-  }
+  @media #{map-get($display-rules, 'xl')} {
+    &__main {
+      padding: 25rem 65rem;
 
-  @media #{map-get($display-breakpoints, 'md')} {
-    .app-header {
-      padding: 0 2.5rem !important;
-    }
 
-    & &__main {
-      padding: 1rem 2.5rem;
     }
   }
 }

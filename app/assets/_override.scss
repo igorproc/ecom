@@ -1,6 +1,0 @@
-@import "breakpoints";
-
-// functions
-@function lib-font-size($size: 0, $base: 16) {
-  @return calc($size / $base) * 1rem;
-}

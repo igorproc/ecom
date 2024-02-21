@@ -1,0 +1,29 @@
+@use "functions" as *;
+
+// Breakpoints
+$display-breakpoints: (
+  'xs': '360px',
+  'md': '768px',
+  'lg': '1024px',
+  'xl': '1440px'
+);
+
+$display-rules: generateBreakpointsRule($display-breakpoints);
+
+// Fonts
+$poppins-font-family: 'Poppins', sans-serif;
+
+// Colors
+$black-color-palette: (
+  'black': #000,
+  'black-5': #3a3a3a
+);
+
+$white-color-palette: (
+  'white': #fff,
+  'white-5': #f4f5f7
+);
+
+$gray-color-palette: (
+  'gray-2': #898989
+);

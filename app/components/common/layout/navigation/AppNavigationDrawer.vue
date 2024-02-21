@@ -1,63 +1,54 @@
 <template>
-  <a-drawer
-    :open="conditionStore.navigationDrawerIsOpen"
-    title="Navigation"
+  <UiDrawer
+    v-model:open="conditionStore.navigationDrawerIsOpen"
+    background-color="#000"
     root-class-name="app-navigation-drawer-container drawer-container"
-    @close="conditionStore.closeNavigationDrawer"
   >
-    <div class="drawer-container__user-actions">
-      <AppUserBadge v-if="userStore.userData && !userStore.isGuest" />
-      <AppAuthModalTrigger v-else />
-    </div>
+<!--    <div class="drawer-container__user-actions">-->
+<!--      <AppUserBadge v-if="userStore.userData && !userStore.isGuest" />-->
+<!--      <AppAuthModalTrigger v-else />-->
+<!--    </div>-->
 
-    <a-menu
-      id="app-navigation-drawer"
-      v-model:selectedKeys="selectedKeys"
-      mode="inline"
-      class="drawer-container__menu drawer-menu"
-    >
-      <a-menu-item
-        v-for="menuItem in drawerLinksList"
-        :key="menuItem.key"
-        :disabled="menuItem.disabled"
-        class="drawer-menu__link-item"
-        @click="selectTab(menuItem)"
-      >
-        <component :is="menuItem.icon" />
-        <span>
-          {{ menuItem.label }}
-        </span>
-      </a-menu-item>
-    </a-menu>
+<!--    <a-menu-->
+<!--      id="app-navigation-drawer"-->
+<!--      v-model:selectedKeys="selectedKeys"-->
+<!--      mode="inline"-->
+<!--      class="drawer-container__menu drawer-menu"-->
+<!--    >-->
+<!--      <a-menu-item-->
+<!--        v-for="menuItem in drawerLinksList"-->
+<!--        :key="menuItem.key"-->
+<!--        :disabled="menuItem.disabled"-->
+<!--        class="drawer-menu__link-item"-->
+<!--        @click="selectTab(menuItem)"-->
+<!--      >-->
+<!--        <span>-->
+<!--          {{ menuItem.label }}-->
+<!--        </span>-->
+<!--      </a-menu-item>-->
+<!--    </a-menu>-->
 
-    <div class="drawer-container__logout-action">
-      <AppLogout
-        v-if="userStore.userData && !userStore.isGuest"
-        class=""
-      />
-    </div>
-  </a-drawer>
+<!--    <div class="drawer-container__logout-action">-->
+<!--      <AppLogout-->
+<!--        v-if="userStore.userData && !userStore.isGuest"-->
+<!--        class=""-->
+<!--      />-->
+<!--    </div>-->
+  </UiDrawer>
 </template>
 
 <script setup lang="ts">
-// Icons
-import {
-  ShoppingCartOutlined,
-  HeartOutlined,
-  UnorderedListOutlined,
-  TableOutlined,
-  LoginOutlined,
-} from '@ant-design/icons-vue'
+// Ui Components
+import UiDrawer from '~/components/ui/drawer/drawer.vue'
 // Components
 import AppLogout from '~/components/auth/AppLogout.vue'
 import AppUserBadge from '~/components/user/AppUserBadge.vue'
+import AppAuthModalTrigger from '~/components/auth/modal/AppAuthModalTrigger.vue'
 // Pinia Stores
 import { useUserStore } from '~/store/user'
 import { useConditionStore } from '~/store/condition'
 // Types & Interfaces
 import type { TNavigationDrawerLinkListItem } from '~/types/global'
-import AppNavigationTrigger from '~/components/common/layout/navigation/AppNavigationTrigger.vue'
-import AppAuthModalTrigger from '~/components/auth/modal/AppAuthModalTrigger.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -80,14 +71,12 @@ const defaultLinkList: TNavigationDrawerLinkListItem[] = [
   {
     key: 'all-cart',
     label: 'Корзина',
-    icon: ShoppingCartOutlined,
     disabled: itemsIsDisabled.value,
     cb: async () => await router.push('user/cart'),
   },
   {
     key: 'all-wishlist',
     label: 'Избранные товары',
-    icon: HeartOutlined,
     disabled: itemsIsDisabled.value,
     cb: async () => await router.push('user/wishlist'),
   },
@@ -97,7 +86,6 @@ const authorizeLinkList: TNavigationDrawerLinkListItem[] = [
   {
     key: 'user-orders',
     label: 'Заказы',
-    icon: UnorderedListOutlined,
     disabled: itemsIsDisabled.value,
     cb: async () => await router.push('user/orders'),
   },
@@ -106,7 +94,6 @@ const adminLinkList: TNavigationDrawerLinkListItem[] = [
   {
     key: 'admin-product-add',
     label: 'Добавление товаров',
-    icon: TableOutlined,
     disabled: itemsIsDisabled.value,
     cb: async () => await router.push('admin/products'),
   },

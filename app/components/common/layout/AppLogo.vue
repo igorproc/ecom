@@ -1,7 +1,7 @@
 <template>
   <NuxtLink :to="{ name: 'index' }" class="app-logo px-2">
     <span class="app-logo__text">
-      Specto Shop
+      Specto
     </span>
   </NuxtLink>
 </template>
@@ -10,15 +10,17 @@
 
 <style lang="scss">
 .app-logo {
+  text-decoration: unset;
+
   .app-logo__text {
-    color: #1677ff;
-    font-size: lib-font-size(18);
+    color: map-get($theme-colors, 'primary-color');
+    font-size: 18rem;
     font-weight: bold;
   }
 
-  @media #{map-get($display-breakpoints, 'md')} {
+  @media #{map-get($display-rules, 'xl')} {
     .app-logo__text {
-      font-size: lib-font-size(20);
+      font-size: 30rem;
     }
   }
 }

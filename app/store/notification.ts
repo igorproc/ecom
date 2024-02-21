@@ -1,13 +1,11 @@
-import type {
-  IconType,
-  NotificationPlacement,
-} from 'ant-design-vue/es/notification/interface'
+// Types & Interfaces
+import { POSITION, TYPE } from 'vue-toastification'
 
 interface INotificationStoreState {
   notificationIsOpen: boolean,
-  notificationStatus: IconType | null,
+  notificationStatus: keyof typeof TYPE | null,
   notificationMessage: string | null,
-  notificationPosition: NotificationPlacement | null,
+  notificationPosition: keyof typeof POSITION | null,
   notificationIcon: string | null,
 }
 
@@ -25,9 +23,9 @@ export const useNotificationStore = defineStore('notification-store', {
     openErrorNotification(message: string, icon?: string) {
       const { $emit } = useNuxtApp()
 
-      this.notificationPosition = 'bottomRight'
+      this.notificationPosition = 'TOP_LEFT'
       this.notificationIsOpen = true
-      this.notificationStatus = 'error'
+      this.notificationStatus = 'ERROR'
       this.notificationMessage = message
       if (icon) {
         this.notificationIcon = icon

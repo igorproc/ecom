@@ -16,6 +16,10 @@ export const useAsyncQuery = () => {
     useClientOnly(() => {
       notificationStore.openErrorNotification(errorMessage)
     })
+
+    useServerOnly(() => {
+      console.error(errorMessage)
+    })
   }
 
   const getApiUrl = (path: string) => {

@@ -14,22 +14,23 @@
         :alt="slide.title"
         class="item__image"
       >
-      <div class="item__inner">
-        <h5 class="item__title">
+      <div class="item__content">
+        <h5 class="item__content-title">
           {{ slide.title }}
         </h5>
-        <h3 v-if="slide.subtitle" class="item__subtitle">
+        <h3 v-if="slide.subtitle" class="item__content-subtitle">
           {{ slide.subtitle }}
         </h3>
-        <span v-if="slide.description" class="item__description">
+        <span v-if="slide.description" class="item__content-description">
           {{ slide.description }}
         </span>
+
         <button
-          aria-label="slider-action"
-          class="item__action"
+          aria-label="slider-offer-action"
+          class="item__content-action action"
           @click="getAction(slide.action)"
         >
-          <span class="item__action-label">
+          <span class="action__label">
             {{ slide.action.actionTitle }}
           </span>
         </button>
@@ -93,7 +94,8 @@ const getAction = async (actionData: IOfferItemAction) => {
     return actionData.action
   }
 
-  return () => {}
+  return () => {
+  }
 }
 </script>
 
@@ -102,7 +104,7 @@ const getAction = async (actionData: IOfferItemAction) => {
   position: relative;
 
   .offers-slider__item {
-    height: 600px;
+    height: 400rem;
 
     .item__image {
       width: 100%;
@@ -110,35 +112,42 @@ const getAction = async (actionData: IOfferItemAction) => {
       object-fit: cover;
     }
 
-    .item__inner {
-      padding: 2rem;
-      max-width: 60%;
-      background-color: #FFF3E3;
+    .item__content {
+      max-width: 200rem;
+      padding: 20rem 15rem;
+      background-color: #fff3e3;
       position: absolute;
-      top: 25%;
-      right: 5%;
+      top: 5%;
+      right: 0;
       display: flex;
       flex-direction: column;
       border-radius: 0.375rem;
 
-      .item__title {
-        font-size: 1rem;
+      .item__content-title {
+        font-family: $poppins-font-family;
+        color: map-get($theme-colors, 'primary-color');
+        font-size: 14rem;
         font-weight: bold;
       }
 
-      .item__subtitle {
-        margin: 0.25rem 0 0.5rem;
+      .item__content-subtitle {
+        font-family: $poppins-font-family;
+        color: map-get($theme-colors, 'accent-color');
+        font-size: 18rem;
+        font-weight: bold;
       }
 
-      .item__description {
-        color: rgb(51, 51, 51);
+      .item__content-description {
+        font-family: $poppins-font-family;
+        color: map-get($theme-colors, 'primary-color');
+        font-size: 8rem;
+        font-weight: bold;
       }
 
-      .item__action {
-        padding: 0.45rem 0.7rem;
-        margin-top: 0.5rem;
+      .item__content-action {
+        padding: 3rem 5rem;
         max-width: 50%;
-        background-color: rgb(184, 142, 47);;
+        background-color: map-get($theme-colors, 'accent-color');
         display: flex;
         align-items: center;
         justify-content: center;
@@ -146,39 +155,77 @@ const getAction = async (actionData: IOfferItemAction) => {
         cursor: pointer;
         border: none;
 
-        .item__action-label {
-          color: #fff;
+        .action__label {
+          font-family: $poppins-font-family;
+          color: map-get($theme-colors, 'background-color');
+          font-size: 8rem;
         }
       }
     }
-  }
 
-  @media #{map-get($display-breakpoints, 'md')} {
-    .offers-slider__item {
-      height: 600px;
+    @media #{map-get($display-rules, 'md')} {
+      height: 450rem;
 
-      .item__inner {
-        max-width: 40%;
+      .item__content {
+        max-width: 30%;
+        padding: 25rem 30rem;
 
-        .item__action {
-          padding: 1rem 1.5rem;
+        .item__content-title {
+          font-size: 18rem;
+        }
 
-          .item__action-label {
-            font-size: 1rem;
-            font-weight: bold;
+        .item__content-subtitle {
+          font-size: 24rem;
+        }
+
+        .item__content-description {
+          font-size: 14rem;
+          font-weight: normal;
+        }
+
+        .item__content-action {
+          padding: 7rem 10rem;
+
+          .action__label {
+            font-size: 10rem;
           }
         }
       }
     }
-  }
 
-  @media #{map-get($display-breakpoints, 'xxl')} {
-    .offers-slider__item {
-      height: 800px;
+    @media #{map-get($display-rules, 'xl')} {
+      height: 717rem;
 
-      .item__inner {
-        max-width: 30%;
-        right: 1rem;
+      .item__content {
+        padding: 62rem 43rem 37rem 39rem;
+        max-width: unset;
+        width: 548rem;
+        height: 331rem;
+        right: 60rem;
+
+        .item__content-title {
+          font-size: 16rem;
+        }
+
+        .item__content-subtitle {
+          margin-top: 4rem;
+          font-size: 52rem;
+        }
+
+        .item__content-description {
+          margin-top: 10rem;
+          font-size: 18rem;
+          font-weight: bold;
+        }
+
+        .item__content-action {
+          margin-top: 17rem;
+          padding: 25rem 72rem;
+
+          .action__label {
+            font-size: 16rem;
+          }
+        }
       }
     }
   }
