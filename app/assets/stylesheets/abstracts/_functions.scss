@@ -1,0 +1,9 @@
+@function generateBreakpointsRule($breakpoints) {
+  $mapped-breakpoints: ();
+
+  @each $key, $value in $breakpoints {
+    $mapped-breakpoints: map-merge($mapped-breakpoints, ($key: 'screen and (min-width: ' + $value + ')'));
+  }
+
+  @return $mapped-breakpoints;
+}

@@ -1,111 +1,74 @@
-import vuetify from "vite-plugin-vuetify";
+import AppConfig from './config/app.config'
+import PwaConfig from './config/pwa.config'
+import ViteConfig from './config/vite.config'
+import TypographyConfig from './config/typography.config'
+import ExperimentalConfig from './config/exprerimantal.config'
 
-// PWA Config
-const title = "Vuetify 3 + Nuxt 3 Starter";
-const shortTitle = "Vuetify 3 + Nuxt 3 Starter";
-const description = "Template to get you up and running with Nuxt 3 & Vuetify 3";
-const image = "https://vuetify3nuxt3starter.behonbaker.com/starter.png";
-const url = "https://vuetify3nuxt3starter.behonbaker.com/";
-
+const isProd = process.env.APP_MODE === 'production'
+const isSsr = !!process.env.IS_SSR
+const proxyEnabled = !!process.env.PROXY_ENABLED
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
+  app: AppConfig,
+  srcDir: 'app',
+  ssr: isSsr,
+  // Rewrite Components Prefix
+  components: {
+    dirs: [
+      {
+        path: '~/components/ui',
+        pathPrefix: true,
+        prefix: 'Ui',
+      },
+    ],
+  },
   // import styles
-  css: ["@/assets/main.scss"],
-  devtools: { enabled: true },
-  // enable takeover mode
-  typescript: { shim: false },
-  build: { transpile: ["vuetify"] },
-  modules: [
-    "@kevinmarrec/nuxt-pwa",
-    async (options, nuxt) => {
-      nuxt.hooks.hook("vite:extendConfig", (config) => {
-        config.plugins ||= [];
-        config.plugins.push(vuetify());
-      });
-    },
+  css: [
+    '@/assets/stylesheets/main.scss',
   ],
-
-  app: {
-    head: {
-      title: "Vuetify 3 + Nuxt 3 Starter",
-      titleTemplate: "%s | Vuetify 3 + Nuxt 3 Starter",
-      link: [
-        { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
-        { rel: "preconnect", href: "https://rsms.me/" },
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-        { rel: "canonical", href: url },
-      ],
-      meta: [
-        {
-          hid: "description",
-          name: "description",
-          content: description,
-        },
-        { property: "og:site_name", content: title },
-        { hid: "og:type", property: "og:type", content: "website" },
-        {
-          hid: "og:url",
-          property: "og:url",
-          content: url,
-        },
-        {
-          hid: "og:image:secure_url",
-          property: "og:image:secure_url",
-          content: image,
-        },
-        {
-          hid: "og:title",
-          property: "og:title",
-          content: title,
-        },
-        {
-          hid: "og:description",
-          property: "og:description",
-          content: description,
-        },
-        {
-          hid: "og:image",
-          property: "og:image",
-          content: image,
-        },
-        //Twitter
-        { name: "twitter:card", content: "summary_large_image" },
-        {
-          hid: "twitter:url",
-          name: "twitter:url",
-          content: url,
-        },
-        {
-          hid: "twitter:title",
-          name: "twitter:title",
-          content: title,
-        },
-        {
-          hid: "twitter:description",
-          name: "twitter:description",
-          content: description,
-        },
-        {
-          hid: "twitter:image",
-          name: "twitter:image",
-          content: image,
-        },
-      ],
+  // Core Configs
+  runtimeConfig: {
+    public: {
+      appUrl: process.env.APP_URL || '',
+      proxyEnabled: proxyEnabled,
+      apiUrl: proxyEnabled ? '' : process.env.API_URL || '',
+      isProduction: isProd,
     },
   },
-
-  pwa: {
-    meta: {
-      name: shortTitle,
-      author: "Behon Baker",
-      theme_color: "#4f46e5",
-      description: description,
-    },
-    manifest: {
-      name: shortTitle,
-      short_name: shortTitle,
-      theme_color: "#4f46e5",
-      description: description,
+  nitro: {
+    routeRules: {
+      '/api/**': {
+        proxy: process.env.API_URL + '/**' || '',
+        cors: true,
+      },
     },
   },
-});
+  devServer: {
+    host: String(process.env.NITRO_DEV_HOST) || '0.0.0.0',
+    port: Number(process.env.NITRO_DEV_PORT) || 3000,
+  },
+  typescript: { shim: false },
+  vite: ViteConfig,
+  experimental: ExperimentalConfig,
+  // Modules
+  modules: [
+    // https://vite-pwa-org.netlify.app/frameworks/nuxt.html
+    '@vite-pwa/nuxt',
+    // https://nuxt.com/modules/pinia
+    '@pinia/nuxt',
+    // https://nuxt.com/modules/vee-validate
+    '@vee-validate/nuxt',
+    // https://swiperjs.com/
+    'nuxt-swiper',
+    // https://nuxt.com/modules/icons
+    'nuxt-icons',
+    // https://google-fonts.nuxtjs.org/
+    '@nuxtjs/google-fonts',
+    // https://nuxt.com/modules/device
+    '@nuxtjs/device',
+  ],
+  // Modules
+  pwa: PwaConfig,
+  googleFonts: TypographyConfig,
+  devtools: { enabled: isProd },
+})
