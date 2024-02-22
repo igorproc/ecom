@@ -8,5 +8,5 @@ export default {
   beforeUnmount: (el: HTMLElement, binding) => {
     el.removeEventListener('mouseenter', binding.value)
     el.removeEventListener('mouseleave', binding.value)
-  }
+  },
 } as Directive

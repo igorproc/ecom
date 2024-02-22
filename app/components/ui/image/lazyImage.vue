@@ -2,6 +2,7 @@
   <img
     :src="src"
     :alt="alt"
+    class="ui-lazy-image"
     @load="emit('loaded')"
   >
 </template>
@@ -19,3 +20,12 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 </script>
+
+<style lang="scss">
+.ui-lazy-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>
+

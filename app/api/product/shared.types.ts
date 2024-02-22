@@ -1,6 +1,6 @@
 import type {
   TConfigurableProductOptions,
-  TConfigurableProductVariants
+  TConfigurableProductVariants,
 } from '~/api/product/configurable/shred.types'
 
 export enum EAddProductTypes {

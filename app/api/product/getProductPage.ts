@@ -5,6 +5,11 @@ export type TProductPageFilters = {
   asc?: boolean,
 }
 
+export type TProductPage = {
+  products: TProduct[],
+  totalProducts: number,
+}
+
 export async function getProductPage(
   page?: number,
   size?: number,
@@ -12,7 +17,7 @@ export async function getProductPage(
 ) {
   const asyncQuery = useAsyncQuery()
 
-  return await asyncQuery<TProduct[]>(
+  return await asyncQuery<TProductPage>(
     'GET',
     `/api/product/list?page=${page}&size=${size}&brand=${filters?.brand || ''}`,
   )

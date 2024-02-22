@@ -3,15 +3,15 @@
     <div class="main-page__slider">
       <AppMainSlider />
     </div>
-    <div v-if="data" class="main-page__showcase">
-      <AppShowcaseList :product-list="data" />
+    <div v-if="data?.products" class="main-page__showcase">
+      <AppShowcaseList :product-list="data.products" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 // Pinia Stores
-import { useProductStore } from '~/store/product/index'
+import { useProductStore } from '~/store/product'
 // Api Methods
 import { getProductPage } from '~/api/product/getProductPage'
 // Components
@@ -21,10 +21,10 @@ import AppShowcaseList from '~/components/products/AppShowcaseList.vue'
 const productStore = useProductStore()
 
 const onLoad = async () => {
-  const productList = await getProductPage(1, 12) || []
+  const productsData = await getProductPage(1, 12)
 
-  productStore.productList = productList
-  return productList
+  productStore.productList = productsData?.products || []
+  return productsData
 }
 
 const { data } = useLazyAsyncData(

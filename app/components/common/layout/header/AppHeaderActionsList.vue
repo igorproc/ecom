@@ -7,7 +7,7 @@
       :key="item.id"
       @click="getItemAction(item.action)"
     >
-      <UiIcon :name="item.icon" />
+      <ui-icon :name="item.icon" />
     </button>
   </div>
 </template>

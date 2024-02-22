@@ -122,10 +122,8 @@ const shareProductUrl = () => {
   .base-product__image-container {
     height: 300rem;
 
-    img {
-      width: 100%;
+    .ui-image {
       height: 100%;
-      object-fit: cover;
     }
   }
 

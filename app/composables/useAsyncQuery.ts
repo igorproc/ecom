@@ -2,6 +2,7 @@
 import axios from 'axios'
 import type { AxiosInstance, Method } from 'axios'
 import { effect } from 'vue'
+import consola from 'consola'
 // Pinia Stores
 import { useNotificationStore } from '~/store/notification'
 
@@ -18,7 +19,7 @@ export const useAsyncQuery = () => {
     })
 
     useServerOnly(() => {
-      console.error(errorMessage)
+      consola.error(errorMessage)
     })
   }
 
@@ -29,7 +30,7 @@ export const useAsyncQuery = () => {
         path
     }
 
-    return apiUrl + path.replace('/api', '')
+    return runtimeConfig.public.apiUrl + path.replace('/api', '')
   }
 
   const createInstance = () => {
@@ -37,8 +38,8 @@ export const useAsyncQuery = () => {
 
     instance.defaults.baseURL = apiUrl.value
     instance.interceptors.response.use(
-      (response) => response,
-      (error) => showError(error.message),
+      response => response,
+      error => showError(error.message),
     )
     instance.defaults.headers['Content-Type'] = 'application/json'
 
@@ -63,7 +64,7 @@ export const useAsyncQuery = () => {
         .request({
           method,
           url: requestUrl,
-          data: payload
+          data: payload,
         })
 
       return response.data as T

@@ -1,7 +1,7 @@
 import type { TProduct } from '~/api/product/shared.types'
 import type {
   TConfigurableProductOptions,
-  TConfigurableProductOption
+  TConfigurableProductOption,
 } from '~/api/product/configurable/shred.types'
 
 interface IAdminStoreState {

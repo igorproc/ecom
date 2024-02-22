@@ -1,6 +1,6 @@
 <template>
   <div class="app-products-page">
-    <AppProductList :product-list="data" />
+    <AppProductList :product-list="data?.products || []" :total-products="data?.totalProducts || 0" />
   </div>
 </template>
 
@@ -11,21 +11,21 @@ import AppProductList from '~/components/products/AppProductList.vue'
 import { useProductStore } from '~/store/product'
 // Api Methods
 import { getProductPage } from '~/api/product/getProductPage'
-// Types & Interfaces
-import type { TProduct } from '~/api/product/shared.types'
 
 const route = useRoute()
+const router = useRouter()
+
 const productStore = useProductStore()
 const onLoad = async () => {
-  let productList: TProduct[] = []
   if (!route.params.brand || Array.isArray(route.params.brand)) {
-    productList = await getProductPage(1, 12) || []
-  } else {
-    productList = await getProductPage(1, 12, { brand: route.params.brand }) || []
+    await router.push({ name: 'products' })
+    return
   }
 
-  productStore.productList = productList
-  return productList
+  const productsData = await getProductPage(1, 12, { brand: route.params.brand })
+  productStore.productList = productsData?.products || []
+
+  return productsData
 }
 
 const { data } = useLazyAsyncData(

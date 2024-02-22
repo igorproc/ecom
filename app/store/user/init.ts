@@ -1,7 +1,6 @@
 // Pinia stores
 import { useUserStore } from '~/store/user/index'
 // Api Methods
-import { checkTokenHealth } from '~/api/user/checkTokenHealth'
 import { getUserData } from '~/api/user/userData'
 
 export const initializeUser = async () => {
