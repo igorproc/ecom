@@ -7,12 +7,14 @@
       :key="item.id"
       @click="getItemAction(item.action)"
     >
-      <ui-icon :name="item.icon" />
+      <UiIcon :name="item.icon" />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+// Components
+import UiIcon from '~/components/ui/icon/icon.vue'
 // Types & Interfaces
 import type { TUiIconNames } from '#build/types/ui-icon'
 
