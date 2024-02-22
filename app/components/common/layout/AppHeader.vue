@@ -57,7 +57,7 @@ const isTablet = computed(() => width.value <= DEFAULT_BREAKPOINT_SIZES.lg)
     padding: 25rem 65rem;
 
     .header__content {
-      margin-left: 15%;
+      max-width: 66%;
       width: 100%;
 
       display: flex;
@@ -71,12 +71,6 @@ const isTablet = computed(() => width.value <= DEFAULT_BREAKPOINT_SIZES.lg)
       .content__actions-list {
         width: 150rem;
       }
-    }
-  }
-
-  @media #{map-get($display-rules, 'xl')} {
-    .header__content {
-      margin-left: 25%;
     }
   }
 }

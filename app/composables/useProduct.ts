@@ -3,12 +3,6 @@ import { useProductStore } from '~/store/product'
 import { useWishlistStore } from '~/store/wishlist'
 import { useCartStore } from '~/store/cart'
 import { addItemToWishlist, removeItemFromWishlist } from '~/store/wishlist/actions'
-// Api Methods
-import { addProductToWishlist } from '~/api/user/wishlist/addProductToWishlist'
-import { removeProductFromWishlist } from '~/api/user/wishlist/removeProductFromWishlist'
-// Types & Interfaces
-import type { TWishlistRemoveProductInput } from '~/api/user/wishlist/removeProductFromWishlist'
-import type { TWishlistOperationWithProductInput } from '~/api/user/wishlist/shared.types'
 
 export const useProduct = (productId: number) => {
   const productStore = useProductStore()

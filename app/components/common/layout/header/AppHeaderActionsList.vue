@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+// Components
+import UiIcon from '~/components/ui/icon/icon.vue'
 // Types & Interfaces
 import type { TUiIconNames } from '#build/types/ui-icon'
 

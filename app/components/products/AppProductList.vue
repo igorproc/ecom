@@ -1,20 +1,12 @@
 <template>
   <div class="app-product-list product-list">
-    <AppProductListFilters class="product-list__filters" />
-
-    <div v-if="productList?.length" class="product-list__container list-container">
-      <component
-        v-for="product in productList"
-        :key="product.pid"
-        :is="getComponent(product.__typename)"
-        :product="product"
-        class="list-container__item"
-      />
-    </div>
-
-    <div class="product-list__pagination">
-
-    </div>
+    <component
+      v-for="product in productList"
+      :key="product.pid"
+      :is="getComponent(product.__typename)"
+      :product="product"
+      class="product-list__item"
+    />
   </div>
 </template>
 
@@ -25,12 +17,14 @@ import AppConfigurableProductTile from '~/components/products/product-tile/Confi
 // Types & Interfaces
 import type { TProduct } from '~/api/product/shared.types'
 import AppProductListFilters from '~/components/products/product-list/AppProductListFilters.vue'
+import AppProductListPagination from '~/components/products/product-list/AppProductListPagination.vue'
 
 interface Props {
-  productList: TProduct[] | null
+  productList: TProduct[] | null,
 }
 
 const props = defineProps<Props>()
+
 const { productList } = toRefs(props)
 
 const getComponent = (productType: TProduct['__typename']) => {
@@ -39,15 +33,22 @@ const getComponent = (productType: TProduct['__typename']) => {
   }
   return AppBaseProductTile
 }
+
 </script>
 
 <style lang="scss">
 .app-product-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rem;
+
+  @media #{map-get($display-rules, 'md')} {
+    gap: 16rem;
+  }
 
   @media #{map-get($display-rules, 'xl')} {
-    .product-list__container {
-      margin-top: 64rem;
-    }
+    gap: 32rem;
   }
 }
 </style>

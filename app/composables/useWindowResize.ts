@@ -32,7 +32,7 @@ export const useWindowResize = (breakpoints?: DynamicObject) => {
   }
   breakpointWatchers[minimalValue.key] = minimalValue.watcher
 
-  for(const [key, value] of Object.entries(breakpoints).slice(1)) {
+  for (const [key, value] of Object.entries(breakpoints).slice(1)) {
     const breakpointsWatcher = windowResizeFactory(
       key,
       value,
@@ -88,11 +88,11 @@ export const windowResizeFactory = (
   return [
     {
       key: getCapitalizedKey() + 'andDown',
-      watcher: computed(() => width.value > Number(prevBreakpoint) && width.value <= Number(breakpointValue))
+      watcher: computed(() => width.value > Number(prevBreakpoint) && width.value <= Number(breakpointValue)),
     },
     {
       key: getCapitalizedKey() + 'andUp',
-      watcher: computed(() => width.value > Number(breakpointValue))
-    }
+      watcher: computed(() => width.value > Number(breakpointValue)),
+    },
   ]
 }

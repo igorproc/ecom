@@ -6,6 +6,6 @@ export async function addProductImage(file: File) {
   return await asyncQuery<string>(
     'POST',
     '/api/product/addImage',
-    formData
+    formData,
   )
 }

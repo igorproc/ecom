@@ -22,7 +22,8 @@
     <template #hover-effect>
       <div class="configurable-product__hover-container hover-container">
         <Button
-          label="Add To Cart"
+          label="Go To Product"
+          :link="`product/${product.pid}`"
           class="hover-container__add-to-cart-action"
         />
 
@@ -40,8 +41,6 @@
 </template>
 
 <script setup lang="ts">
-// Composables
-import { useProduct } from '~/composables/useProduct'
 // Utils
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
@@ -56,45 +55,12 @@ const props = defineProps<Props>()
 const { product } = toRefs(props)
 
 const runtimeConfig = useRuntimeConfig()
-const {
-  productIsAddedToCart,
-  productIsAddedToWishlist,
-  operationWithCartIsProcessing,
-  operationWithWishlistIsProcessing,
-  addToCart,
-  addToWishlist,
-  removeFromWishlist,
-  removeFromCart,
-} = useProduct(product.value.pid)
 
 const productPrice = computed(() => {
   return formattedPrice(product.value.price)
 })
 
-const productUrl = computed(() =>  `${runtimeConfig.public.appUrl}/product/${product.value.pid}`)
-
-const addProductToWishlist = () => {
-  if (operationWithWishlistIsProcessing.value) {
-    return
-  }
-
-  if (productIsAddedToWishlist.value) {
-    removeFromWishlist()
-    return
-  }
-  addToWishlist()
-}
-const addProductToCart = () => {
-  if (operationWithCartIsProcessing.value) {
-    return
-  }
-
-  if (productIsAddedToCart.value) {
-    removeFromCart()
-    return
-  }
-  addToCart()
-}
+const productUrl = computed(() => `${runtimeConfig.public.appUrl}/product/${product.value.pid}`)
 
 const shareProductUrl = () => {
   if (import.meta.server || !window) {
@@ -113,10 +79,8 @@ const shareProductUrl = () => {
   .configurable-product__image-container {
     height: 300rem;
 
-    img {
-      width: 100%;
+    .ui-image {
       height: 100%;
-      object-fit: cover;
     }
   }
 
