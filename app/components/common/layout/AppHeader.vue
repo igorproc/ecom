@@ -73,5 +73,9 @@ const isTablet = computed(() => width.value <= DEFAULT_BREAKPOINT_SIZES.lg)
       }
     }
   }
+
+  @media #{map-get($display-rules, 'xxl')} {
+    padding: 30rem 185rem;
+  }
 }
 </style>

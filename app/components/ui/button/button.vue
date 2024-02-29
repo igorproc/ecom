@@ -45,7 +45,7 @@ const props = defineProps<Props>()
 const { variant } = toRefs(props)
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .ui-button {
   padding: 8rem 12rem;
   display: flex;

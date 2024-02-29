@@ -4,6 +4,7 @@ import consola from 'consola'
 // Pinia Stores
 import { initializeUser } from '~/store/user/init'
 import { initializeWishlist } from '~/store/wishlist/init'
+import path from 'path'
 
 export const useIndexStore = defineStore('index-store', {
   actions: {

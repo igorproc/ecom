@@ -1,8 +1,8 @@
 <template>
   <UiCard
-    hoverable
     :title="product.name"
     :subtitle="product.__typename"
+    :link="{ path: 'product/' + product.name.toLowerCase() }"
     class="app-product-tile --configurable configurable-product"
   >
     <template #cover>
@@ -18,25 +18,6 @@
         </span>
       </div>
     </template>
-
-    <template #hover-effect>
-      <div class="configurable-product__hover-container hover-container">
-        <Button
-          label="Go To Product"
-          :link="`product/${product.pid}`"
-          class="hover-container__add-to-cart-action"
-        />
-
-        <div class="hover-container__additional-actions additional-actions">
-          <Button
-            variant="text"
-            label="Share"
-            prepend-icon="user/share"
-            @click="shareProductUrl"
-          />
-        </div>
-      </div>
-    </template>
   </UiCard>
 </template>
 
@@ -45,16 +26,15 @@
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
 import type { TProduct } from '~/api/product/shared.types'
-import Button from '~/components/ui/button/button.vue'
 
 interface Props {
   product: TProduct
 }
 
+const runtimeConfig = useRuntimeConfig()
+
 const props = defineProps<Props>()
 const { product } = toRefs(props)
-
-const runtimeConfig = useRuntimeConfig()
 
 const productPrice = computed(() => {
   return formattedPrice(product.value.price)

@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@egjs/flicking-plugins": "^4.7.1",
     "@nuxt/devtools": "^0.8.5",
     "@nuxtjs/device": "^3.1.1",
     "@nuxtjs/eslint-module": "^4.1.0",
@@ -29,6 +30,7 @@
     "vite-plugin-eslint": "^1.8.1"
   },
   "dependencies": {
+    "@egjs/vue3-flicking": "^4.11.2",
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/nuxt": "^4.12.2",
     "@vee-validate/yup": "^4.12.2",
@@ -36,7 +38,6 @@
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
     "nuxt-icons": "^3.2.1",
-    "nuxt-swiper": "^1.2.2",
     "pinia": "^2.1.7",
     "vue": "^3.3.9",
     "vue-toastification": "^2.0.0-rc.5"

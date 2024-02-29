@@ -18,7 +18,7 @@
         label="Show More"
         variant="outlined"
         title="Show More"
-        link="products"
+        link="products?page=1&size=8"
       />
     </div>
   </div>

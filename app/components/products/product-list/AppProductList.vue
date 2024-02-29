@@ -1,6 +1,13 @@
 <template>
   <div class="app-product-list product-list">
+    <ui-skeleton-card
+      v-if="isLoading"
+      v-for="index in pageSize"
+      :key="generateRandomId() + index"
+    />
+
     <component
+      v-else
       v-for="product in productList"
       :key="product.pid"
       :is="getComponent(product.__typename)"
@@ -18,9 +25,12 @@ import AppConfigurableProductTile from '~/components/products/product-tile/Confi
 import type { TProduct } from '~/api/product/shared.types'
 import AppProductListFilters from '~/components/products/product-list/AppProductListFilters.vue'
 import AppProductListPagination from '~/components/products/product-list/AppProductListPagination.vue'
+import { generateRandomId } from '~/utils/generate.util'
 
 interface Props {
   productList: TProduct[] | null,
+  isLoading: boolean,
+  pageSize: number,
 }
 
 const props = defineProps<Props>()
@@ -44,11 +54,20 @@ const getComponent = (productType: TProduct['__typename']) => {
   gap: 12rem;
 
   @media #{map-get($display-rules, 'md')} {
-    gap: 16rem;
+    justify-content: space-between;
+    gap: 24rem;
+  }
+
+  @media #{map-get($display-rules, 'lg')} {
+    justify-content: flex-start;
   }
 
   @media #{map-get($display-rules, 'xl')} {
-    gap: 32rem;
+    gap: 51rem;
+  }
+
+  @media #{map-get($display-rules, 'xxl')} {
+    gap: 27rem;
   }
 }
 </style>

@@ -13,9 +13,20 @@ const toast = useToast()
 
 const notificationStore = useNotificationStore()
 
-$listen('notification:open', () => openNotification())
+$listen('notification:open', () => {
+  const notificationData = getNotificationData()
 
-const openNotification = () => {
+  if (!notificationData) {
+    return
+  }
+
+  toast(
+    notificationData.message,
+    notificationData.options,
+  )
+})
+
+const getNotificationData = () => {
   if (
     !notificationStore.notificationMessage ||
     !notificationStore.notificationPosition ||
@@ -29,13 +40,13 @@ const openNotification = () => {
     position: POSITION[notificationStore.notificationPosition] || POSITION.BOTTOM_RIGHT,
     message: notificationStore.notificationMessage,
     timeout: 1500,
-    onClose: notificationStore.closeErrorNotification,
+    onClose: notificationStore.closeNotification,
     showCloseButtonOnHover: true,
   }
 
-  toast(
-    notificationStore.notificationMessage,
+  return {
+    message: notificationStore.notificationMessage,
     options,
-  )
+  }
 }
 </script>

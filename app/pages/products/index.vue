@@ -1,102 +1,88 @@
 <template>
-  <div class="app-products-page products">
-    <AppProductListFilters
-      :total-products="totalProducts"
-      :page-size="pageSize"
-      :current-page="currentPage"
-      class="products__filters"
-      @page-size-updated="updatePageSize"
-    />
-
-    <AppProductList
-      :product-list="productStore.productList || []"
-      class="products__list"
-    />
-
-    <AppProductListPagination
-      :total-pages="totalPages"
-      :current-page="currentPage"
-      class="products__pages-list"
-      @update-current-page="updateCurrentPage"
-    />
-  </div>
+  <AppProductsPage
+    v-model:filters="pageFilters"
+    :products-is-loaded="productsIsLoaded"
+    :total-products="pageData.totalProducts"
+  />
 </template>
 
 <script setup lang="ts">
 // Components
-import AppProductList from '~/components/products/AppProductList.vue'
+import AppProductsPage from '~/components/products/AppProductListPage.vue'
 // Pinia Stores
 import { useProductStore } from '~/store/product'
 // Api Methods
 import { getProductPage } from '~/api/product/getProductPage'
-import AppProductListFilters from '~/components/products/product-list/AppProductListFilters.vue'
-import AppProductListPagination from '~/components/products/product-list/AppProductListPagination.vue'
+// Types & Interfaces
+import type { TGetProductPageInput, TProductPage } from '~/api/product/getProductPage'
 
 const productStore = useProductStore()
+const route = useRoute()
+const router = useRouter()
 
-const totalProducts = ref(0)
-const currentPage = ref(1)
-const pageSize = ref(16)
+const pageFilters = ref<TGetProductPageInput>({ page: 1, size: 8, filters: {} })
+const pageData = ref<TProductPage>({ products: [], totalProducts: 0 })
+const productsIsLoaded = ref(false)
 
-const onLoad = async () => {
-  const productsData = await getProductPage(currentPage.value, pageSize.value)
-
-  if (productsData) {
-    totalProducts.value = productsData.totalProducts
-    productStore.productList = productsData?.products || []
+const getFiltersFromLink = () => {
+  if (route.query?.page && Number(route.query?.page)) {
+    pageFilters.value.page = Number(route.query?.page)
   }
+  if (route.query?.size && Number(route.query?.size)) {
+    pageFilters.value.size = Number(route.query?.size)
+  }
+  if (route.query?.brand) {
+    pageFilters.value.filters.brand = route.query.brand.toString()
+  }
+  if (route.query?.sort) {
+    pageFilters.value.filters.sortBy = route.query?.sort.toString()
+  }
+}
+const onUpdateFilters = async () => {
+  const routerRewrite: {
+    page: string | number,
+    size: string | number,
+    brand?: string,
+    sort?: string,
+  } = {
+    page: pageFilters.value.page,
+    size: pageFilters.value.size,
+  }
+  if (pageFilters.value.filters.brand) {
+    routerRewrite.brand = pageFilters.value.filters.brand
+  }
+  if (pageFilters.value.filters.sortBy) {
+    routerRewrite.sort = pageFilters.value.filters.sortBy
+  }
+
+  await router.replace({ query: routerRewrite })
+}
+const onLoad = async () => {
+  productsIsLoaded.value = true
+  const productsData = await getProductPage(pageFilters.value)
+
+  if (!productsData) {
+    productsIsLoaded.value = false
+    return null
+  }
+
+  setTimeout(() => {
+    productStore.productList = productsData.products
+    pageData.value.totalProducts = productsData.totalProducts
+    pageData.value.products = productsData.products
+    productsIsLoaded.value = false
+  }, 5000)
+
   return productsData
 }
 
-const { data } = useLazyAsyncData(
-  'user-product-list-all',
-  async () => await onLoad()
-)
+getFiltersFromLink()
+await onUpdateFilters()
 
-const totalPages = computed(() => {
-  return Math.floor(totalProducts.value / currentPage.value) + (totalProducts.value % currentPage.value ? 1 : 0)
-})
+useAsyncData('user-product-list-all', async () => await onLoad())
 
-const updatePageSize = async (providedPageSize: number) => {
-  pageSize.value = providedPageSize
+watch(pageFilters, async () => {
+  await onUpdateFilters()
   await onLoad()
-}
-
-const updateCurrentPage = async (pageNumber: number) => {
-  currentPage.value = pageNumber
-  await onLoad()
-}
+}, { deep: true })
 </script>
-
-<style lang="scss">
-.app-products-page {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-
-  .products__filters {
-    width: 100%;
-  }
-
-  .products__list {
-    margin-top: 18rem;
-    width: 100%;
-  }
-
-  .products__pages-list {
-    margin-top: 24rem;
-    width: 100%;
-  }
-
-  @media #{map-get($display-rules, 'xl')} {
-    .products__list {
-      margin-top: 40rem;
-      padding: 0 25rem;
-    }
-
-    .products__pages-list {
-      margin-top: 65rem;
-    }
-  }
-}
-</style>

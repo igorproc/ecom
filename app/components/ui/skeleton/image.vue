@@ -4,13 +4,13 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .skeleton-image {
   position: relative;
   overflow: hidden;
   background-color: #{map-get($white-color-palette, 'white-5')};
   height: 100%;
-  border-radius: 5px;
+  border-radius: 5rem;
 }
 
 .skeleton-image__shine {

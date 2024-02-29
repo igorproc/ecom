@@ -1,9 +1,21 @@
 <template>
   <div class="ui-pagination">
     <button
-      v-for="item in items"
+      v-if="prevPageAction"
+      :class="{ '--is-disabled':  (currentPage === 1) || disabled }"
+      aria-label="Route to next page"
+      class="ui-pagination__item item --prev-page"
+      @click="prevPage"
+    >
+      <span class="item__label">
+        prev
+      </span>
+    </button>
+
+    <button
+      v-for="item in paginationItems"
       :key="item?.id || generateRandomId()"
-      :class="{ '--is-active': item.value === currentPage }"
+      :class="{ '--is-active': item.value === currentPage, '--is-disabled': disabled }"
       aria-label="Route to selected page"
       class="ui-pagination__item item"
       @click="selectPage(item.value)"
@@ -14,8 +26,10 @@
     </button>
 
     <button
-      class="ui-pagination__item item --next-page"
+      v-if="nextPageAction"
+      :class="{ '--is-disabled': (currentPage === totalPages) || disabled }"
       aria-label="Route to next page"
+      class="ui-pagination__item item --next-page"
       @click="nextPage"
     >
       <span class="item__label">
@@ -26,18 +40,19 @@
 </template>
 
 <script setup lang="ts">
-export interface IPaginationItem {
-  id?: string,
-  text: string,
-  value: number,
-}
+// Util
+import { getDefaultPagination } from '~/utils/getTotalPages.util'
+import { generateRandomId } from '~/utils/generate.util'
+// Types & Interfaces
+import type { IPaginationItem } from '~/utils/getTotalPages.util'
 
 interface Props {
-  items: IPaginationItem[],
+  items?: IPaginationItem[],
+  disabled?: boolean,
   totalPages: number,
   currentPage: number,
   prevPageAction?: boolean,
-  nextPageAction?: boolean
+  nextPageAction?: boolean,
 }
 
 interface Emits {
@@ -47,29 +62,44 @@ interface Emits {
 const props = withDefaults(
   defineProps<Props>(),
   {
+    disabled: false,
     prevPageAction: false,
     nextPageAction: false,
   },
 )
 const emit = defineEmits<Emits>()
 
-const generateRandomId = () => {
-  return Date.now().toString(32).slice(0, 5) + Math.random().toString(32)
-}
+const paginationItems = computed(() => {
+  if (props.items) {
+    return props.items
+  }
 
+  return getDefaultPagination(props.totalPages, props.currentPage)
+})
 const selectPage = (value: number) => {
+  if (props.currentPage === value || props.disabled) {
+    return
+  }
+
   emit('update:currentPage', value)
 }
 const nextPage = () => {
-  if (props.currentPage >= props.totalPages) {
+  if (props.currentPage >= props.totalPages || props.disabled) {
     return
   }
 
   emit('update:currentPage', props.currentPage + 1)
 }
+const prevPage = () => {
+  if (props.currentPage === 1 || props.disabled) {
+    return
+  }
+
+  emit('update:currentPage', props.currentPage - 1)
+}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .ui-pagination {
   width: 100%;
   display: flex;
@@ -89,6 +119,10 @@ const nextPage = () => {
 
     &.--is-active {
       background-color: map-get($theme-colors, 'accent-color');
+    }
+
+    &.--is-disabled {
+      cursor: default;
     }
   }
 
