@@ -1,7 +1,7 @@
 <template>
   <UiCard
     :title="product.name"
-    :subtitle="product.__typename"
+    :subtitle="product.brand?.name || ''"
     :link="{ path: 'product/' + product.name.toLowerCase() }"
     class="app-product-tile --configurable configurable-product"
   >

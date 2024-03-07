@@ -2,7 +2,7 @@
   <UiCard
     hoverable
     :title="product.name"
-    :subtitle="product.__typename"
+    :subtitle="product.brand?.name || ''"
     class="app-product-tile --base base-product"
     :link="{ path: 'product/' +  product.name.toLowerCase() }"
   >

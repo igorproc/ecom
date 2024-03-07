@@ -54,7 +54,7 @@ const emit = defineEmits<Emits>()
 
 const updatePageSize = async (providedPageSize: number) => {
   emit('update:filters', {
-    page: filters.value.page,
+    page: 1,
     size: providedPageSize,
     filters: {
       brand: filters.value.filters.brand,

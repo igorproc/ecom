@@ -1,18 +1,18 @@
 <template>
   <div class="app-product-page">
-    <h1>
-      Hello World
-    </h1>
-    <h2>
-      {{ data }}
-    </h2>
+    <AppProductBaseBlock v-if="data" :product="data" />
   </div>
 </template>
 
 <script setup lang="ts">
+// Components
+import AppProductBaseBlock from '~/components/products/product-block/_Base.vue'
 // Api Methods
 import { getProductData } from '~/api/product/getProductData'
+// Pinia Stores
+import { useProductStore } from '~/store/product'
 
+const productStore = useProductStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -24,7 +24,11 @@ const onLoad = async () => {
     return null
   }
 
-  return await getProductData(productName)
+  const data = await getProductData(productName)
+  if (data) {
+    productStore.productList.push(data)
+  }
+  return data
 }
 
 const { data } = useLazyAsyncData(

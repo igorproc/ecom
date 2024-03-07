@@ -66,12 +66,10 @@ const onLoad = async () => {
     return null
   }
 
-  setTimeout(() => {
-    productStore.productList = productsData.products
-    pageData.value.totalProducts = productsData.totalProducts
-    pageData.value.products = productsData.products
-    productsIsLoaded.value = false
-  }, 5000)
+  productStore.productList = productsData.products
+  pageData.value.totalProducts = productsData.totalProducts
+  pageData.value.products = productsData.products
+  productsIsLoaded.value = false
 
   return productsData
 }

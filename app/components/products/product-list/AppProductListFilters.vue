@@ -49,10 +49,11 @@ const pageSizeInputId = useId()
 
 const productShowsText = computed(() => {
   let startShowsProducts = 1
-  let endShowsProducts = (props.currentPage + 1) * props.pageSize
+  let endShowsProducts = props.currentPage * props.pageSize
 
   if (props.currentPage > 1) {
     startShowsProducts = props.currentPage * props.pageSize
+    endShowsProducts = (props.currentPage + 1) * props.pageSize
   }
 
   if (startShowsProducts > totalProducts.value) {
@@ -76,7 +77,7 @@ const changePageSize = (e: Event) => {
 
 const throttleChangePageSize = useDebounceFn((e: Event) => {
   changePageSize(e)
-})
+}, 300)
 </script>
 
 <style lang="scss">
