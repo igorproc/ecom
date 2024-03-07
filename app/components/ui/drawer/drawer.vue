@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-// Node Deps
+import { onMounted, ref, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 
 interface Emits {
@@ -38,7 +38,7 @@ interface Props {
 const props = withDefaults(
   defineProps<Props>(),
   {
-    isOpen: false,
+    open: false,
     maxWidth: '300rem',
     animationSpeed: 300,
   },
@@ -46,17 +46,17 @@ const props = withDefaults(
 const emit = defineEmits<Emits>()
 
 const target = ref(null)
-const isTransitioning = ref(false)
 
 const drawerIsOpen = computed(() => props.open)
 
-useClientOnly(() => {
-  onClickOutside(target, () => emit('update:open', false))
+onMounted(() => {
+  onClickOutside(target.value, () => emit('update:open', false))
 })
 </script>
 
 <style lang="scss" scoped>
 .ui-drawer {
+  visibility: hidden;
   animation-name: slideOutToLeft;
 
   &__overlay {
@@ -77,7 +77,6 @@ useClientOnly(() => {
     position: fixed;
     top: 0;
     right: 0;
-    bottom: 0;
 
     height: 100%;
     width: 100%;

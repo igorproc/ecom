@@ -24,6 +24,10 @@
   @media #{map-get($display-rules, 'xl')}{
     padding: 25rem 65rem;
   }
+
+  @media #{map-get($display-rules, 'xxl')} {
+    padding: 30rem 185rem;
+  }
 }
 
 </style>

@@ -31,8 +31,12 @@ import AppFooter from '~/components/common/layout/AppFooter.vue'
   @media #{map-get($display-rules, 'xl')} {
     &__main {
       padding: 25rem 65rem;
+    }
+  }
 
-
+  @media #{map-get($display-rules, 'xxl')} {
+    &__main {
+      padding: 30rem 185rem;
     }
   }
 }

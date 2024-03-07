@@ -2,7 +2,13 @@ import type { TProduct } from '~/api/product/shared.types'
 
 export type TProductPageFilters = {
   brand?: string,
-  asc?: boolean,
+  sortBy?: string,
+}
+
+export type TGetProductPageInput = {
+  page: number,
+  size: number,
+  filters: TProductPageFilters
 }
 
 export type TProductPage = {
@@ -11,14 +17,23 @@ export type TProductPage = {
 }
 
 export async function getProductPage(
-  page?: number,
-  size?: number,
-  filters?: TProductPageFilters,
+  pageData: TGetProductPageInput
 ) {
   const asyncQuery = useAsyncQuery()
 
+  const filtersUrl = () => {
+    let filterUrl = ''
+    if (pageData.filters?.brand) {
+      filterUrl += `&brand=${pageData.filters.brand}`
+    }
+    if (pageData.filters?.sortBy) {
+      filterUrl += `&sortBy=${pageData.filters.sortBy}`
+    }
+    return filterUrl
+  }
+
   return await asyncQuery<TProductPage>(
     'GET',
-    `/api/product/list?page=${page}&size=${size}&brand=${filters?.brand || ''}`,
+    `/api/product/list?page=${pageData.page}&size=${pageData.size}${filtersUrl()}`,
   )
 }

@@ -21,7 +21,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .ui-lazy-image {
   width: 100%;
   height: 100%;

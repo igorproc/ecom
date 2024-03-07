@@ -2,8 +2,9 @@
   <UiCard
     hoverable
     :title="product.name"
-    :subtitle="product.__typename"
+    :subtitle="product.brand?.name || ''"
     class="app-product-tile --base base-product"
+    :link="{ path: 'product/' +  product.name.toLowerCase() }"
   >
     <template #cover>
       <div class="base-product__image-container">
@@ -27,6 +28,7 @@
         <Button
           label="Add To Cart"
           class="hover-container__add-to-cart-action"
+          @click.prevent="addProductToCart"
         />
 
         <div class="hover-container__additional-actions additional-actions">
@@ -34,13 +36,13 @@
             variant="text"
             label="Share"
             prepend-icon="user/share"
-            @click="shareProductUrl"
+            @click.prevent="shareProductUrl"
           />
           <Button
             variant="text"
             label="Like"
             prepend-icon="user/heart"
-            @click="addToWishlist"
+            @click.prevent="addProductToWishlist"
           />
         </div>
       </div>
@@ -51,6 +53,8 @@
 <script setup lang="ts">
 // Composables
 import { useProduct } from '~/composables/useProduct'
+// Pinia Stores
+import { useNotificationStore } from '~/store/notification'
 // Utils
 import { formattedPrice } from '~/utils/getCurrencyFormat.util'
 // Types & Interfaces
@@ -64,6 +68,7 @@ interface Props {
 const props = defineProps<Props>()
 const { product } = toRefs(props)
 
+const notificationStore = useNotificationStore()
 const runtimeConfig = useRuntimeConfig()
 const {
   productIsAddedToCart,
@@ -80,7 +85,7 @@ const productPrice = computed(() => {
   return formattedPrice(product.value.price)
 })
 
-const productUrl = computed(() =>  `${runtimeConfig.public.appUrl}/product/${product.value.pid}`)
+const productUrl = computed(() => `${runtimeConfig.public.appUrl}/product/${product.value.pid}`)
 
 const addProductToWishlist = () => {
   if (operationWithWishlistIsProcessing.value) {
@@ -113,6 +118,8 @@ const shareProductUrl = () => {
   navigator
     .clipboard
     .writeText(productUrl.value)
+
+  notificationStore.openInfoNotification('Link was copied to clipboard')
 }
 </script>
 

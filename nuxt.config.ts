@@ -58,8 +58,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     // https://nuxt.com/modules/vee-validate
     '@vee-validate/nuxt',
-    // https://swiperjs.com/
-    'nuxt-swiper',
     // https://nuxt.com/modules/icons
     'nuxt-icons',
     // https://google-fonts.nuxtjs.org/

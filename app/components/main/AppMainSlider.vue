@@ -1,45 +1,52 @@
 <template>
-  <swiper
-    :autoplay="{ delay: 3000 }"
+  <Flicking
+    hide-before-init
+    :options="{ circular: true }"
+    :plugins="flickingPlugins"
     class="app-main-offers-slider offers-slider"
   >
-    <swiper-slide
+    <div
       v-for="slide in items"
       :key="slide.id"
       class="offers-slider__item item"
     >
-      <img
-        v-if="slide?.image"
-        :src="slide.image"
-        :alt="slide.title"
-        class="item__image"
-      >
-      <div class="item__content">
-        <h5 class="item__content-title">
-          {{ slide.title }}
-        </h5>
-        <h3 v-if="slide.subtitle" class="item__content-subtitle">
-          {{ slide.subtitle }}
-        </h3>
-        <span v-if="slide.description" class="item__content-description">
+      <div class="item__wrapper">
+        <img
+          v-if="slide?.image"
+          :src="slide.image"
+          :alt="slide.title"
+          class="item__image"
+        >
+        <div class="item__content">
+          <h5 class="item__content-title">
+            {{ slide.title }}
+          </h5>
+          <h3 v-if="slide.subtitle" class="item__content-subtitle">
+            {{ slide.subtitle }}
+          </h3>
+          <span v-if="slide.description" class="item__content-description">
           {{ slide.description }}
         </span>
 
-        <button
-          aria-label="slider-offer-action"
-          class="item__content-action action"
-          @click="getAction(slide.action)"
-        >
+          <button
+            aria-label="slider-offer-action"
+            class="item__content-action action"
+            @click="getAction(slide.action)"
+          >
           <span class="action__label">
             {{ slide.action.actionTitle }}
           </span>
-        </button>
+          </button>
+        </div>
       </div>
-    </swiper-slide>
-  </swiper>
+    </div>
+  </Flicking>
 </template>
 
 <script setup lang="ts">
+// Node Deps
+import { AutoPlay } from '@egjs/flicking-plugins'
+
 interface IOfferItemAction {
   actionTitle: string,
   isLink: boolean,
@@ -70,7 +77,7 @@ const items: TOfferItem[] = [
     },
   },
   {
-    id: 1,
+    id: 2,
     title: 'New Arrival',
     subtitle: 'Discover Our \nNew Collection',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis.',
@@ -84,6 +91,9 @@ const items: TOfferItem[] = [
 ]
 
 const router = useRouter()
+const flickingPlugins = [
+  new AutoPlay({ duration: 5000 }),
+]
 
 const getAction = async (actionData: IOfferItemAction) => {
   if (actionData.isLink && actionData.link) {
@@ -101,10 +111,14 @@ const getAction = async (actionData: IOfferItemAction) => {
 
 <style lang="scss">
 .app-main-offers-slider {
-  position: relative;
-
   .offers-slider__item {
+    width: 100%;
     height: 400rem;
+
+    .item__wrapper {
+      height: 100%;
+      position: relative;
+    }
 
     .item__image {
       width: 100%;
@@ -197,10 +211,10 @@ const getAction = async (actionData: IOfferItemAction) => {
       height: 717rem;
 
       .item__content {
-        padding: 62rem 43rem 37rem 39rem;
+        padding: 62rem 43rem 20rem 39rem;
         max-width: unset;
         width: 548rem;
-        height: 331rem;
+        height: auto;
         right: 60rem;
 
         .item__content-title {

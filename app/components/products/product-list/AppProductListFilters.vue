@@ -18,7 +18,6 @@
           :id="pageSizeInputId"
           :value="pageSize"
           type="number"
-          placeholder="16"
           class="showcase-action__input"
           @input="throttleChangePageSize"
         >
@@ -44,16 +43,17 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { totalProducts, currentPage, pageSize } = toRefs(props)
+const { totalProducts } = toRefs(props)
 
 const pageSizeInputId = useId()
 
 const productShowsText = computed(() => {
   let startShowsProducts = 1
-  let endShowsProducts = (currentPage.value + 1) * pageSize.value
+  let endShowsProducts = props.currentPage * props.pageSize
 
-  if (currentPage.value) {
-    startShowsProducts = currentPage.value * pageSize.value
+  if (props.currentPage > 1) {
+    startShowsProducts = props.currentPage * props.pageSize
+    endShowsProducts = (props.currentPage + 1) * props.pageSize
   }
 
   if (startShowsProducts > totalProducts.value) {
@@ -77,7 +77,7 @@ const changePageSize = (e: Event) => {
 
 const throttleChangePageSize = useDebounceFn((e: Event) => {
   changePageSize(e)
-})
+}, 300)
 </script>
 
 <style lang="scss">
@@ -108,6 +108,10 @@ const throttleChangePageSize = useDebounceFn((e: Event) => {
         width: 50rem;
         background-color: map-get($theme-colors, 'background-color');
         font-size: 20rem;
+
+        &:active {
+          border: none;
+        }
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {

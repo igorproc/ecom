@@ -23,7 +23,7 @@ export const useNotificationStore = defineStore('notification-store', {
     openErrorNotification(message: string, icon?: string) {
       const { $emit } = useNuxtApp()
 
-      this.notificationPosition = 'TOP_LEFT'
+      this.notificationPosition = 'BOTTOM_RIGHT'
       this.notificationIsOpen = true
       this.notificationStatus = 'ERROR'
       this.notificationMessage = message
@@ -32,7 +32,17 @@ export const useNotificationStore = defineStore('notification-store', {
       }
       $emit('notification:open')
     },
-    closeErrorNotification() {
+    openInfoNotification(message: string) {
+      const { $emit } = useNuxtApp()
+
+      this.notificationPosition = 'TOP_RIGHT'
+      this.notificationIsOpen = true
+      this.notificationStatus = 'INFO'
+      this.notificationMessage = message
+
+      $emit('notification:open')
+    },
+    closeNotification() {
       this.notificationIsOpen = false
       this.notificationPosition = null
       this.notificationStatus = null

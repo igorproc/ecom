@@ -3,11 +3,12 @@
     :is="link ? nuxtLinkComponent : 'button'"
     :to="link"
     :style="{
-      '--button-background-provided-color': backgroundColor
+      '--ui-button-background-color': backgroundColor
     }"
     :class="{
       '--is-outlined': variant === 'outlined',
       '--is-text': variant === 'text',
+      '--custom-background': backgroundColor
     }"
     class="ui-button"
   >
@@ -45,7 +46,7 @@ const props = defineProps<Props>()
 const { variant } = toRefs(props)
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .ui-button {
   padding: 8rem 12rem;
   display: flex;
@@ -63,6 +64,11 @@ const { variant } = toRefs(props)
       font-size: 16rem;
       font-weight: bold;
     }
+  }
+
+  &.--custom-background {
+    background-color: var(--ui-button-background-color);
+    border: 1px solid var(--ui-button-background-color);
   }
 
   &.--is-outlined {
